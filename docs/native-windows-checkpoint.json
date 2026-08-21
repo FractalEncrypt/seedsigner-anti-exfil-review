@@ -1,0 +1,28 @@
+{
+  "status": "desktop-native-checkpoint",
+  "production_ready": false,
+  "source_repository": "BlockstreamResearch/secp256k1-zkp",
+  "source_commit": "2af926dc309a673461f0e2da090105c8f05b4505",
+  "platform": "Windows 10 AMD64",
+  "compiler": "MSVC 19.50.35723.0",
+  "compiler_tools": "MSVC 14.50.35717 Hostx64/x64",
+  "build_type": "Release",
+  "shared_library": true,
+  "ecdsa_s2c": true,
+  "library_filename": "libsecp256k1-6.dll",
+  "library_size": 1566720,
+  "first_build_sha256": "291046c2979833aa43655c854bb3f9740ada357d96ab8154eeed6be688d6b444",
+  "scripted_rebuild_sha256": "28cf15677484b1c95bf2169199c144e7a7fc1b6590a886ed5d8a1876860b5ea1",
+  "byte_reproducible": false,
+  "vector_reproducible": true,
+  "focused_s2c_tests_passed": 14,
+  "focused_s2c_tests_failed": 0,
+  "python_vector_tests": "byte-identical",
+  "notes": [
+    "The full 326-test upstream suite exceeded the 120-second command bound after at least 296 reported passes and no reported failure.",
+    "The focused S2C and anti-exfil suite completed independently with all 14 tests passing.",
+    "Two same-source/same-configuration Windows builds had equal size and behavior but different SHA-256 hashes; deterministic PE output has not been established.",
+    "This compiler-specific DLL is an ignored local artifact and is not committed or distributed.",
+    "The device library must be rebuilt by the SeedSigner OS Buildroot toolchain; image packaging and physical-device validation remain required."
+  ]
+}

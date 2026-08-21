@@ -1,0 +1,55 @@
+{
+  "checkpoint": "protocol-v1-physical-rejection-matrix-01",
+  "date": "2026-08-07",
+  "device": "SeedSigner Pi Zero physical device",
+  "image_sha256": "db2a04b3b9013c1bb189af3008fd9789d66b6f3846683469acdc317281aefd19",
+  "reference_parent_commit": "9089f1b2a71128b04a9aa3b7cdbb43619649e713",
+  "seedsigner_parent_commit": "b1f6fb761422da27210af4625520fdd4fd54f35f",
+  "manifest_sha256": "a3b6596211e152327d7cf80df0d1f444858170760428f79134685313aed7d6f6",
+  "warning": "public deterministic test seed and zero-value fixture only",
+  "summary": {
+    "case_count": 13,
+    "passed_as_specified": 11,
+    "failed_due_to_system_error_ui": 2,
+    "unexpected_response_qrs": 0,
+    "ordinary_signing_fallbacks": 0
+  },
+  "cases": [
+    {"slug": "01-wrong-mainnet", "expected": "AE_TRANSACTION_MISMATCH", "result": "pass"},
+    {"slug": "02-wrong-stage-message-2", "expected": "AE_WRONG_STAGE", "result": "pass"},
+    {"slug": "03-outer-inner-network-mismatch", "expected": "AE_TRANSACTION_MISMATCH", "result": "pass"},
+    {"slug": "04-truncated-psbt", "expected": "AE_INVALID_MESSAGE", "result": "pass"},
+    {
+      "slug": "05-missing-utxo",
+      "expected": "AE_SIGNATURE_SLOT_MISMATCH / Protected signing stopped",
+      "result": "fail",
+      "observed": "System Error: UnboundLocalError in psbt_parser.py _parse_inputs; script_pubkey was unbound",
+      "signature_or_response_produced": false
+    },
+    {
+      "slug": "06-broken-witness-script",
+      "expected": "AE_SIGNATURE_SLOT_MISMATCH / Protected signing stopped",
+      "result": "fail",
+      "observed": "System Error: ValueError in psbt_parser.py _parse_multisig; Not a multisig script",
+      "signature_or_response_produced": false
+    },
+    {"slug": "07-wrong-derivation-path", "expected": "AE_SIGNATURE_SLOT_MISMATCH / Protected signing stopped", "result": "pass"},
+    {"slug": "08-unsupported-sighash-none", "expected": "AE_SIGNATURE_SLOT_MISMATCH / Protected signing stopped", "result": "pass"},
+    {"slug": "09-mixed-taproot-input", "expected": "AE_SIGNATURE_SLOT_MISMATCH / Protected signing stopped", "result": "pass"},
+    {"slug": "10-duplicate-slot-record", "expected": "AE_SIGNATURE_SLOT_MISMATCH", "result": "pass"},
+    {"slug": "11-reordered-slot-records", "expected": "AE_SIGNATURE_SLOT_MISMATCH", "result": "pass"},
+    {"slug": "12-altered-host-reveal", "expected": "AE_COMMITMENT_MISMATCH / Protected signing stopped", "result": "pass"},
+    {"slug": "13-altered-signer-opening", "expected": "AE_OPENING_MISMATCH / Protected signing stopped", "result": "pass"}
+  ],
+  "additional_navigation_finding": {
+    "route": "loaded seed > Scan transaction > anti-exfil AEXT",
+    "observed": "the seed-specific scanner treated the anti-exfil transaction as the wrong QR type and routed to settings review",
+    "control": "main-menu Scan accepted the same package",
+    "next_image_requirement": "accept anti-exfil transaction envelopes in the seed-specific transaction scanner and preserve the preselected seed"
+  },
+  "next_image_fixes_prepared": [
+    "run strict anti-exfil semantic validation before the stock PSBT review parser",
+    "route invalid UTXO/script structures to Protected signing stopped instead of System Error",
+    "accept anti-exfil envelopes through seed-specific Scan transaction and preserve its seed selection"
+  ]
+}

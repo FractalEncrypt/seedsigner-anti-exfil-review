@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-08-20",
+  "protocol": "AEXB-v1-multislot",
+  "components": [
+    {
+      "name": "Drongo",
+      "fork": "https://github.com/FractalEncrypt/drongo",
+      "upstream": "https://github.com/sparrowwallet/drongo",
+      "upstream_base": "a47c2b3f58d7cedd504b2bd07833708866614216",
+      "tested_commit": "1bbafd94f08fd9105e20be30a6fdfe9a091fb675",
+      "tested_tag": "anti-exfil-review-v1-tested-2026-08-20",
+      "tag_object": "de20707f09ef9886a6577f64ca87ecbc54bab56c"
+    },
+    {
+      "name": "Sparrow",
+      "fork": "https://github.com/FractalEncrypt/sparrow",
+      "upstream": "https://github.com/sparrowwallet/sparrow",
+      "upstream_base": "b99b880c9fe75565921af9ef438d6314fdd73d6f",
+      "tested_commit": "7674cecde48335e0b55454f6fa53c8187a459932",
+      "tested_tag": "anti-exfil-review-v1-tested-2026-08-20",
+      "tag_object": "a26885ed19bcd6e795b59df6f5cb7a82d2b68bb1"
+    },
+    {
+      "name": "SeedSigner",
+      "fork": "https://github.com/FractalEncrypt/FractalEncrypt_seedsigner",
+      "upstream": "https://github.com/SeedSigner/seedsigner",
+      "upstream_base": "56637104b90325e1bc47b58f5f5e8154ea56cf37",
+      "tested_commit": "aa8395e3576379467d795bb05268533e3a2ac082",
+      "tested_tag": "anti-exfil-review-v1-tested-2026-08-14",
+      "tag_object": "9511574e2c13e33e47b18c0dbebd1910198c67f6"
+    },
+    {
+      "name": "SeedSignerOS",
+      "fork": "https://github.com/FractalEncrypt/seedsigner-os",
+      "upstream": "https://github.com/SeedSigner/seedsigner-os",
+      "upstream_base": "d5a1077851a9b41d6637f7317e3f06aaa453bd5d",
+      "tested_commit": "0bf1dc92519906c7db265055abfb07e0ee344342",
+      "tested_tag": "anti-exfil-review-v1-tested-2026-08-12",
+      "tag_object": "1575208220d8e3cf7ffbded8ca8765a5b27e9aaf"
+    }
+  ],
+  "frozen_bundle": {
+    "reference_commit": "dd7b2b26ece992f74daeb3095aa148fc278176ea",
+    "filename": "anti-exfil-private-review-bundle-v1.zip",
+    "bytes": 4686310,
+    "sha256": "08efdaa268e83e0bf6bd12ed5ae248465396a2f2c885c0441fe08345c6042651"
+  }
+}

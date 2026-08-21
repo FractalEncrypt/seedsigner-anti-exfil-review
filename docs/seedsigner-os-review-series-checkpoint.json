@@ -1,0 +1,100 @@
+{
+  "checkpoint": "clean-seedsigner-os-review-series",
+  "date": "2026-08-12",
+  "status": "passed",
+  "repository": "https://github.com/FractalEncrypt/seedsigner-os",
+  "branch": "anti-exfil-review-v1",
+  "upstream_repository": "https://github.com/SeedSigner/seedsigner-os",
+  "upstream_base": "d5a1077851a9b41d6637f7317e3f06aaa453bd5d",
+  "commits": [
+    {
+      "commit": "8c0006cf16b8eb8423d28a2a3d7b294da00194ab",
+      "subject": "Add native anti-exfil package for Pi Zero"
+    },
+    {
+      "commit": "0bf1dc92519906c7db265055abfb07e0ee344342",
+      "subject": "Add opt-in anti-exfil physical test image"
+    }
+  ],
+  "tree": "1ed46cd81f95c9b372c5248e30b883ac33c13a0c",
+  "buildroot_submodule": "bf2a2858aa675a14b60f1f9142c65b32652609c1",
+  "seedsigner_application": {
+    "repository": "https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git",
+    "commit": "f971a645ce3cd8519adba62e92e3365b03fb48ab"
+  },
+  "native_source": {
+    "repository": "https://github.com/BlockstreamResearch/secp256k1-zkp",
+    "commit": "2af926dc309a673461f0e2da090105c8f05b4505",
+    "archive_sha256": "40e0858f5f189a078f2aeee10e1fc0e732f73abb7bc9f8745c63dac3f8d8d4e5",
+    "buildroot_source_gate": "passed"
+  },
+  "static_gates": {
+    "git_diff_check": "passed",
+    "shell_syntax": "passed",
+    "docker_compose_config": "passed",
+    "normal_config_native_package": true,
+    "normal_config_test_overlay": false,
+    "test_config_native_package": true,
+    "test_config_test_overlay": true
+  },
+  "publication": {
+    "branch_published": true,
+    "remote_commit_verified": "0bf1dc92519906c7db265055abfb07e0ee344342",
+    "tested_tag": "anti-exfil-review-v1-tested-2026-08-12",
+    "tested_tag_object": "1575208220d8e3cf7ffbded8ca8765a5b27e9aaf",
+    "tested_tag_commit": "0bf1dc92519906c7db265055abfb07e0ee344342",
+    "tested_tag_published": true,
+    "tested_tag_deferred_until_image_and_boot_gates": false
+  },
+  "fresh_clone": {
+    "path": "C:/Users/FractalEncrypt/Documents/Windsurf/SeedSignerOS_AntiExfil_Review_Fresh_LF2",
+    "recursive": true,
+    "clean": true,
+    "lf_checkout_verified": true,
+    "tree": "1ed46cd81f95c9b372c5248e30b883ac33c13a0c"
+  },
+  "normal_image_gate": {
+    "source_head": "d1fee78f80e57bb527fab3876b568673f8d754b5",
+    "filename": "seedsigner_os.f971a645ce3cd8519adba62e92e3365b03fb48ab.pi0.img",
+    "length": 52428800,
+    "sha256": "c96c8b5a00ed0281d9aa65f979f8ed59d52d2b320fdbd05b725193017f77e485",
+    "booted_to_main_menu": true,
+    "test_receipt_absent": true,
+    "source_clean_after_build": true,
+    "preserved_by_test_only_correction": true
+  },
+  "rejected_test_image": {
+    "source_head": "d1fee78f80e57bb527fab3876b568673f8d754b5",
+    "sha256": "ac53e3c9b16af6d9316244296e0167a24e36f90a3d976e464061f78f9c825e14",
+    "booted": true,
+    "receipt_missing": true,
+    "root_cause": "S01 test services ran before S10mdev created and mounted the SD boot partition"
+  },
+  "boot_order_correction": {
+    "services": [
+      "S11zantiexfil-selftest",
+      "S11zzantiexfil-file-stage"
+    ],
+    "mount": "/mnt/microsd",
+    "owns_mount": false,
+    "container_mount_receipt_probe": "passed"
+  },
+  "corrected_test_image_gate": {
+    "source_head": "0bf1dc92519906c7db265055abfb07e0ee344342",
+    "filename": "seedsigner_os.f971a645ce3cd8519adba62e92e3365b03fb48ab.pi0.anti-exfil-test.img",
+    "length": 52428800,
+    "sha256": "e8e93eb527469e1708d6db0735b2857f52f6f91276a9bd679d5141507fd48f85",
+    "booted_to_main_menu": true,
+    "source_clean_after_build": true,
+    "selftest_exit_code": 0,
+    "receipt": {
+      "status": "ok",
+      "backend": "native-secp256k1-zkp",
+      "library": "/usr/lib/seedsigner/libsecp256k1.so.0.0.0",
+      "opening_matches": true,
+      "signature_matches": true,
+      "production_fallback": false
+    }
+  },
+  "pending_gates": []
+}

@@ -1,0 +1,51 @@
+{
+  "date": "2026-08-06",
+  "device": "Raspberry Pi Zero SeedSigner",
+  "image": {
+    "filename": "seedsigner_os.dev.pi0.anti-exfil-test.img",
+    "size_bytes": 52428800,
+    "sha256": "db2a04b3b9013c1bb189af3008fd9789d66b6f3846683469acdc317281aefd19",
+    "native_selftest": {
+      "status": "ok",
+      "backend": "native-secp256k1-zkp",
+      "opening_matches": true,
+      "signature_matches": true,
+      "production_fallback": false
+    }
+  },
+  "fixture": {
+    "network": "TESTNET4",
+    "psbt_sha256": "fa4ef7e7bee778ec04017cd89c12da335d8e17fb3da749e3bfae070b0655d249",
+    "input_count": 4,
+    "slot_count": 5,
+    "script_forms": [
+      "P2WPKH",
+      "P2SH-P2WPKH",
+      "P2WSH standard multisig",
+      "P2SH-P2WSH standard multisig"
+    ]
+  },
+  "ceremonies": [
+    {
+      "navigation": "post-message-2 Scan host reveal shortcut",
+      "session_id": "c3493a28719dd2de3acce4aedfff29569af9639f544625752bbf9e0204671bb3",
+      "signed_psbt_sha256": "1e2317f7c78cfdef6d729b13aa62855d1f7bfed302317392c5f536d241544ef4",
+      "message_2_scan_seconds": 10.75,
+      "message_4_scan_seconds": 22.953,
+      "verified_slots": 5,
+      "psbt_reconstructed_from_original": true,
+      "broadcast": false
+    },
+    {
+      "navigation": "exit to main menu and ordinary Scan for message 3",
+      "session_id": "70774b5ffc32aceffc4b17fdbc40ee1cec9e5ea6e29a2bed69b249d8092009de",
+      "signed_psbt_sha256": "84bace8113a7c2f10f3883fcdaab4574dc8b46bd9fae4ed0b84870f0206bbcd1",
+      "message_2_scan_seconds": 10.735,
+      "message_4_scan_seconds": 19.125,
+      "verified_slots": 5,
+      "psbt_reconstructed_from_original": true,
+      "broadcast": false
+    }
+  ],
+  "result": "combined multi-slot device checkpoint passed"
+}

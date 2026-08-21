@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seedsigner-airgap-anti-exfil"
+version = "0.0.1"
+description = "Terminal reference implementation for air-gapped ECDSA anti-exfil"
+requires-python = ">=3.10"
+dependencies = [
+  "embit==0.8.0",
+]
+
+[project.scripts]
+anti-exfil = "anti_exfil.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

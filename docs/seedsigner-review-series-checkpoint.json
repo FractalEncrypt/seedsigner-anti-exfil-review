@@ -1,0 +1,107 @@
+{
+  "checkpoint": "clean-seedsigner-review-series",
+  "date": "2026-08-14",
+  "repository": "https://github.com/FractalEncrypt/FractalEncrypt_seedsigner",
+  "branch": "anti-exfil-review-v1",
+  "upstream_repository": "https://github.com/SeedSigner/seedsigner",
+  "upstream_base": "56637104b90325e1bc47b58f5f5e8154ea56cf37",
+  "commits": [
+    {
+      "commit": "f7ce4888e89f27d0e7d2b564b7b2dc7dbeaa65b5",
+      "subject": "Implement protocol-v1 multi-slot anti-exfil core"
+    },
+    {
+      "commit": "b0162be75f64cedf2776cd52b3b26f214bbb4399",
+      "subject": "Add interactive protected-signing ceremony"
+    },
+    {
+      "commit": "f971a645ce3cd8519adba62e92e3365b03fb48ab",
+      "subject": "Fail closed before review and preserve signer context"
+    },
+    {
+      "commit": "aa8395e3576379467d795bb05268533e3a2ac082",
+      "subject": "Preserve QR brightness in Python renderer fallback"
+    }
+  ],
+  "tree": "9b95f381c53669cd54af6fa4139a4eb782bc445b",
+  "chronological_evidence": {
+    "branch": "anti-exfil-v0.8.7",
+    "head": "663389a77a3b4248193c73aa594eded2c1642e9e",
+    "tag": "anti-exfil-tested-2026-08-11",
+    "tag_object": "34e372a45e2e64a6a6841060edd31b54756ba204",
+    "published": true
+  },
+  "equivalence_audit": {
+    "method": "git merge-tree --write-tree of chronological head with current upstream/dev",
+    "synthetic_tree": "5feb717c3a8f561cef2c66c57dc89147db28d256",
+    "review_tree": "5feb717c3a8f561cef2c66c57dc89147db28d256",
+    "byte_identical": true
+  },
+  "focused_tests": {
+    "protocol_core": {
+      "passed": 25,
+      "skipped": 2
+    },
+    "interactive_views_before_hardening": {
+      "passed": 11
+    },
+    "fail_closed_state_and_navigation": {
+      "passed": 20
+    }
+  },
+  "windows_tests": {
+    "applicable_passed": 231,
+    "skipped": 2,
+    "deselected_known_platform_exceptions": 3,
+    "known_platform_exceptions": [
+      "test_compact_seedqr_encode_decode",
+      "test_compact_seedqr_handles_null_bytes",
+      "test_compact_seedqr_bytes_interpretable_as_str"
+    ],
+    "translations_compiled": true
+  },
+  "linux_ci": {
+    "final_correction_run_id": 31801493663,
+    "final_correction_url": "https://github.com/FractalEncrypt/FractalEncrypt_seedsigner/actions/runs/31801493663",
+    "result": "success",
+    "python_3_10": {
+      "tests_passed": 235,
+      "tests_skipped": 2,
+      "screenshot_tests_passed": 22,
+      "coverage_percent": 73.50
+    },
+    "python_3_12": {
+      "tests_passed": 235,
+      "tests_skipped": 2,
+      "screenshot_tests_passed": 22,
+      "coverage_percent": 73.51
+    }
+  },
+  "recursive_clone": {
+    "path": "C:/Users/FractalEncrypt/Documents/Windsurf/SeedSigner_AntiExfil_Review_Fresh",
+    "depth": 1,
+    "seedsigner_commit": "aa8395e3576379467d795bb05268533e3a2ac082",
+    "translations_commit": "708961a4163b1bd43eb15c4a26713649c63f6ccd",
+    "screenshots_update_policy": "none",
+    "result": "clean"
+  },
+  "review_tag": {
+    "name": "anti-exfil-review-v1-tested-2026-08-14",
+    "object": "9511574e2c13e33e47b18c0dbebd1910198c67f6",
+    "commit": "aa8395e3576379467d795bb05268533e3a2ac082"
+  },
+  "qr_brightness_correction": {
+    "focused_tests": "41 passed, 1 skipped",
+    "instrumented_image": "seedsigner_os.aa8395e3576379467d795bb05268533e3a2ac082.pi0.anti-exfil-test.img",
+    "instrumented_image_bytes": 52428800,
+    "instrumented_image_sha256": "05bf333f3342d3b1229ed2565bf6f4492901ad8962251bf5d6e34a63d375d17e",
+    "static_qr_brightness": "passed",
+    "animated_qr_brightness": "passed",
+    "animation_resumption": "passed"
+  },
+  "remote_safety": {
+    "origin": "https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git",
+    "upstream_fetch": "https://github.com/SeedSigner/seedsigner.git",
+    "upstream_push": "DISABLED"
+  }
+}

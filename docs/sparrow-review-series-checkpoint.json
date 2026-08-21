@@ -1,0 +1,122 @@
+{
+  "checkpoint": "clean-sparrow-review-series",
+  "date": "2026-08-14",
+  "repository": "https://github.com/FractalEncrypt/sparrow",
+  "branch": "anti-exfil-review-v1",
+  "upstream_base": "b99b880c9fe75565921af9ef438d6314fdd73d6f",
+  "commits": [
+    {
+      "commit": "8acfca8a9fd3b4ec157957b9acd86c8665562277",
+      "subject": "Add protected-signing QR transport and ceremony"
+    },
+    {
+      "commit": "00917c7dfbc1dd888a63c66e3d737844902457ad",
+      "subject": "Persist device-neutral protected-signing policy"
+    },
+    {
+      "commit": "0bbd3d3e7c6f0ed868e070f46c658c3ad353775e",
+      "subject": "Export canonical PSBT v0 for protected signing"
+    },
+    {
+      "commit": "9b35d472d8bb9d8c537514ba19e1b194ea30d9ca",
+      "subject": "Enforce protected signatures and harden QR imports"
+    },
+    {
+      "commit": "2146c3ba18003b246fd5176f909ccb9e58050c1e",
+      "subject": "Hide buffered camera frames during scanner drain"
+    },
+    {
+      "commit": "74a377409d4b026f5dce255b1ef9fb7aa652d0ae",
+      "subject": "Default SeedSigner QR imports to optional protection"
+    },
+    {
+      "commit": "c88c5733afca81869aba8614366458e5fa5adb74",
+      "subject": "Revert \"Hide buffered camera frames during scanner drain\""
+    }
+  ],
+  "tree": "e517ce7437028131088677e0c8a82d62d7072466",
+  "drongo_commit": "1250d5a8323f5525236753a8597729c22ce1e5da",
+  "lark_commit": "ddffe556f0d1ba6a138be3b362ce74219fed0710",
+  "tag": "anti-exfil-review-v1-tested-2026-08-14",
+  "tag_object": "2161c985f792d9f4bca1266cfe4b314f077029ef",
+  "equivalence_audit": {
+    "tested_chronological_head": "c923bb9234ba637abd49a3a8013763b28c26a318",
+    "result": "Anti-exfil implementation files match the tested chronological branch except for the reviewed Drongo pointer and URL, the intentional collapse of V11/V12 into one final V11 policy migration, and current-upstream Sparrow changes.",
+    "obsolete_database_boolean_removed": true,
+    "legacy_json_boolean_import_retained": true
+  },
+  "windows_tests": {
+    "sparrow": {
+      "discovered": 150,
+      "passed": 146,
+      "failed": 4,
+      "known_platform_exceptions": [
+        "CaravanMultisigTest.exportWallet1",
+        "ColdcardMultisigTest.exportWallet1",
+        "ColdcardMultisigTest.exportWalletMultiDeriv",
+        "SpecterDIYTest.testExport"
+      ]
+    },
+    "drongo": {
+      "discovered": 456,
+      "passed": 454,
+      "failed": 2,
+      "known_platform_exceptions": [
+        "ApplicationDirTest.testXdgAppliedToMacos",
+        "ApplicationDirTest.testXdgDirs"
+      ]
+    },
+    "focused_anti_exfil_tests": "passed"
+  },
+  "linux_ci": {
+    "branch": "anti-exfil-review-v1-ci",
+    "workflow_only_commits_excluded_from_review_branch": true,
+    "review_commit": "c88c5733afca81869aba8614366458e5fa5adb74",
+    "ci_only_head": "12daa16601881f927f76b65c4a1ca8476449477d",
+    "run_id": 31820118151,
+    "url": "https://github.com/FractalEncrypt/sparrow/actions/runs/31820118151",
+    "result": "success",
+    "environment": "ubuntu-22.04, Temurin Java 25.0.2, Xvfb",
+    "annotations": 0
+  },
+  "recursive_clone": {
+    "path": "C:/Users/FractalEncrypt/Documents/Windsurf/Sparrow_AntiExfil_Review_Fresh",
+    "depth": 1,
+    "sparrow_commit": "c88c5733afca81869aba8614366458e5fa5adb74",
+    "drongo_url": "https://github.com/FractalEncrypt/drongo.git",
+    "result": "clean"
+  },
+  "final_physical_smoke": {
+    "explicit_seedsigner_import_policy": "OPTIONAL",
+    "generic_watch_only_import_policy": "UNSUPPORTED",
+    "scanner_preview_disposition": "Same retained-frame presentation reproduced in stock Sparrow 2.4.0; preview experiment reverted and ordinary scanner source restored.",
+    "post_revert_focused_tests": "5 passed"
+  },
+  "final_reviewed_tag": {
+    "recorded": "2026-08-20",
+    "head": "7674cecde48335e0b55454f6fa53c8187a459932",
+    "tree": "0ac7c62f9ec013f1e84190817a15cb821eaf0e2f",
+    "drongo_submodule": "1bbafd94f08fd9105e20be30a6fdfe9a091fb675",
+    "tag": "anti-exfil-review-v1-tested-2026-08-20",
+    "tag_object": "a26885ed19bcd6e795b59df6f5cb7a82d2b68bb1",
+    "remediation_range": "c88c5733afca81869aba8614366458e5fa5adb74..7674cecde48335e0b55454f6fa53c8187a459932",
+    "security_result": "Signature-scoped provenance and R-F1 raw-transaction lifecycle remediation passed focused review with no new findings",
+    "windows_tests": "151/155 passed; four unchanged CRLF/LF export comparisons failed",
+    "linux_ci": "https://github.com/FractalEncrypt/sparrow/actions/runs/32305165978",
+    "physical_gate": "Three-state raw-transaction lifecycle passed; no broadcast performed"
+  },
+  "packaged_app": {
+    "task": "jpackageImage",
+    "result": "success",
+    "duration_seconds": 240,
+    "path": "C:/Users/FractalEncrypt/Documents/Windsurf/Sparrow_AntiExfil_Review_Fresh/build/jpackage/Sparrow",
+    "file_count": 248,
+    "bytes": 124078751,
+    "executable": "C:/Users/FractalEncrypt/Documents/Windsurf/Sparrow_AntiExfil_Review_Fresh/build/jpackage/Sparrow/Sparrow.exe",
+    "executable_bytes": 519680,
+    "executable_sha256": "AEDE33AEB413143EFC7A1E46E090758B118DEDFA7A2903E715E87C1588F35763",
+    "startup_profile": "C:/Users/FractalEncrypt/Documents/Windsurf/Sparrow_AntiExfil_Review_Fresh/run/packaged-smoke-01",
+    "startup_network": "testnet4",
+    "startup_result": "process remained responsive through the startup observation"
+  }
+}

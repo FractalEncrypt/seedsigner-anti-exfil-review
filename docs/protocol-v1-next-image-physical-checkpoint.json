@@ -1,0 +1,39 @@
+{
+  "checkpoint": "protocol-v1-next-image-focused-retest",
+  "date": "2026-08-07",
+  "device": "SeedSigner Pi Zero physical device",
+  "reference_parent_commit": "614d023a9b1fad6577e5524beb4271b50ecb2a85",
+  "seedsigner_commit": "e46691676904de595a0e96542d873b44334de942",
+  "image": {
+    "filename": "seedsigner_os.e46691676904de595a0e96542d873b44334de942.pi0.anti-exfil-test.img",
+    "size_bytes": 52428800,
+    "sha256": "0adde4626d9407d2136484a35e39409d946eb6ae5b74793562b4ea68f38348c2"
+  },
+  "warning": "public deterministic test seed and zero-value fixture only",
+  "results": {
+    "native_boot_selftest": "pass: exit 0, native backend, no production fallback",
+    "stock_network_menu": "pass: Mainnet, Testnet, Regtest only",
+    "testnet4_wire_on_testnet_setting": "pass",
+    "seed_first_scan_transaction": "pass: entered protected flow and preserved the selected seed",
+    "honest_five_slot_ceremony": "pass",
+    "missing_utxo_case_05": "pass: Protected signing stopped; no response",
+    "broken_witness_script_case_06": "pass: Protected signing stopped; no response"
+  },
+  "honest_ceremony": {
+    "run_directory": "run/protocol-v1-device-qr-03",
+    "network": "TESTNET4",
+    "session_id": "17014aeebe91a118ab6fa02e30eaa5d5372b397ae4749970135c94e72fbbbc28",
+    "psbt_sha256": "fa4ef7e7bee778ec04017cd89c12da335d8e17fb3da749e3bfae070b0655d249",
+    "signed_psbt_sha256": "381054e90aafd191e93bed0f75379a4add16af09f49304411fc180d02366dc52",
+    "input_count": 4,
+    "slot_count": 5,
+    "verified_slots": 5,
+    "psbt_reconstructed_from_original": true,
+    "broadcast": false
+  },
+  "photographs": [
+    "img/anti-exfil-checkpoints/next-image-seed-first-protected-signing.png",
+    "img/anti-exfil-checkpoints/next-image-protected-signing-stopped.png"
+  ],
+  "result": "focused next-image physical regression passed"
+}

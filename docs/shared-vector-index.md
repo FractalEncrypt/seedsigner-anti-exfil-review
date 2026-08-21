@@ -1,0 +1,118 @@
+# Shared protocol-v1 vector index
+
+Status: canonical vector inventory for maintainer review
+
+Hashes: SHA-256 of the checked-in UTF-8 JSON bytes at reference head
+`7a60f5748298286f54611c3e6e028eb9ac146fbd`
+
+## Canonical vectors
+
+| File | SHA-256 | Purpose |
+| --- | --- | --- |
+| `fixtures/protocol-v1-multislot-vectors.json` | `bafd399a342e1be965666d4efca970b50218a2fb2e2820c418ad64686bac1bb3` | Byte-level AEXB/AEXT/CBOR/UR transcript: four stages, Testnet4, three synthetic slots |
+| `fixtures/protocol-v1-semantic-psbt-vector.json` | `f28d572d1ae5d2060eeb52ca9814f37ce5d54258811d3af18b78c41744e23a4e` | Real canonical PSBT-v0 semantics: four inputs, five slots, real BIP143 hashes, complete signatures and reconstructed PSBT |
+
+The byte-level vector deliberately uses a synthetic PSBT-shaped payload to pin
+codec and QR bytes. It is not a spendable or semantic PSBT fixture. The semantic
+vector is the authoritative PSBT oracle.
+
+### Multi-slot byte vector
+
+Generator: `scripts/generate_protocol_v1_vectors.py`
+
+Pins:
+
+- AEXB header, network `TESTNET4`, stages, record lengths, strict ordering, and
+  three slot identifiers;
+- exact message bytes and SHA-256 values for messages 1 through 4;
+- exact AEXT packages with stage-specific PSBT presence;
+- canonical CBOR byte strings; and
+- a complete first medium-density UR fountain window.
+
+Primary consumers:
+
+- Python: `tests/reference/test_protocol_v1_codec.py`;
+- SeedSigner: `tests/test_anti_exfil_protocol.py`;
+- Drongo: `AntiExfilCodecTest`; and
+- Sparrow transport tests through the Drongo resource copy.
+
+### Semantic PSBT vector
+
+Generator: `scripts/generate_protocol_v1_semantic_vectors.py`
+
+Pins:
+
+- canonical 975-byte PSBT v0 and its digest;
+- native P2WPKH;
+- nested P2WPKH;
+- native P2WSH standard multisig with two controlled signing keys;
+- nested P2WSH standard multisig;
+- slot order `[0, 1, 2, 2, 3]` with five real BIP143 message hashes;
+- deterministic host randomness and all four transcript messages;
+- compact low-S signatures; and
+- the exact reconstructed signed-PSBT hash.
+
+Primary consumers:
+
+- Python: `tests/reference/test_psbt_v1.py` and
+  `tests/reference/test_coordinator_v1.py`;
+- SeedSigner: its multi-slot protocol/state tests via the matching deterministic
+  fixture;
+- Drongo: `AntiExfilPsbtTest` and `AntiExfilCoordinatorTest`; and
+- Sparrow: protected-signing flow, canonical PSBT-v0 export, AEXT, and
+  reconstruction tests.
+
+## Generated adversarial corpus
+
+The physical adversarial corpus is generated rather than checked in as a large
+QR directory:
+
+```powershell
+& .\.venv\Scripts\python.exe -m anti_exfil v1-make-device-adversarial `
+  --out-dir run\protocol-v1-device-adversarial `
+  --seedsigner-src C:\Users\FractalEncrypt\Documents\Windsurf\SeedSigner_AntiExfil\src
+```
+
+Generator: `src/anti_exfil/adversarial_device_v1.py`
+
+Tests: `tests/reference/test_adversarial_device_v1.py`
+
+The corpus separates raw-envelope malformations from well-formed semantic
+attacks. It covers wrong stage/network, malformed/truncated AEXT, PSBT digest
+substitution, missing UTXO, broken witness scripts, wrong derivation, unsupported
+sighash, mixed Taproot, duplicate/reordered slots, altered host reveal, and
+altered signer opening. Production coordinator code never emits these packages.
+
+The non-physical adversarial harness additionally models:
+
+- predetermined nonce;
+- Dark Skippy low-entropy nonce;
+- nonce grinding;
+- exact-retry/selective-abort behavior; and
+- returned PSBT metadata exfiltration.
+
+Relevant files are `src/anti_exfil/adversarial.py`,
+`tests/reference/test_adversarial.py`, and `tests/reference/test_psbt_v1.py`.
+
+## Historical compatibility fixture
+
+`fixtures/transport-v1-vectors.json` has SHA-256
+`4889a5a77986f2e051ede740a98870ed9a3480ae350bdbef0b13eae0f529a2e3`.
+It contains two single-slot prototype AEXT packages and uses the older ambiguous
+network label `testnet`. It remains useful for regression-testing strict AEXT
+framing and camera metadata, but it is not normative for multi-slot protocol v1
+and must not be used to choose current network or slot semantics.
+
+## Regeneration rule
+
+Regeneration MUST be deterministic and produce no diff. A changed canonical
+file requires:
+
+1. an explicit protocol-version decision rather than a silent vector update;
+2. synchronized Python, SeedSigner, Drongo, and Sparrow consumer changes;
+3. review of every changed byte/hash and semantic slot;
+4. rerunning all adversarial corpora; and
+5. a new physical interoperability checkpoint.
+
+Copies embedded in another repository's test resources must remain byte-identical
+to the reference files. The reference repository is the source of record.

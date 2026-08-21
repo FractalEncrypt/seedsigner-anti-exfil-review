@@ -1,0 +1,148 @@
+{
+  "recorded_at": "2026-08-18",
+  "status": "passed",
+  "sparrow_xpub_import": {
+    "camera_freshness": "passed",
+    "duplicate_rejected": true,
+    "distinct_cosigners": 3,
+    "brand_preserved": "Airgapped Wallet (SeedSigner)",
+    "generic_camera_import_policies": ["UNSUPPORTED", "UNSUPPORTED", "UNSUPPORTED"],
+    "seedsigner_import_observed": "OPTIONAL",
+    "policy_disposition": "Passed physically through Import > SeedSigner > Scan using Sparrow commit 74a3774. The imported keystore retained Airgapped Wallet (SeedSigner) branding and displayed Protected signing: Optional.",
+    "stale_preview_observed": true,
+    "stale_preview_data_accepted": false,
+    "preview_disposition": "The same ending-frame preview was reproduced in installed stock Sparrow 2.4.0 and the current-upstream review fork. It is a Windows/DroidCam capture-backend presentation quirk, not an anti-exfil regression. The decoder's existing 500 ms rejection window remains; visual blackout/drain experiments were removed, with commit c88c573 reverting the preview-only change.",
+    "preview_physical_retest_required": false,
+    "funded": false
+  },
+  "seedsigner_message3": {
+    "direct_continuation_retained_seed": true,
+    "main_menu_recovery_stateless": true,
+    "transaction_broadcast": true
+  },
+  "device_image": {
+    "filename": "seedsigner_os.f971a645ce3cd8519adba62e92e3365b03fb48ab.pi0.anti-exfil-test.1.img",
+    "sha256": "ac53e3c9b16af6d9316244296e0167a24e36f90a3d976e464061f78f9c825e14",
+    "note": "Application behavior is at f971a645; this pre-boot-order-correction test image did not produce the OS self-test receipt. The corrected e8e93e image separately passed the native receipt gate."
+  },
+  "followup": {
+    "issue": "QR brightness tips render but the QR background does not change",
+    "scope": "current upstream Python QR-renderer fallback, not anti-exfil protocol",
+    "root_cause": "qrimage_io fallback omitted the requested background color; Pillow also requires a leading hash for six-digit hexadecimal colors",
+    "application_commit": "aa8395e3576379467d795bb05268533e3a2ac082",
+    "focused_tests": "41 passed, 1 skipped",
+    "replacement_image": "seedsigner_os.aa8395e3576379467d795bb05268533e3a2ac082.pi0.anti-exfil-test.img",
+    "replacement_image_bytes": 52428800,
+    "replacement_image_sha256": "05bf333f3342d3b1229ed2565bf6f4492901ad8962251bf5d6e34a63d375d17e",
+    "static_qr_brightness": "passed",
+    "animated_qr_brightness": "passed",
+    "animated_qr_resumed_after_brightness_tip": true,
+    "animation_freeze_observed": false,
+    "physical_retest_required": false
+  },
+  "sparrow_followup": {
+    "preview_revert_commit": "c88c5733afca81869aba8614366458e5fa5adb74",
+    "import_policy_commit": "74a377409d4b026f5dce255b1ef9fb7aa652d0ae",
+    "focused_tests": "20 passed, 0 failed, 0 skipped",
+    "post_revert_focused_tests": "5 passed, 0 failed, 0 skipped",
+    "full_windows_tests": "146 passed; 4 unchanged CRLF-vs-LF golden-export comparisons failed",
+    "physical_retest_required": false
+  },
+  "p6_f1_signature_provenance": {
+    "status": "passed",
+    "sparrow_commit": "90c64c9d5fc121aa5235627301e35523cf067863",
+    "drongo_commit": "1bbafd94f08fd9105e20be30a6fdfe9a091fb675",
+    "sparrow_application_jar_sha256": "e7633d50cca6f66b15aa07548081ce05859d0b9344958635ff45be0b9f07772c",
+    "sparrow_launcher_exe_sha256": "66892bc6067c4efe111f20f24abc4651724dc04d70ecbcc162a3a43703294160",
+    "linux_ci": {
+      "status": "passed",
+      "url": "https://github.com/FractalEncrypt/sparrow/actions/runs/32144398178",
+      "ci_merge_commit": "f9b74b04f2b186e8b46846ffce4e231a3d55ebd2"
+    },
+    "focused_tests": "All Sparrow *AntiExfil* tests passed",
+    "full_windows_tests": "149 passed; 4 unchanged CRLF-vs-LF golden-export comparisons failed (Caravan 1, Coldcard 2, Specter DIY 1)",
+    "gate_1": {
+      "status": "passed",
+      "expectation": "An ordinary signature from REQUIRED signer B is rejected even after a valid protected ceremony for REQUIRED signer A",
+      "observed_reason": "REQUIRED_PROOF_MISSING",
+      "evidence": "docs/assets/p6-f1-smoke/gate-1-mixed-provenance-rejected.png",
+      "evidence_sha256": "2e6f8a30b33d405ab564609deeeffedce1d7961e57d059d8812eb0426acbc718"
+    },
+    "gate_2": {
+      "status": "passed",
+      "expectation": "The legitimate protected signature remains usable when signer B is Optional",
+      "evidence": "docs/assets/p6-f1-smoke/gate-2-legitimate-protected-signature.png",
+      "evidence_sha256": "ac75f416a0dad8adf3aa1df6eea9f8ab4a752e12ad64875296016adcbe5589e1"
+    },
+    "gate_3": {
+      "status": "passed",
+      "initial_failure_commit": "fe4510dae37f85dfdfc61f310cf37e8b5bd079f7",
+      "initial_failure": "After close/reopen, finalized-signature attribution depended on wallet transaction-history nodes and did not reattach the durable proof",
+      "corrected_commit": "90c64c9d5fc121aa5235627301e35523cf067863",
+      "observed": "After close/reopen, View Final Transaction was enabled; opening it displayed raw transaction hex and enabled Broadcast Transaction",
+      "broadcast_performed": false,
+      "evidence": "docs/assets/p6-f1-smoke/gate-3-finalized-proof-restored.png",
+      "evidence_sha256": "f7fd4005f2511b9f555a456d2b456dac86e3100e02f396618c9302646472d190"
+    },
+    "gate_4": {
+      "status": "passed",
+      "expectation": "An unsupported air-gapped model cannot select Required",
+      "observed": "Specter DIY offered only Unsupported and Optional",
+      "evidence": "docs/assets/p6-f1-smoke/gate-4-unsupported-model-ui.png",
+      "evidence_sha256": "e8a3ba342e2aacb681270cce129f69624d53ab43018cd51cea507bc8425c3a24"
+    },
+    "saved_finalized_psbt": {
+      "path": "docs/assets/p6-f1-smoke/protocol-v1-mixed-provenance-finalized.psbt",
+      "bytes": 491,
+      "sha256": "eec8c79a24e38af4fa3382ec56360717b045ea2a849bc3967774d3f892535cb3"
+    },
+    "funded": false,
+    "broadcast_performed": false,
+    "physical_retest_required": false
+  },
+  "r_f1_resolution": {
+    "status": "passed",
+    "recorded_at": "2026-08-20",
+    "sparrow_commit": "7674cecde48335e0b55454f6fa53c8187a459932",
+    "sparrow_tree": "0ac7c62f9ec013f1e84190817a15cb821eaf0e2f",
+    "sparrow_tag": "anti-exfil-review-v1-tested-2026-08-20",
+    "sparrow_tag_object": "a26885ed19bcd6e795b59df6f5cb7a82d2b68bb1",
+    "drongo_commit": "1bbafd94f08fd9105e20be30a6fdfe9a091fb675",
+    "drongo_tag": "anti-exfil-review-v1-tested-2026-08-20",
+    "drongo_tag_object": "de20707f09ef9886a6577f64ca87ecbc54bab56c",
+    "focused_sparrow_tests": "20 passed, 0 failed",
+    "full_sparrow_windows_tests": "151 passed; 4 unchanged CRLF-vs-LF golden-export comparisons failed",
+    "full_drongo_windows_tests": "456 passed; 2 unchanged Windows/XDG platform cases failed",
+    "linux_ci": {
+      "status": "passed",
+      "url": "https://github.com/FractalEncrypt/sparrow/actions/runs/32305165978",
+      "ci_merge_commit": "2c5d768efd86d2fca624ea35ecbe23635ab7be41"
+    },
+    "packaged_app": {
+      "task": "jpackageImage",
+      "result": "success",
+      "duration_seconds": 110,
+      "file_count": 248,
+      "bytes": 124203097,
+      "executable_bytes": 519680,
+      "executable_sha256": "66892bc6067c4efe111f20f24abc4651724dc04d70ecbcc162a3a43703294160",
+      "application_jar_bytes": 15689191,
+      "application_jar_sha256": "e012ab79c5c21f2c2fd63f0ff710850e22bfc3546657f03edcb906ab28964d8e"
+    },
+    "physical_lifecycle_gate": {
+      "status": "passed",
+      "source_wallet_closed": "POLICY_CONTEXT_UNAVAILABLE; View Final Transaction and Broadcast Transaction disabled",
+      "source_wallet_open_and_synced": "Broadcast Transaction enabled; View Final Transaction remained disabled for the raw transaction tab",
+      "source_wallet_reclosed": "POLICY_CONTEXT_UNAVAILABLE quarantine restored",
+      "broadcast_performed": false,
+      "funded_testnet_utxo_used": true,
+      "evidence_closed": "docs/assets/r-f1-smoke/gate-b-source-wallet-closed.png",
+      "evidence_closed_sha256": "8686f76e9d87abd6ea92aaf0ca6df6df2810aa3f0351517d4228baad49a00146",
+      "evidence_open": "docs/assets/r-f1-smoke/gate-b-source-wallet-open.png",
+      "evidence_open_sha256": "8b469d1a5e60dbfc38787e4551cb62ccad4436e31e2efadcba6642415201a8cb",
+      "signed_transaction": "docs/assets/r-f1-smoke/gate-b-signed-sweep.txn",
+      "signed_transaction_sha256": "fc08587773f5e1840616199a53092bf5e9181faf45a4058a19733f2ed460e473"
+    },
+    "independent_diff_review": "All eight requested R-F1 checks passed; no new findings, missing routes, fail-open transitions, or precedence issues"
+  }
+}

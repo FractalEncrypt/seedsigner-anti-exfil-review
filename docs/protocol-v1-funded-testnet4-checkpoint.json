@@ -1,0 +1,70 @@
+{
+  "checkpoint": "protocol-v1-funded-testnet4-confirmed",
+  "date": "2026-08-07",
+  "device": "SeedSigner Pi Zero physical device",
+  "network": "TESTNET4",
+  "lineage": {
+    "reference_parent_commit": "a4d203ed5a55e59a8bd34db28cf9ca5211acc62f",
+    "seedsigner_commit": "e46691676904de595a0e96542d873b44334de942",
+    "seedsigner_os_commits": [
+      "1d8d453d5e19081005a034e8a57b7c897ed78060",
+      "ccb0247b3dc66251b5d2216a36e6981db2b4a40c"
+    ],
+    "normal_image_sha256": "952eaa05697d20af7b0e270831cd2810db663ba2dcc935c16b5ecd40290a18f4"
+  },
+  "coordinator": {
+    "session_id": "1e6f26cef92b01f5f2a922a0ab8f3ed6e348c9cf7469aa423524fc89c6b026c5",
+    "protocol": "AEXB-v1-multislot",
+    "slot_count": 1,
+    "anti_exfil_verified": true,
+    "signer_pubkey": "02fc4323478d235a10d8053af51ec0d237fe8547629560a0ad61e077392a95a5cc",
+    "message_hash": "722d51cf33a1b9ba8145f1f3407d30d54564b82755bf9be28416427c0a1af829",
+    "psbt_reconstructed_from_original": true,
+    "broadcast": false
+  },
+  "artifacts": {
+    "original_psbt_sha256": "d9e80acc9e99c22187e362e937143f7dae62f480f2bc06faf92ca316ed75dc6b",
+    "signed_psbt_sha256": "4259b234f4d2b27a16e7aa633e6f48f36e7097c1314b7ba4ba3e4572835f297c",
+    "raw_transaction_sha256": "a64022c5ceec83e3c4151bb384f3945e88197073339285871d8ddd45f4bcb161",
+    "signed_psbt_delta": "only the expected verified partial signature",
+    "finalized_raw_size_bytes": 222,
+    "weight": 561,
+    "vsize": 141
+  },
+  "transaction": {
+    "txid": "1e44fb484b17318a5702bbce80fbf5565e4765d49074bfb31401a0182aec0cbe",
+    "wtxid": "c50e44c0514e4366638826737b5d8c983bf97cbc0018201b76559cedea436b23",
+    "input": {
+      "outpoint": "debdc48313f4b54a32429e684e2b7a53aeb58c305be82034f64cff91ecccd235:1",
+      "value_sats": 500000,
+      "script": "P2WPKH",
+      "rbf_signaled": true
+    },
+    "outputs": [
+      {
+        "role": "wallet change",
+        "address": "tb1q4nqngpcfaxmm40hljgvqduzhp3jjh5zc6g75d3",
+        "value_sats": 478490,
+        "derivation": "m/84h/1h/0h/1/0"
+      },
+      {
+        "role": "wallet self-payment",
+        "address": "tb1qvwkhakqhz7m7kmz6332avatsmdy32m64hp7hm9",
+        "value_sats": 21369,
+        "derivation": "m/84h/1h/0h/0/2"
+      }
+    ],
+    "fee_sats": 141,
+    "fee_rate_sat_vb": 1.0,
+    "manual_broadcast_client": "unmodified Sparrow Wallet",
+    "explorer": "https://mempool.space/testnet4/tx/1e44fb484b17318a5702bbce80fbf5565e4765d49074bfb31401a0182aec0cbe",
+    "confirmation_observed": 1,
+    "confirmed_block_height": 147435,
+    "confirmed_timestamp_displayed": "2026-08-07 20:11:00"
+  },
+  "evidence": [
+    "img/anti-exfil-checkpoints/funded-testnet4-broadcast.png",
+    "img/anti-exfil-checkpoints/funded-testnet4-confirmed.png"
+  ],
+  "result": "funded physical anti-exfil transaction manually broadcast and confirmed on testnet4"
+}

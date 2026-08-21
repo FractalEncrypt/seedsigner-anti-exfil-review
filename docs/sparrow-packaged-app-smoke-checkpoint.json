@@ -1,0 +1,33 @@
+{
+  "artifact": {
+    "file_count": 248,
+    "launcher": "build/jpackage/Sparrow/Sparrow.exe",
+    "launcher_sha256": "66892BC6067C4EFE111F20F24ABC4651724DC04D70ECBCC162A3A43703294160",
+    "total_bytes": 124182016
+  },
+  "build": {
+    "duration_seconds": 99,
+    "result": "BUILD SUCCESSFUL",
+    "task": "jpackageImage"
+  },
+  "network": {
+    "launch_argument": "testnet4",
+    "restart_menu_current_network_omitted": "Testnet4",
+    "restart_menu_visible_targets": [
+      "Home Folder...",
+      "Mainnet",
+      "Testnet3",
+      "Signet"
+    ]
+  },
+  "observations": {
+    "existing_wallets_visible": false,
+    "first_run_onboarding_displayed": true,
+    "fresh_server_configuration_required": true,
+    "isolated_profile_confirmed": true,
+    "packaged_restart_menu_visible": true
+  },
+  "recorded": "2026-08-11",
+  "scope": "non-installing packaged launcher and profile-isolation smoke test",
+  "status": "pass"
+}

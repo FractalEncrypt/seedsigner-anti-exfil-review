@@ -1,0 +1,88 @@
+{
+  "checkpoint": "sparrow-phase6-physical-testnet4",
+  "recorded_date": "2026-08-10",
+  "network": "testnet4",
+  "protocol": "AEXB-v1-multislot",
+  "wallet": {
+    "profile": "Sparrow_AntiExfil/run/profile-phase6-01",
+    "isolated_from_installed_sparrow": true,
+    "policy_type": "single-signature-hd",
+    "script_type": "p2wpkh",
+    "keystore_model": "SeedSigner",
+    "master_fingerprint": "0fb882ff",
+    "derivation": "m/84'/1'/0'",
+    "anti_exfil_required": true,
+    "policy_persisted_across_restart": true
+  },
+  "artifacts": {
+    "original_psbt_sha256": "9ed9c06bc4963f45f9d11a95b07a23b205aebd23480968083ad373a96f7f9725",
+    "signed_psbt_sha256": "41fa375e2a89e572b9d1da1b105c39f8098fc84cce62f44ec9ef2843762be0cc",
+    "session_file_sha256": "9f137ea3be107a759c75c0001930610893365a0de9d24277c6c31fdb4babf6ca",
+    "message_1_sha256": "1e85340e29015a2c74a262d2addf5d95afd6445002bd8ff6e85e3d9d88a4ec00",
+    "message_2_sha256": "8d7b3c30241e3c23c83bb11d3ac6968c57e1799ae71d812ec04f2ff53c191546",
+    "message_3_sha256": "b0bd7de5f2a1e5331fa322b8b89aa4eefa504e5e6d3b19209961514f337528af",
+    "message_4_sha256": "4ebed936a7e6b617b2cd870ccaf28481d5eff458161422fa6775acf190629d42"
+  },
+  "durability": {
+    "session_checksum_valid": true,
+    "session_phase": "COMPLETE",
+    "slot_randomness_count": 1,
+    "abort_journal_checksum_valid": true,
+    "abort_event_count": 0,
+    "exact_post_reveal_retry_used": true
+  },
+  "transaction": {
+    "txid": "e2dca8df04aade59dc9abaa38c18f0535410c9907a96478a442d0c94fd772a2c",
+    "raw_hex": "02000000000101be0cec2a18a00114b3bf7490d465475e56f5fb80cebb02578a31174b48fb441e0100000000fdffffff021027000000000000160014588cba3ec38dcd4fee6bce03c236ecbbf656630e232c00000000000016001441e538449f13f16373db113942e8210d0c296bd70247304402204fda6d50860c5319553003d8f61d19ca0c71e547574da0b9fd459533baa982f10220688b129fad775444f4d169a6c168c98c6341810b50174a2979aecf9a3d49d279012102bda8ab73196ca246ba66ba9740f7d3552eb8b3dc6432e9c10d6f20f5f6c7e5fe47400200",
+    "input": "1e44fb484b17318a5702bbce80fbf5565e4765d49074bfb31401a0182aec0cbe:1",
+    "input_value_sats": 21369,
+    "destination": "tb1qtzxt50kr3hx5lmntecpuydhvh0m9vccwy9zdpl",
+    "destination_value_sats": 10000,
+    "change": "tb1qg8jns3ylz0ckxu7mzyu596ppp5xzj67h2ktyls",
+    "change_value_sats": 11299,
+    "fee_sats": 70,
+    "vsize": 141,
+    "fee_rate_sat_vb": 0.496,
+    "sequence": "0xfffffffd",
+    "rbf": true,
+    "locktime": 147527,
+    "sighash": "ALL",
+    "signature_valid": true,
+    "signer_pubkey": "02bda8ab73196ca246ba66ba9740f7d3552eb8b3dc6432e9c10d6f20f5f6c7e5fe",
+    "unsigned_transaction_matches_frozen_psbt": true
+  },
+  "transport": {
+    "messages_1_through_3_completed_normally": true,
+    "first_message_4_camera_scan_stalled": true,
+    "recovery": "close scanner, select Retry exact session, redisplay identical message 3, scan existing message 4",
+    "retry_completed": true,
+    "camera_note": "A smaller sharply focused SeedSigner QR decoded faster in the tested DroidCam setup."
+  },
+  "broadcast": {
+    "automatic": false,
+    "manual_after_review": true,
+    "confirmed_observed_by_operator": true
+  },
+  "post_physical_regressions": {
+    "sparrow": {
+      "total": 140,
+      "passed": 136,
+      "known_windows_crlf_failures": 4,
+      "new_failures": 0
+    },
+    "drongo": {
+      "total": 453,
+      "passed": 451,
+      "known_windows_xdg_failures": 2,
+      "new_failures": 0
+    }
+  },
+  "acceptance": {
+    "four_message_ceremony_complete": true,
+    "anti_exfil_signature_verified": true,
+    "ordinary_ecdsa_signature_verified": true,
+    "signed_psbt_reconstructed_from_frozen_original": true,
+    "required_policy_enforced": true,
+    "physical_testnet4_gate_complete": true
+  }
+}

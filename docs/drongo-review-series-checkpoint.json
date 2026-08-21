@@ -1,0 +1,90 @@
+{
+  "chronological_baseline": {
+    "branch": "anti-exfil",
+    "head": "1f29e247b6dd9bc3ae46977014d7d21c8e187d36",
+    "tested_tag": "anti-exfil-tested-2026-08-11",
+    "tested_tag_target": "1f29e247b6dd9bc3ae46977014d7d21c8e187d36"
+  },
+  "ci": {
+    "annotation_count": 0,
+    "branch": "anti-exfil-review-v1-ci",
+    "branch_head": "c4635eddb4aefffa07f248923d43bade0c82c90b",
+    "conclusion": "success",
+    "java": "25",
+    "platform": "ubuntu-latest",
+    "review_source_head": "1250d5a8323f5525236753a8597729c22ce1e5da",
+    "run_id": 31536594146,
+    "run_url": "https://github.com/FractalEncrypt/drongo/actions/runs/31536594146",
+    "status": "completed",
+    "workflow_only_commits": [
+      "a84ef4edbc9774e11ac997bf4929b549a0301c81",
+      "c4635eddb4aefffa07f248923d43bade0c82c90b"
+    ]
+  },
+  "equivalence": {
+    "changed_files": 22,
+    "deletions": 1,
+    "insertions": 2257,
+    "review_tree": "677cbd65e43417956596b8e126c2b81bcd8c21e0",
+    "synthetic_tested_plus_upstream_tree": "677cbd65e43417956596b8e126c2b81bcd8c21e0",
+    "trees_equal": true
+  },
+  "local_tests": {
+    "focused": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 25
+    },
+    "full_windows": {
+      "expected_platform_failures": [
+        "ApplicationDirTest.testXdgAppliedToMacos",
+        "ApplicationDirTest.testXdgDirs"
+      ],
+      "failed": 2,
+      "passed": 454,
+      "tests": 456
+    }
+  },
+  "recorded": "2026-08-11",
+  "review_series": {
+    "branch": "anti-exfil-review-v1",
+    "commits": [
+      {
+        "commit": "1e7c7ee810f95424fc5faf1c426860d138206e88",
+        "subject": "Add strict anti-exfil protocol and PSBT-v0 semantics"
+      },
+      {
+        "commit": "b4a441f0ca1fe7e8c9fbc281cac9f633933060f0",
+        "subject": "Add durable anti-exfil coordinator and exact retry state"
+      },
+      {
+        "commit": "1250d5a8323f5525236753a8597729c22ce1e5da",
+        "subject": "Add device-neutral anti-exfil keystore policy"
+      }
+    ],
+    "head": "1250d5a8323f5525236753a8597729c22ce1e5da",
+    "remote": "https://github.com/FractalEncrypt/drongo",
+    "upstream_base": "a47c2b3f58d7cedd504b2bd07833708866614216"
+  },
+  "status": "pass",
+  "final_reviewed_tag": {
+    "recorded": "2026-08-20",
+    "head": "1bbafd94f08fd9105e20be30a6fdfe9a091fb675",
+    "tree": "c257540046f512ded720101530fee11abde6ec1f",
+    "tag": "anti-exfil-review-v1-tested-2026-08-20",
+    "tag_object": "de20707f09ef9886a6577f64ca87ecbc54bab56c",
+    "remediation_commits": [
+      {
+        "commit": "b5e50d69965a41f6ca9f8a1c9de2a2a8f635d473",
+        "subject": "Return signature-scoped proofs"
+      },
+      {
+        "commit": "1bbafd94f08fd9105e20be30a6fdfe9a091fb675",
+        "subject": "Test mixed provenance"
+      }
+    ],
+    "windows_tests": "456/458 passed; two unchanged Windows/XDG platform cases failed",
+    "security_result": "Signature-scoped proof records passed focused remediation review"
+  }
+}

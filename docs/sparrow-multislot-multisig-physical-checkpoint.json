@@ -1,0 +1,56 @@
+{
+  "checkpoint": "sparrow-multislot-multisig-physical",
+  "recorded_date": "2026-08-10",
+  "network": "testnet4",
+  "protocol": "AEXB-v1-multislot",
+  "single_signature_funding_transaction": {
+    "txid": "fb10ca40e72a4b90b0cc442bb2ff84b3b5a2c01c09124e1ad49dd5e748988f81",
+    "script_type": "p2wpkh",
+    "input_count": 3,
+    "output_count": 6,
+    "broadcast_accepted": true,
+    "confirmation_observed": null
+  },
+  "multisig_transaction": {
+    "txid": "3a77ac86b4b96272b16ab105380f08f24d98c71994e7ebbe119c93da3a1b48d3",
+    "script_type": "p2wsh",
+    "policy": "sortedmulti-2-of-3",
+    "input_count": 2,
+    "output_count": 3,
+    "protected_signer_sessions": 2,
+    "broadcast_accepted": true,
+    "confirmation_observed": null
+  },
+  "keystores": {
+    "count": 3,
+    "all_required": true,
+    "master_fingerprints": ["6f9abf05", "0fb882ff", "b4899a09"],
+    "derivation": "m/48'/1'/0'/2'"
+  },
+  "resume_observation": {
+    "second_cosigner_interrupted_before_host_reveal": true,
+    "pending_step_one_response_reused": true,
+    "fresh_post_reveal_challenge_created": false
+  },
+  "defects_observed": {
+    "buffered_previous_keystore_qr": true,
+    "duplicate_cosigner_temporarily_displayed": true,
+    "uninterrupted_seed_reselection": true
+  },
+  "local_fixes": {
+    "camera_startup_drain_milliseconds": 500,
+    "duplicate_xpub_rejected": true,
+    "hidden_import_dialog_unregistered": true,
+    "direct_host_reveal_scan_preserves_seed": true,
+    "ordinary_main_menu_recovery_remains_stateless": true
+  },
+  "verification": {
+    "seedsigner_focused_passed": 15,
+    "seedsigner_applicable_passed": 185,
+    "seedsigner_skipped": 2,
+    "stock_windows_compact_seedqr_module_excluded": true,
+    "sparrow_discovered": 147,
+    "sparrow_passed": 143,
+    "sparrow_known_windows_line_ending_failures": 4
+  }
+}

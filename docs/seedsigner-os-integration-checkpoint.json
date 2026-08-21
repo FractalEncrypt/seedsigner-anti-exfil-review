@@ -1,0 +1,69 @@
+{
+  "checkpoint": "formal-seedsigner-os-integration",
+  "date": "2026-08-07",
+  "repository": "C:/Users/FractalEncrypt/Documents/Windsurf/seedsigner-os-antiexfil",
+  "branch": "anti-exfil",
+  "base": {
+    "commit": "d138593",
+    "tag": "v0.8.7"
+  },
+  "commits": [
+    {
+      "commit": "1d8d453",
+      "subject": "Add native anti-exfil package for Pi Zero",
+      "scope": "pinned Buildroot package and Pi Zero production selection"
+    },
+    {
+      "commit": "ccb0247",
+      "subject": "Add opt-in anti-exfil physical test image",
+      "scope": "explicit test flag, test-only overlay, init-script mode handling, and documentation"
+    }
+  ],
+  "native_source": {
+    "repository": "BlockstreamResearch/secp256k1-zkp",
+    "commit": "2af926dc309a673461f0e2da090105c8f05b4505",
+    "archive_sha256": "40e0858f5f189a078f2aeee10e1fc0e732f73abb7bc9f8745c63dac3f8d8d4e5"
+  },
+  "buildroot_submodule": {
+    "base_gitlink": "bf2a2858aa675a14b60f1f9142c65b32652609c1",
+    "integrated_gitlink": "bf2a2858aa675a14b60f1f9142c65b32652609c1",
+    "content_changes_committed": false,
+    "worktree_note": "apparent modifications are Windows line-ending noise"
+  },
+  "validation": {
+    "shell_syntax": "pass",
+    "buildroot_package_check": "62 lines processed; 0 substantive warnings",
+    "normal_pi0_config": {
+      "native_package": true,
+      "rootfs_overlay": "../rootfs-overlay/",
+      "test_overlay_present": false
+    },
+    "test_pi0_config": {
+      "native_package": true,
+      "rootfs_overlay": "../rootfs-overlay/ ../anti-exfil-test-overlay/",
+      "test_overlay_present": true
+    },
+    "non_pi0_test_flag_rejected": true,
+    "committed_diff_check": "pass",
+    "ignored_outputs_confirmed": [
+      "images/seedsigner*",
+      "opt/rootfs-overlay/opt/",
+      ".ccache/",
+      ".buildroot-ccache/"
+    ]
+  },
+  "previous_physical_artifact": {
+    "filename": "seedsigner_os.e46691676904de595a0e96542d873b44334de942.pi0.anti-exfil-test.img",
+    "sha256": "0adde4626d9407d2136484a35e39409d946eb6ae5b74793562b4ea68f38348c2",
+    "result": "focused device regression passed"
+  },
+  "normal_image_confirmation": {
+    "filename": "seedsigner_os.e46691676904de595a0e96542d873b44334de942.pi0.img",
+    "size_bytes": 52428800,
+    "sha256": "952eaa05697d20af7b0e270831cd2810db663ba2dcc935c16b5ecd40290a18f4",
+    "build_exit_code": 0,
+    "boot": "pass",
+    "test_overlay_present": false
+  },
+  "remaining_gate": "preflight, sign, independently review, and manually broadcast one funded testnet4 self-spend"
+}
