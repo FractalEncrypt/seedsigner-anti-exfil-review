@@ -48,6 +48,16 @@
     "tag": "anti-exfil-gate5-tested-2026-08-22",
     "tag_object": "d541733e5240a40da5bcf24555b368e3b743dfe0"
   },
+  "frozen_bundle": {
+    "source_commit": "8df2d3e21e53043fe3cec8b444c9008027876999",
+    "source_tag": "review-hub-v1.2-2026-08-22",
+    "tag_object": "52a94c082054e8ed049feaf7c6398611b079665c",
+    "filename": "seedsigner-anti-exfil-review-bundle-v1.2.zip",
+    "bytes": 4897532,
+    "entries": 128,
+    "sha256": "7f19ea4f0f315f421c915b3c584707d4a48b0f9f5fce9faf9abcd3bf9fbeca34",
+    "release": "https://github.com/FractalEncrypt/seedsigner-anti-exfil-review/releases/tag/review-hub-v1.2-2026-08-22"
+  },
   "superseded_bundle": {
     "reference_commit": "dd7b2b26ece992f74daeb3095aa148fc278176ea",
     "filename": "anti-exfil-private-review-bundle-v1.zip",
