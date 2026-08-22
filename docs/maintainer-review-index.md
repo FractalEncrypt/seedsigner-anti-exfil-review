@@ -47,12 +47,14 @@ historical development notes.
 15. [Security-review findings](security-review-findings.md) and
     [maintainer decisions](maintainer-decisions-requested.md) — completed phase
     ledger, remediation reviews, residuals, and explicit dispositions.
-16. [Private review-bundle manifest](review-bundle-manifest.md) — selected
+16. [Review rounds and remediation history](review-rounds-summary.md) — concise
+    provenance for the Kimi/Cascade, V12, and 0x review rounds.
+17. [Private review-bundle manifest](review-bundle-manifest.md) — selected
     normative docs, vectors, oracle/tests, evidence, and explicit exclusions.
-17. [Final smoke checkpoint](final-smoke-checkpoint.json) — completed xpub,
+18. [Final smoke checkpoint](final-smoke-checkpoint.json) — completed xpub,
     duplicate, direct-continuation, stateless-recovery, P6-F1 provenance, and
     R-F1 raw-transaction lifecycle observations.
-18. [QR brightness correction gate](qr-brightness-correction-gate.md) — passed
+19. [QR brightness correction gate](qr-brightness-correction-gate.md) — passed
     replacement application/image/physical gate included in the final freeze.
 
 ## Implementation snapshots

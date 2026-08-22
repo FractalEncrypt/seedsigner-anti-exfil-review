@@ -38,6 +38,7 @@ a recommendation to use protected signing with mainnet funds.
 6. [Maintainer decisions](docs/maintainer-decisions-requested.md)
 7. [Frozen bundle record](FROZEN-BUNDLE.md)
 8. [V12 remediation verification plan](docs/v12-findings-verification-plan.md)
+9. [Security review rounds and remediation history](docs/review-rounds-summary.md)
 
 The normative reading order is:
 

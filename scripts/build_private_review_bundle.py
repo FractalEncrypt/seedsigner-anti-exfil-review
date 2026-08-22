@@ -37,6 +37,7 @@ EXACT_FILES = [
     "docs/physical-evidence-index.md",
     "docs/ux-proposal.md",
     "docs/review-bundle-manifest.md",
+    "docs/review-rounds-summary.md",
     "docs/v12-audit-export.md",
     "docs/v12-findings-verification-plan.md",
     "docs/v12-gate1-implementation-review-brief.md",

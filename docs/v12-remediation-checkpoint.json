@@ -60,5 +60,13 @@
   "release_notes": [
     "A foreign partial signature lacking sufficient supplied UTXO context is rejected fail-closed.",
     "A pre-Gate-5 durable session containing an invalid foreign partial signature now fails closed on load; its downstream output was already uncombinable."
-  ]
+  ],
+  "post_release_validation": {
+    "recorded_at": "2026-08-22",
+    "trigger": "0x review F-R2 hygiene observation",
+    "native_library_sha256": "291046c2979833aa43655c854bb3f9740ada357d96ab8154eeed6be688d6b444",
+    "native_library_source_commit": "2af926dc309a673461f0e2da090105c8f05b4505",
+    "final_reference_native_tests": {"total": 4, "passed": 4, "skipped": 0, "failed": 0},
+    "note": "The checkpointed pinned-source Windows DLL was temporarily supplied to the exact final reference code and removed after the run. Independent artifact rebuilding remains desirable release evidence."
+  }
 }
