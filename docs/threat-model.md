@@ -204,6 +204,36 @@ A malicious endpoint can always refuse to sign or continue. The goal is to make 
 
 Version 1 does not protect or sign Taproot inputs through this protocol. Required-mode Taproot signature slots fail closed until a reviewed Schnorr construction is specified.
 
+### 6.7 Trusted coordinator storage
+
+Durable AEXS session state contains plaintext unrevealed host randomness, and
+AEXJ contains wallet-lifetime selective-abort history. The coordinator state
+directory is in the trusted computing base. Checksums detect corruption but do
+not provide freshness, encryption at rest, or protection from a local actor
+who can read, delete, replace, or roll back the complete storage domain.
+
+The supported deployment requires owner-restricted storage. POSIX files are
+set to owner read/write where supported; Windows relies on the effective parent
+DACL. Backups must not restore session or journal state independently. Missing
+or suspected rolled-back state is not evidence of safety: stop protected
+signing and migrate funds to fresh independently generated wallet keys before
+relying on the anti-exfil guarantee again. A stronger rollback guarantee would
+require a separately trusted monotonic authority; encryption at rest remains a
+separate maintainer decision.
+
+### 6.8 Witness-only PSBT input data
+
+SegWit-v0 protocol slots accept standard BIP174 witness-only UTXO data. A
+standalone `witness_utxo` cannot be authenticated against the unsigned
+transaction outpoint without the full previous transaction or external wallet
+history. Its amount and script are nevertheless committed by the BIP143
+message hash: false data produces a signature invalid for the actual coin, not
+a signature authorizing a different real prevout. Verified evidence attests to
+the exact supplied signing hash and unsigned-transaction outpoint; it does not
+attest that external chain state exists. Requiring every full previous
+transaction is intentionally outside v1 because it would break standard and
+QR-constrained workflows.
+
 ## 7. Security invariants
 
 The implementation and tests must enforce these invariants:
@@ -224,6 +254,8 @@ The implementation and tests must enforce these invariants:
 - **INV-14:** The coordinator imports only verified expected signatures and never broadcasts as a completion side effect.
 - **INV-15:** An imported cosigner xpub cannot duplicate another keystore in the same wallet.
 - **INV-16:** Scanner startup buffering cannot silently change stage/session context or populate a duplicate cosigner.
+- **INV-17:** Every pre-existing partial signature in an anti-exfil input PSBT is ordinarily verified before coordinator state is created; valid foreign signatures may be preserved but receive no protected evidence.
+- **INV-18:** Witness-only UTXO amount/script changes necessarily change the bound signing hash; protected evidence never upgrades supplied PSBT data into an external chain-state attestation.
 
 ## 8. Failure classes and user-facing meaning
 
@@ -261,6 +293,7 @@ The original Gemini one-round construction is retained only as a negative-contro
 | AE-11 and AE-12 | strict point/signature parsers, atomic slot-set tests, mixed-input and mixed-policy tests |
 | AE-13 | ordinary finalized-return regression and physical **Protected signature rejected** gate |
 | AE-14 and AE-15 | stale-fountain regression, camera startup-drain test, duplicate-keystore unit tests, pending first-open smoke observation |
+| Storage and PSBT trust residuals | Gate 5 foreign-partial rejection, witness-only sighash-binding test, and explicit rollback/ACL recovery contract |
 
 ## 10. Resolved v1 decisions and review questions
 

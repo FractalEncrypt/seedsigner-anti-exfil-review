@@ -14,10 +14,10 @@ Verify the outer SHA-256 supplied separately, preserve the original ZIP, and
 then verify every internal file before running code:
 
 ```sh
-sha256sum anti-exfil-private-review-bundle-v1.zip
+sha256sum seedsigner-anti-exfil-review-bundle-v1.2.zip
 mkdir anti-exfil-reference
 cd anti-exfil-reference
-unzip ../anti-exfil-private-review-bundle-v1.zip
+unzip ../seedsigner-anti-exfil-review-bundle-v1.2.zip
 sha256sum --check SHA256SUMS.txt
 ```
 
@@ -31,16 +31,17 @@ commit and tag.
 cd ..
 git clone --branch anti-exfil-review-v1-tested-2026-08-14 \
   https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git seedsigner
-git clone --recursive --branch anti-exfil-review-v1-tested-2026-08-20 \
+git clone --recursive --branch anti-exfil-review-v1-gate5-tested-2026-08-22 \
   https://github.com/FractalEncrypt/sparrow.git sparrow
-git clone --branch anti-exfil-review-v1-tested-2026-08-20 \
+git clone --branch anti-exfil-review-v1-gate5-tested-2026-08-22 \
   https://github.com/FractalEncrypt/drongo.git drongo
 git clone --recursive --branch anti-exfil-review-v1-tested-2026-08-12 \
   https://github.com/FractalEncrypt/seedsigner-os.git seedsigner-os
 
 test "$(git -C seedsigner rev-parse HEAD)" = aa8395e3576379467d795bb05268533e3a2ac082
-test "$(git -C sparrow rev-parse HEAD)" = 7674cecde48335e0b55454f6fa53c8187a459932
-test "$(git -C drongo rev-parse HEAD)" = 1bbafd94f08fd9105e20be30a6fdfe9a091fb675
+test "$(git -C sparrow rev-parse HEAD)" = f003bfa9575bc7c67b337f8785b1479fd092641a
+test "$(git -C drongo rev-parse HEAD)" = bb691c7d77290933b3f7d6c411556c1524a29d98
+test "$(git -C sparrow rev-parse HEAD:drongo)" = bb691c7d77290933b3f7d6c411556c1524a29d98
 test "$(git -C seedsigner-os rev-parse HEAD)" = 0bf1dc92519906c7db265055abfb07e0ee344342
 git -C sparrow submodule status --recursive
 git -C seedsigner-os submodule status --recursive
@@ -74,6 +75,7 @@ files and internal hashes:
 ```sh
 python scripts/generate_protocol_v1_vectors.py
 python scripts/generate_protocol_v1_semantic_vectors.py
+python scripts/generate_protocol_v1_negative_vectors.py
 ```
 
 The extracted archive is not itself a Git checkout, so use `cmp`, `sha256sum`,

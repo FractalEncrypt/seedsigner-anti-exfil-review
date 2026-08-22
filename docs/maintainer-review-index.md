@@ -1,9 +1,9 @@
 # Maintainer review package
 
-Status: frozen reviewed prototype inputs; clean experimental implementation
-tags published and tested
+Status: independently reviewed Gate 5 prototype inputs; immutable experimental
+implementation tags published and Linux-tested
 
-Recorded: 2026-08-20
+Recorded: 2026-08-22
 
 Security status: focused review and remediation complete; not a production audit
 
@@ -73,8 +73,8 @@ it is not part of the maintainer patch series.
 | --- | --- | --- | --- |
 | Reference/coordinator | `master` | See `BUNDLE-METADATA.json` | Python oracle, generators, adversarial harnesses, camera/file coordinator, evidence |
 | SeedSigner | `anti-exfil-review-v1` | `aa8395e3576379467d795bb05268533e3a2ac082` | Strict signer semantics, native S2C signing, stateless QR UX, fail-closed policy, QR-renderer compatibility |
-| Drongo | `anti-exfil-review-v1-tested-2026-08-20` | `1bbafd94f08fd9105e20be30a6fdfe9a091fb675` | Codec, public verification, PSBT semantics, reconstruction, durable coordinator model, signature-scoped proof records |
-| Sparrow | `anti-exfil-review-v1-tested-2026-08-20` | `7674cecde48335e0b55454f6fa53c8187a459932` | AEXT/UR bridge, persistence, policy, JavaFX ceremony, signature-scoped downgrade enforcement, raw-transaction lifecycle policy |
+| Drongo | `anti-exfil-review-v1-gate5-tested-2026-08-22` | `bb691c7d77290933b3f7d6c411556c1524a29d98` | Codec, public verification, PSBT semantics, reconstruction, durable coordinator model, signature-scoped proofs, Gates 1–5 state and trust hardening |
+| Sparrow | `anti-exfil-review-v1-gate5-tested-2026-08-22` | `f003bfa9575bc7c67b337f8785b1479fd092641a` | AEXT/UR bridge, persistence, policy, ceremony, signature-scoped enforcement, quarantine, and exact Gate 5 Drongo pin |
 | SeedSignerOS | `anti-exfil-review-v1` | `0bf1dc92519906c7db265055abfb07e0ee344342` | Native package and opt-in Pi Zero test-image integration |
 
 The chronological SeedSignerOS checkout retains extensive Windows
@@ -117,14 +117,16 @@ Historical/non-normative:
 
 - Reference semantic/adversarial corpus: canonical four-input/five-slot PSBT,
   native/nested P2WPKH, native/nested P2WSH multisig, malformed transcripts,
-  Dark Skippy, predetermined nonce, nonce grinding, selective abort, and
-  returned-metadata injection. All 82 reference tests pass.
+  repeated same-key openings, Dark Skippy, predetermined nonce, nonce grinding,
+  selective abort, and returned-metadata injection. The final hub run reports
+  85 passed and 3 native-library skips with the tagged SeedSigner adapter active.
 - SeedSigner: 185 applicable tests pass and 2 skip; the stock Windows
   CompactSeedQR bitmap module remains excluded for the documented Pillow/pyzbar
   issue.
-- Sparrow: 155 tests discovered, 151 pass; the same four upstream-style Windows
+- Sparrow Gate 5: 156 tests discovered, 152 pass; the same four upstream-style Windows
   CRLF/LF export comparisons fail.
-- Drongo: 458 tests discovered, 456 pass; the same two Windows/XDG
+- Drongo Gate 5: 484 tests discovered, 481 pass and one POSIX-only test skips on
+  Windows; the same two Windows/XDG
   `ApplicationDirTest` cases fail.
 - Physical: honest and adversarial SeedSigner QR ceremonies, normal OS image,
   confirmed funded Testnet4 signing, Sparrow-to-SeedSigner ceremony, required

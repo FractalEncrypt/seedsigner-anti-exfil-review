@@ -1,63 +1,52 @@
-# V12 context: Drongo anti-exfil v1 diff
+# Independent review context: anti-exfil v1 final Gate 5 inputs
 
-## Exact review input
+## Exact immutable inputs
 
-- Repository: `https://github.com/FractalEncrypt/drongo`
-- Base: `a47c2b3f58d7cedd504b2bd07833708866614216`
-- Target: `1bbafd94f08fd9105e20be30a6fdfe9a091fb675`
-- Immutable target tag: `anti-exfil-review-v1-tested-2026-08-20`
+- Drongo: `bb691c7d77290933b3f7d6c411556c1524a29d98`, tag
+  `anti-exfil-review-v1-gate5-tested-2026-08-22`
+- Sparrow: `f003bfa9575bc7c67b337f8785b1479fd092641a`, tag
+  `anti-exfil-review-v1-gate5-tested-2026-08-22`
+- Sparrow Drongo pin: `bb691c7d77290933b3f7d6c411556c1524a29d98`
+- SeedSigner: `aa8395e3576379467d795bb05268533e3a2ac082`
+- SeedSignerOS: `0bf1dc92519906c7db265055abfb07e0ee344342`
 
-Drongo is one component of a four-repository interactive ECDSA anti-exfil
-prototype. It owns the protocol codec, public verification, PSBT semantics,
-durable coordinator state, signing-slot identity, and immutable
-per-signature proof records. Sparrow consumes these APIs; SeedSigner performs
-the air-gapped signing ceremony.
+The repository is a cross-project review hub containing the reference oracle,
+normative documents, shared vectors, tests, physical evidence, and completed
+review ledger. Implementation code remains in the four linked forks.
 
 ## Claimed security behavior
 
 An accepted protected ECDSA signature must be bound to the canonical original
 PSBT context, input/outpoint, signer pubkey, BIP143 message hash, sighash, exact
 compact signature, wallet identity, and a fully revalidated ceremony session.
-One signer's valid ceremony must never authorize another signer's ordinary
-signature. Reopened durable state must reproduce the same proof records only
-after full transcript and signed-PSBT revalidation.
+One signer's ceremony must never authorize another signer's ordinary signature.
+Malformed, substituted, replayed, downgraded, incomplete, stale, or
+policy-incompatible ceremonies must fail closed.
 
-## Review requests
+## Requested review output
 
-Prioritize concrete security or correctness defects in:
+For every proposed finding, provide:
 
-- scalar/point/signature validation and low-S enforcement;
-- AEXB codec canonicality, limits, duplicate/unknown fields, and parser
-  differentials;
-- canonical PSBT-v0 digest construction;
-- per-slot attribution and exact signature matching;
-- multisig mixed-provenance rejection;
-- durable file containment, lookup-hint handling, revalidation, exact retry,
-  and abort behavior;
-- prospective combine/reconstruction semantics and failed-merge behavior; and
-- policy serialization or attribution helpers used by Sparrow.
+1. exact affected code paths and immutable revision;
+2. a reachable failure sequence within the documented threat model;
+3. a safe regression or counterexample that fails for the claimed reason;
+4. impact and justified severity;
+5. remediation that compiles and preserves legitimate protected signing; and
+6. validation that the original invariant violation is closed.
 
-For each finding, provide:
+Distinguish implementation defects from documented residual risks and
+maintainer compatibility decisions. Do not treat public deterministic fixture
+keys as secrets.
 
-1. Exact affected code paths and line references.
-2. Preconditions and a technically coherent exploit or failure sequence.
-3. A minimal executable proof of concept or regression test where feasible.
-4. Impact and a justified severity.
-5. Remediation that compiles and preserves legitimate protected signing.
-6. Validation showing the original exploit no longer succeeds.
+## Previously reviewed remediation
 
-## Historical findings already remediated
+The ledger records P6-F1 and R-F1 plus V12 findings `#247985`–`#248002`.
+Gates 1–5 added per-key opening uniqueness, a wallet-wide abort state machine,
+durable-state bounds and locking, complete-transcript/API enforcement, invalid
+foreign-signature rejection, and explicit storage/rollback/witness-UTXO trust
+contracts. Re-report one of these as open only with a concrete bypass at the
+immutable heads above.
 
-P6-F1 previously showed that transaction-wide authorization could allow one
-REQUIRED signer's protected ceremony to bless another REQUIRED signer's
-ordinary signature. The target replaces that model with immutable,
-signature-scoped `VerifiedAntiExfilSignature` records and mixed-provenance
-tests. Do not report P6-F1 as currently open unless the final target contains a
-demonstrable remaining bypass.
-
-R-F1 concerned Sparrow's PSBT-less raw-transaction UI and did not change Drongo.
-Do not attribute that Sparrow UI issue to Drongo without an affected Drongo code
-path.
-
-Documented test fixtures intentionally contain public deterministic keys and
-mnemonics. Their presence is not a secret leak.
+The project remains an experimental prototype. The completed reviews do not
+replace independent cryptographic review, upstream review, reproducible-release
+review, or a production/mainnet security audit.

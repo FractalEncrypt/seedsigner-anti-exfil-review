@@ -1284,3 +1284,685 @@ matrix exactly; all eight requested checks pass:
 transitions, or precedence issues identified. **Sparrow head `7674cec`
 and Drongo head `1bbafd94` are recommended for immutable tested tags and
 reviewer-bundle freeze.**
+
+---
+
+## Phase 10 — V12 independent audit triage (2026-08-21)
+
+Inputs: `docs/export.md` (22 findings against Drongo `1bbafd94`; 20
+unreviewed, 2 marked invalid by V12) and `docs/v12-findings-verification
+-plan.md`. This phase records an independent credibility assessment only;
+no V12 proof of concept was executed and no V12 patch is accepted.
+
+### Priority 0: #247985 — duplicate openings expose the signing key
+
+**Source-confirmed reachable; the cryptographic claim independently
+re-derived and sound.** At `1bbafd94`:
+
+- `AntiExfilCodec.validate` enforces slot ordering, per-input limits, and
+  duplicate host commitments/reveals, but no cross-slot uniqueness of
+  signer opening points.
+- `AntiExfilCoordinator.acceptOpenings` releases per-slot rho after
+  opening acceptance with no opening-uniqueness check.
+- `AntiExfilPsbt.enumerateSigningSlots` legitimately permits the same
+  signer public key on multiple inputs (slot identity = input index +
+  pubkey).
+- `AntiExfilCrypto.verify` checks each opening/rho/signature tuple
+  independently.
+
+With a reused opening point Q under the same key across two slots, the
+effective nonces are k_i = k0 + t_i with t_i = taggedHash(POINT_TAG,
+Q ‖ rho_i) publicly computable, so k1 − k2 = t1 − t2 is known and the
+private key follows from the two public signatures in one linear
+equation. The coordinator emits `VerifiedAntiExfilSignature` evidence for
+the leaking ceremony, so the protocol's core covert-channel guarantee is
+broken. Critical severity is justified. **This gap was also missed by my
+Phase 1/2 review, which verified single-slot S2C soundness but did not
+enumerate cross-slot multislot invariants; recorded here for ledger
+honesty.**
+
+The Python reference oracle's slot checks cover duplicate slot
+*identifiers*, not opening-point reuse across distinct slots, so the
+spec/rule gap is shared: the fix requires the same invariant in the
+reference plus a shared negative vector, or the implementations will
+differentially accept.
+
+### Severity calibration notes
+
+- **247988/247987 (rollback/erasure, V12 Critical/High):** rest on a
+  local-filesystem attacker able to replace or roll back coordinator
+  state, which decision 5 places in the trusted base. Not accepted as
+  Critical/High without a maintainer threat-model decision (Gate 5).
+- **247989 (abort gate only at creation, not at reveal boundary):**
+  credible **in-model** state-machine defect — no filesystem attacker
+  required. Highest priority after 247985.
+- **247993 (allocation before size check), 247998 (JVM lock contention),
+  247991 (lexical lock identity vs path aliases), 247986 (no parent-dir
+  durability barrier):** credible as resource/concurrency/durability
+  defects at the stated severities or lower; verifiable with bounded
+  fault-injection tests.
+- **247996 (foreign partials preserved):** intentional per the P6-F1
+  mixed-provenance remediation; disposition is a documented contract
+  ("protected slots verified, foreign partials preserved but untrusted"),
+  not a fix.
+- **247997 (witness-UTXO trust):** standard BIP174 trust assumption;
+  availability-only impact; document.
+
+### Endorsed gate order, with two amendments
+
+The plan's Gate 1→5 order is endorsed, amended as follows:
+
+1. **Gate 1 must span both verifiers.** Patch the reference oracle and
+   add a shared negative vector (reused opening, same key, two inputs)
+   alongside the Drongo fix; regenerate affected corpora.
+2. **Gate 1 interacts with #248000.** If `validateTransition` does not
+   fully validate both messages (248000's claim), the opening-uniqueness
+   check must be guaranteed to execute on the `acceptOpenings` path
+   before rho release — either by full validation of the openings message
+   in the coordinator or by placing the invariant in the transition path.
+   Decide placement deliberately and test that the check cannot be
+   bypassed through the transition-only route.
+
+The evidence standard in the verification plan (§"Evidence required for
+every accepted finding") is endorsed as written, including no key-recovery
+or weaponized demonstrations: the Gate 1 regression only needs "reused
+opening rejected before any rho is returned" plus "distinct legitimate
+openings still pass".
+
+### Tag disposition
+
+The current Drongo/Sparrow tested tags remain valid immutable evidence of
+the reviewed states but **must not be promoted to a release** until Gate 1
+is remediated and re-reviewed. New immutable tags only after the Gate 1
+diff review, focused+full Drongo suites, reference cross-implementation
+vectors, and Sparrow suite (plus the physical gate only if wire behavior
+changes — it does not for a validation-only fix, but the multislot
+negative vector should reach the physical rejection corpus).
+
+### Gate 1 design decisions and follow-up dispositions (2026-08-21)
+
+GPT's refinement is **verified against source**: `acceptOpenings()` decodes
+the incoming message via `AntiExfilCodec.decode()`, which invokes full
+`validate()`. The uniqueness invariant placed in `validate()` therefore
+executes before rho disclosure on every coordinator path.
+`validateTransition()` itself performs transition checks only, so #248000
+remains a live finding for direct callers but does not block Gate 1.
+
+**Gate 1 decisions (agreed):** reject repeated opening points only among
+slots sharing the same canonical compressed signer public key; compare
+canonical encodings (already enforced at parse); return
+`OPENING_MISMATCH`; place the invariant in `AntiExfilCodec.validate()`;
+apply the equivalent rule to the Python reference; add a shared negative
+vector without changing positive vectors or the wire version; no
+key-recovery PoC — the rejection regression suffices.
+
+**Physical corpus correction:** my earlier statement that the negative
+vector should reach the physical rejection corpus was imprecise. Message 2
+(SIGNER_OPENINGS) is signer→host only; SeedSigner never ingests it. The
+vector belongs in the host-side Drongo/Sparrow negative corpus and the
+shared cross-implementation vector set. No SeedSignerOS rebuild or
+physical rejection test is required for Gate 1.
+
+**Follow-up dispositions:**
+
+1. *Abort acknowledgement model:* fail closed — any new journal abort
+   appearing between session creation and the reveal boundary permanently
+   invalidates the in-flight session. If maintainers later want an
+   acknowledgement UX, the session must durably record the journal
+   generation/digest at creation; the reveal-time recheck compares the
+   current digest; an explicit acknowledgement binds to the exact digest
+   observed and is recorded durably, covering only aborts present at that
+   digest, never future appends.
+2. *Automatic rejection journaling:* journal `SIGNATURE_REJECTED` only
+   for failures attributable to signer-supplied data — structural,
+   transcript-binding, or cryptographic rejection of message 2 or
+   message 4, including verification failure in `complete()`. Local I/O
+   failures, corrupt host state, wrong-stage/retry conflicts, and
+   programming errors fail closed but are not journaled (they are
+   host-side faults; journaling them would poison the nonce-reuse
+   defense with false aborts).
+3. *Abort deduplication (#248004):* at most one abort event per session,
+   first recorded reason retained, repeated calls idempotent no-ops.
+   Agreed as the simplest safe rule.
+4. *Lock order:* journal → session is the single global order for every
+   path that holds both (creation gate, reveal-time recheck, abort
+   recording), including cross-process use via `FileChannel` locks.
+   Session-only paths are unaffected. Per #247991, lock identity must be
+   canonicalized (real path) before this ordering reasoning holds.
+5. *Windows durability contract (#247986):* `channel.force(true)` remains
+   required for file content. Directory-entry durability after
+   create/rename is fsync'd on POSIX; where the platform does not support
+   it (Java on Windows), degrade gracefully with a documented
+   recovery-grade residual — do **not** fail closed. Coordinator
+   persistence already sits inside the decision-5 trusted filesystem, and
+   the marginal risk is state loss/rollback after power failure, which is
+   detected at revalidation, not a silent security failure.
+
+---
+
+## Phase 11 — V12 Gate 1 implementation review (2026-08-21)
+
+Inputs: `docs/v12-gate1-implementation-review-brief.md`; diffs Reference
+`dd7b2b2..eb1542e`, Drongo `1bbafd9..67127fd`, Sparrow
+`7674cec..e6e38b9` (Sparrow pins Drongo `67127fd3`). Review is static:
+diffs, fixture hashes, and production ingress paths inspected directly;
+test results in brief §5 taken as ledger evidence (baseline-failure claim
+is internally consistent with the reviewed pre-fix code).
+
+### Ten-property results
+
+1. **Correct scope — PASS.** Both validators group by the canonical
+   compressed signer pubkey (`Map<Bytes, Set<Bytes>>` in Drongo;
+   `openings_by_signer` dict in the reference). Canonical form is
+   enforced by per-slot validation before grouping. Cross-key opening
+   equality is explicitly permitted and tested in both suites.
+2. **All relevant stages — PASS.** The check fires whenever
+   `slot.opening != null`; slot-level validation ties opening presence to
+   stage ≥ `SIGNER_OPENINGS`. Messages 2/3/4 all pass through
+   `validate()`/`_validate_message` on both encode and decode.
+3. **Before-rho enforcement — PASS.** `acceptOpenings()` decodes message 2
+   via `AntiExfilCodec.decode` (full `validate()`) before constructing or
+   returning message 3; state is written only after validation. The retry
+   path returns the cached message 3 only for bytes identical to the
+   previously validated message 2. Rehydration (`validateState`) decodes
+   message 2, re-running validation. Sparrow's scan boundary
+   (`AntiExfilTransportPackage.decode`, line 89) also fully validates.
+   No production path constructs message 3 from unvalidated openings.
+4. **Complete-message failure — PASS.** The first repeat throws
+   `OPENING_MISMATCH` from within the slot loop; no state write, no
+   partial reveal, no message-3 construction on that path.
+5. **No compatibility regression — PASS.** Same-key/distinct-opening is
+   tested as accepted in both suites; positive canonical fixtures are
+   untouched by the diffs (stat-verified). Honest signers cannot false-
+   reject: same-key slots on distinct inputs have distinct BIP143 message
+   hashes, and same-key same-input duplicates are already rejected as
+   duplicate slot identifiers.
+6. **Reference/Drongo parity — PASS with one observation (O1).**
+   Grouping, equality, stage coverage, and error code are identical.
+   Within-iteration check ordering diverges: Drongo evaluates the
+   per-input slot limit before the opening check; the reference after.
+   Only error-code selection for multiply-invalid messages differs; both
+   fail closed, and the shared negative vector is unaffected.
+7. **Host integration — PASS.** Sparrow's new test decodes the shared
+   wrapped AEXT vector through the real package boundary under Drongo
+   `67127fd3` and asserts `OPENING_MISMATCH`. All three fixture copies
+   are byte-identical (SHA-256 `f5b9d3d2…e97599`, independently
+   re-hashed, matching the brief).
+8. **No accidental #248000 disposition — PASS.** `validateTransition()`
+   is unchanged; no doc claims it performs full object validation. The
+   finding stays open for Gate 4. Object-form callers bypassing
+   decode/validate would miss the new invariant — currently no such
+   production caller exists.
+9. **No signer-side scope expansion — PASS.** No SeedSigner/SeedSignerOS
+   changes; `shared-vector-index.md` correctly documents the vector as
+   host-side only.
+10. **No unrelated authorization change — PASS.** Drongo range touches
+    codec + codec test + fixture only; Sparrow range is the submodule pin
+    + transport test + fixture only. Provenance, R-F1 quarantine, PSBT
+    reconstruction, and broadcast policy are untouched.
+
+### Observations (non-blocking)
+
+- **O1 — check-order divergence:** Drongo rejects a slot exceeding the
+  per-input limit with `SIGNATURE_SLOT_MISMATCH` before reaching the
+  opening check; the reference evaluates the opening check first and
+  would return `OPENING_MISMATCH` for a message violating both. Both fail
+  closed; severity nil. Align ordering or document the tolerated
+  divergence in `shared-vector-index.md`.
+- **O2 — Sparrow fixture-growth asymmetry:** the reference test pins the
+  exact case-name list and the Drongo test asserts a single
+  `message_hex` match, so both fail if the fixture gains cases; Sparrow's
+  test reads only `cases[0]` and would silently ignore added cases.
+  Recommend iterating all cases (as the reference does) when the fixture
+  next grows.
+
+### Disposition
+
+**Gate 1 approved against §6.** No bypass, no false-rejection path, no
+fixture mismatch, no missing production path found. Tag hold remains in
+effect per brief §7: replacement tested tags only after public CI is
+green; the 2026-08-20 tags stay immutable evidence of the vulnerable
+state.
+
+### Observation closure review (2026-08-21)
+
+Ranges: Drongo `67127fd..5a7baed` (`5a7baed1a2cad23f0f0a4f007d49cdba44415
+b60`), Sparrow `e6e38b9..3eb93d5`; Reference unchanged at `eb1542e`.
+
+- **O1 closed.** Drongo's per-input limit check now runs after the
+  commitment/reveal/opening checks, matching the reference iteration
+  order exactly (ordering → commitment → reveal → opening → per-input).
+  Acceptance is unchanged by construction: all checks are pure predicates
+  over slot fields, a throw aborts the whole validation, and the accepted
+  set is the conjunction of the same checks in either order. Only
+  error-code selection for multiply-invalid messages changed, which was
+  the intent.
+- **O2 closed.** `AntiExfilTransportPackageTest` now iterates every
+  `cases` entry with a non-empty assertion, decoding each `package_hex`
+  and asserting its declared error. New fixture cases can no longer be
+  silently skipped.
+- **Pin verified.** Sparrow's `drongo` submodule points at exactly
+  `5a7baed1a2cad23f0f0a4f007d49cdba44415b60`, the Drongo branch head.
+
+**Gate 1 review is complete.** Final Gate 1 heads: Reference `eb1542e`,
+Drongo `5a7baed1a2cad23f0f0a4f007d49cdba44415b60`, Sparrow `3eb93d5`.
+Replacement tested tags remain gated on public CI per brief §7.
+
+---
+
+## Phase 12 — V12 Gate 2 implementation review (2026-08-22)
+
+Inputs: `docs/v12-gate2-implementation-review-brief.md`, the locked design
+record `docs/v12-gate2-abort-state-machine-design.md`; diffs Reference
+`eb1542e..3fabb38`, Drongo `5a7baed..0e1d1c3`
+(`0e1d1c3abd71ef5d2bd7c02fdd4d09e0ba56a354`), Sparrow
+`3eb93d5..9936628`. Static review of git objects at the exact commits;
+test results in brief §6 taken as ledger evidence. Note: both review
+clones were checked out at Gate 1 heads during review — working-tree
+reads reflect Gate 1 code; Gate 2 code was inspected via `git show` at
+the pinned commits.
+
+### Twelve-property results
+
+1. **Atomic create gate — PASS.** `create` holds the canonical journal
+   lock across the acknowledgement check, digest snapshot, and the nested
+   session-locked durable write (coordinator lines 81–91).
+2. **Reveal-boundary digest recheck — PASS.** `acceptOpenings` rejects
+   with `RETRY_CONFLICT` when the stored digest is null or stale before
+   message 2 is decoded or any reveal is constructed; the durable write
+   still precedes the return of message 3.
+3. **Race closure — PASS.** Create, reveal, and abort append all
+   serialize on the canonical journal lock (journal→session nesting).
+   Test 9 uses a genuine child-process `FileChannel` lock holder; the
+   staging makes the create-gate-before-abort interleaving deterministic
+   by construction (the abort contender is submitted only after the
+   create thread must already hold the journal lock).
+4. **Acknowledged snapshot binding — PASS.** Acknowledged creation binds
+   the digest of the nonempty journal; any later append revokes the
+   first reveal (Drongo test 2, reference test 2).
+5. **Retry/completion usability — PASS.** The exact-retry branch precedes
+   the digest gate and returns only the byte-identical cached reveal; a
+   changed retry gets `RETRY_CONFLICT` with nothing returned. `complete`
+   has no post-reveal digest gate, per the locked design; test 7 covers
+   completion after an unrelated later abort.
+6. **Narrow rejection classification — PASS.** `isSignerDataRejection`
+   is an exhaustive switch matching the design list (8 signer-attributable
+   codes true; `WRONG_STAGE`/`RETRY_CONFLICT`/`STATE_INVALID` false; no
+   default arm). Journaling happens inside the journal-locked catch
+   before rethrow. Host-state reads and validation sit outside the
+   classified try blocks, so host faults cannot be relabeled. Sparrow
+   applies the same shared predicate at the message-2 and message-4
+   boundaries; scan/UR failures remain un-journaled transport
+   interruptions.
+7. **First-event-wins dedup — PASS.** `LockedJournal.append` returns the
+   existing event without a write; the `MAX_EVENTS` check follows the
+   dedup check, so idempotent repeats work even on a full journal. Legacy
+   duplicates are normalized first-event on load. Byte-stability pinned
+   by Drongo test 3 and the updated coordinator test.
+8. **Lock order and identity — PASS.** All nested paths are
+   journal→session; `getStatus` takes the locks sequentially, not
+   nested. Journal paths are canonicalized in the constructor and again
+   in `locked` (real parent, real file when present). Symlink-alias test
+   8 confirms one identity and one event.
+9. **JVM-local registry soundness — PASS.** Reference counts increment
+   inside the atomic `compute` before lock acquisition and decrement
+   inside `compute` after release; removal occurs only at zero, when no
+   holder or waiter can exist. The channel lock closes before the
+   finally block, so a fresh lock object after removal cannot meet a
+   stale same-JVM file lock — no `OverlappingFileLockException` window,
+   no split identity, no leak.
+10. **v1 migration split — PASS.** Decode accepts versions 1–2; v1
+    yields a null digest. v1 pre-reveal sessions fail closed at the
+    reveal gate (test 10); v1 post-reveal sessions keep exact retry and
+    completion (test 11); completed v1 evidence revalidates. The test
+    downgrade helper produces a genuine v1 encoding (digest blob removed,
+    version byte set, trailing checksum recomputed). New writes are
+    always v2 with a digest; `acceptOpenings` cannot persist a null
+    digest because the gate precedes the write.
+11. **Sparrow pin and classification — PASS.** Submodule tree entry at
+    Sparrow `9936628` is exactly `0e1d1c3abd71ef5d2bd7c02fdd4d09e0ba56a354`
+    (verified via `git ls-tree`). The previous indiscriminate
+    journal-on-every-exception in the completion catch is replaced by the
+    shared predicate.
+12. **No collateral behavior change — PASS.** Reference range is docs,
+    the adversarial-model addition, and tests only; no codec or wire
+    change. Drongo range is coordinator, journal, durable-files, and
+    tests; codec, PSBT reconstruction, provenance, and quarantine are
+    untouched. Sparrow range is the signing flow, its test, and the pin.
+
+### Minor notes (non-blocking)
+
+- Message 1 is decoded twice on the reveal path (once inside
+  `validateState`, once for the digest gate) — harmless redundancy.
+- The reference model permits post-reveal failure recording after
+  completion (it has no COMPLETE phase); Drongo refuses with
+  `WRONG_STAGE`. Drongo is stricter; the asymmetry is immaterial.
+- `#248000` remains correctly untouched; `validateTransition` unchanged.
+
+### Disposition
+
+**Gate 2 approved against the brief's twelve properties.** No false-abort
+precedence path, no first-reveal path without a matching digest, no lock
+inversion, and no legacy-state path disclosing unbound randomness were
+found. Public CI and replacement tested tags remain the remaining gate
+per brief §7; Gate 1 heads stay immutable.
+
+---
+
+## Phase 13 — V12 Gate 3 implementation review (2026-08-22)
+
+Inputs: `docs/v12-gate3-implementation-review-brief.md`, the locked design
+record `docs/v12-gate3-durable-bounds-design.md`; diffs Reference
+`3fabb38..5d2c699` (design doc only), Drongo `0e1d1c3..a3ed65c`
+(`ee97f22` durable persistence/bounds/hard-links, `a3ed65c` wire-magic
+isolation), Sparrow `9936628..c57b075` (gitlink only, pins exactly
+`a3ed65c5dfda9a7a16dabc8b0a206c9beb422eaf`; verified via the range diff).
+Drongo working tree was at the Gate 3 head during review; sources read
+directly. Test results in brief §4 taken as ledger evidence.
+
+### Twelve-property results
+
+1. **No reveal from a failed durability transition — PASS.** A directory-
+   barrier failure invalidates the visible new file before throwing; the
+   old inode was already truncated and forced before the move; the write
+   precedes any return of message 3, so neither a first nor a cached
+   reveal can come from an uncommitted state. Pinned by
+   `failedDirectoryBarrierCannotLeaveAReadableUncommittedState`.
+2. **Write order — PASS.** Temp content `force(true)` → atomic move →
+   parent-directory force is the only successful order, confirmed by the
+   injected-barrier observer test (the barrier callback can already read
+   the replaced file).
+3. **Fail-closed move/barrier — PASS.** `AtomicMoveNotSupportedException`
+   and any move `IOException` propagate (temp cleaned in `finally`);
+   POSIX directory-force failures rethrow; all surface as `STATE_INVALID`
+   at the coordinator boundary. Availability cost is documented.
+4. **Bounded reads — PASS.** Size comes from an already-open channel and
+   is range-checked before allocation; the read loop reads exactly that
+   size and rejects mid-read truncation (`read < 0`) and growth (extra
+   byte readable). Sparse-oversize rejection pinned before allocation.
+5. **`checkedStateFileLength` exactness — PASS.** Arithmetic verified
+   against the v2 AEXS layout: 38-byte fixed header + 7×4 blob lengths +
+   2-byte rho count + 32-byte checksum = 100, plus 69 bytes per rho
+   record (4 index + 33 key + 32 rho). `encode` self-checks
+   `body.length == expected - 32`. Tests pin exact-bound (207 accepted,
+   206 rejected) and per-field overflow (16 MiB + 1 signed PSBT).
+6. **Write/read limit symmetry — PASS.** Writer per-blob caps equal the
+   decoder's `readBlob` caps (`MAX_PSBT_BYTES`, `MAX_MESSAGE_BYTES` ×4,
+   `MAX_BLOB_BYTES`, digest ∈ {-1, 32}, rho count 1..`MAX_SLOTS`); both
+   reject lengths < 1 for non-null blobs; the total-file cap includes the
+   checksum on both sides (`body > maximumBytes - 32` vs channel size >
+   `maximumBytes`). Successful write implies reloadability under the same
+   limits.
+7. **Over-limit completion fails before replacement — PASS.**
+   `checkedStateFileLength` runs at the top of `encode`, before any
+   filesystem touch; the failure propagates as `STATE_INVALID` and the
+   prior `OPENINGS_ACCEPTED` file is never opened for writing. Pinned by
+   `overLimitReplacementPreservesPriorValidState`.
+8. **Global JVM lock ordering — PASS.** `JVM_DURABLE_LOCK` is a fair,
+   reentrant, always-outermost serializer; Gate 2's journal→session
+   nesting re-enters it legally, and no lock is ever acquired before it,
+   so inversion is structurally impossible and same-thread nesting cannot
+   deadlock. The Gate 2 per-path registry is retained beneath it; the
+   `OverlappingFileLockException` catch remains as fail-closed defense.
+9. **Cross-process alias serialization — PASS (POSIX).** Canonical and
+   symlink aliases converge on one pathname `.lock` via `canonicalPath`;
+   hard links, which have no canonical name, converge on the
+   underlying-inode `FileChannel` lock when the file exists. The
+   not-yet-existing create window fails closed for the loser via
+   `createOnly`. Verified by the child-process `LockHolder` test.
+10. **Detached-alias invalidation — PASS.** `invalidate` truncates and
+    forces the old inode before `REPLACE_EXISTING`, while POSIX still
+    holds its underlying lock; a detached hard link reads a zero-byte
+    file and fails the minimum-size check. Pinned by the alias test's
+    post-replacement read assertions.
+11. **Windows hard-link residual — PASS (accurate, contained, not
+    overclaimed).** Windows retains file forcing, atomic replacement,
+    the JVM serializer, and stale-inode invalidation; it skips the
+    underlying-file lock because the OS forbids atomically replacing a
+    target while this process holds its `FileChannel` lock — the code
+    comment states exactly this. The cross-process POSIX test is
+    `assumeFalse(isWindows())`-skipped (the 1 skip in the focused run),
+    not silently green. The residual stays inside the existing
+    trusted-filesystem assumption in both the design doc and the code.
+12. **Immutable wire framing — PASS.** `encode`/`decode` use the private
+    `WIRE_MAGIC`; the public `MAGIC` is a deprecated clone. The mutation
+    test flips a public byte and pins frozen-vector decode and emitted
+    framing, restoring the byte in `finally`. No production code (Drongo
+    or Sparrow) references `AntiExfilCodec.MAGIC`.
+
+### Minor notes (non-blocking)
+
+- POSIX TOCTOU between `Files.exists(canonical)` and the underlying-file
+  open could let a pathname-swapping attacker desynchronize the inode
+  lock; such an actor is already inside the trusted-filesystem boundary.
+- The reference range adds only the design record; no reference model or
+  fixture changes were needed for this gate.
+
+### Disposition
+
+**Gate 3 approved against the brief's twelve properties.** No unchecked
+exception path, limit mismatch, lock-order cycle, successful return
+before the durability barrier, or surviving-alias path was found. Per
+brief §5, public Linux CI must still execute the non-skipped POSIX
+parent-directory and cross-process hard-link tests before any new tested
+tag is created; Gates 1–2 heads and tags remain immutable.
+
+---
+
+## Phase 14 — V12 Gate 4 implementation review (2026-08-22)
+
+Inputs: `docs/v12-gate4-implementation-review-brief.md`, the locked design
+record `docs/v12-gate4-api-contracts-design.md`; diffs Reference
+`5d2c699..23b8603` (design doc only), Drongo `a3ed65c..6b9eec6` (9 files,
++98/-17), Sparrow `c57b075..f130d58` (gitlink + one test). Both Drongo
+and Sparrow working trees were at their Gate 4 heads; sources read
+directly. Pin verified via `git ls-tree`: Sparrow `f130d58` carries
+`drongo = 6b9eec662931a1c387d75e21c1e58806d20e9d6e` exactly. Test results
+in the brief's validation-evidence section taken as ledger evidence.
+
+### Twelve-property results
+
+1. **Complete transcript — PASS.** `reconstructSignedPsbt` has exactly
+   one production signature (original, keystore, commit, openings,
+   reveal, signatures, hostRandomness); grep confirms no compatibility
+   overload in Drongo and zero Sparrow references. All three coordinator
+   call sites (`complete`, `deriveVerifiedSignatures`, `validateState`)
+   pass the full durable transcript.
+2. **Opening fixation — PASS.** The full `1→2→3→4` chain runs through
+   `validateTransition` three times; opening byte-identity is enforced
+   from stage 2 onward (`OPENING_MISMATCH`). The new PsbtTest case swaps
+   slot 0's opening for slot 1's with otherwise valid later messages and
+   expects `OPENING_MISMATCH` before reconstruction.
+3. **Durable-rho authority — PASS.** The durable map keyset must equal
+   the authoritative slot identifiers; per slot, rho must equal both the
+   durable entry and the reveal value, and `hostCommit(rho)` must equal
+   the stage-1 commitment. Caller-supplied transcript data cannot
+   substitute for durable randomness.
+4. **Authoritative semantics — PASS.** Commit `psbtDigest` must equal
+   SHA-256 of the original PSBT; `requireSlot` binds input index,
+   sighash, signer key, and message hash to the canonical PSBT semantics
+   at stages 1 and 4. No provenance/finalization files changed, so
+   foreign ordinary multisig signatures remain preserved and proof-less.
+5. **Endpoint validation — PASS.** `validateTransition` calls full
+   `validate(previous)` then `validate(current)` before adjacency and
+   continuity checks. `validate(null)` and structurally malformed
+   endpoints produce controlled `INVALID_MESSAGE` failures (null-guarded
+   header check), never unchecked exceptions. CodecTest pins malformed-
+   previous, malformed-current, null, and valid cases.
+6. **Production coverage — PASS.** Grep over Drongo production shows
+   reconstruction is reachable only from the three coordinator paths,
+   each decoding all four durable messages. No unvalidated reconstruction
+   ingress remains.
+7. **Admission — PASS.** Both public `create` overloads delegate to the
+   single core overload, which rejects `!supportsAntiExfil()` with
+   `STATE_INVALID` before randomness generation or any filesystem write.
+   CoordinatorTest pins UNSUPPORTED rejection (and absence of the session
+   file) plus OPTIONAL/REQUIRED admission.
+8. **Migration boundary — PASS.** `load` is untouched: it revalidates the
+   durable session in full but does not consult current policy metadata,
+   preserving completed historical evidence after a policy downgrade
+   (pinned by the new admission/reload test). No new ceremony can be
+   created or re-created under UNSUPPORTED because every creation path
+   rejects first. Nuance within the documented boundary: a pre-reveal
+   session created by pre-Gate-4 code under an UNSUPPORTED policy can
+   still advance via `load` + `acceptOpenings`; that is the deliberate
+   "historical evidence" carve-out, not a new admission path through the
+   corrected API.
+9. **Evidence authority — PASS.** The `VerifiedAntiExfilSignature`
+   constructor is package-private; the class is not `Serializable` and
+   exposes no factory, builder, or deserializer. Minting occurs only in
+   `deriveVerifiedSignatures`, after `reconstructSignedPsbt` (which
+   cryptographically verifies every signature against durable rhos and
+   stage-1 commitments) and byte-equality with the stored signed PSBT.
+   A reflection assertion pins zero public constructors.
+10. **Value semantics — PASS.** Defensive copies in constructor and
+    accessors, field-wise `equals`/`hashCode` — all unchanged by this
+    diff; completion, exact retry, and reload derive from the same
+    durable bytes, and the identical-evidence test remains green.
+11. **Sparrow integration — PASS.** The mixed REQUIRED/OPTIONAL
+    regression now mints `proofA` through a real deterministic coordinator
+    (`create` → `acceptOpenings(message_2)` → `complete(message_4)`)
+    from the frozen mixed-provenance vector, asserts the minted compact
+    signature equals the frozen `protected_signature_a_compact` bytes,
+    and retains the policy outcome that protected signer A does not bless
+    ordinary signer B.
+12. **No scope expansion — PASS.** Range stats confirm: no AEXB wire,
+    frozen-vector, AEXS format/version, abort-state-machine, provenance,
+    quarantine, finalization, broadcast, reference-oracle, or SeedSigner
+    changes. Test fixtures only gained explicit policy metadata.
+
+### Reviewer questions
+
+1. No — one reconstruction signature; every caller supplies the durable
+   four-message transcript.
+2. No — endpoint validation only adds earlier controlled failures.
+   Coordinator paths pre-validate host-side messages (via
+   `validateState`), so newly-early endpoint failures on the classified
+   paths are attributable to signer-supplied bytes and journal correctly;
+   revalidation paths still surface `STATE_INVALID`.
+3. No — all creation funnels through the rejecting core overload; retries
+   and `load` operate only on already-durable sessions.
+4. Yes — with the legacy pre-reveal nuance noted in property 8; full
+   durable revalidation keeps `load` from minting unverified evidence.
+5. No — package-private constructor, reflection-pinned, no serialization
+   or public-factory surface in Drongo or Sparrow.
+6. Yes — the proof is minted from the frozen vector through a real
+   completion and pinned to the frozen protected-signature bytes.
+7. Yes — the pin matches exactly; no missing callers or tests identified.
+
+### Disposition
+
+**Gate 4 approved against the brief's twelve properties and all seven
+reviewer questions.** Per the hold point, Gate 4 tested tags remain held
+until public Linux CI is green; Gate 3 tags stay immutable. All V12 gates
+1–4 have now passed independent review; remaining dispositions
+(247987/247988/247990/247996/247997) belong to Gate 5.
+
+---
+
+## Phase 15 — V12 Gate 5 implementation review (2026-08-22)
+
+Inputs: `docs/v12-gate5-implementation-review-brief.md`, the locked
+disposition record `docs/v12-gate5-trust-contracts-design.md`; diffs
+Reference `92ab573..f2dc199` (docs only: design record, threat-model
+§6.7/§6.8 + INV-17/INV-18, maintainer decision 15), Drongo
+`6b9eec6..bb691c7` (3 files, +58/-1), Sparrow `f130d58..f003bfa`
+(gitlink only, pins exactly `bb691c7d77290933b3f7d6c411556c1524a29d98`;
+verified via the range diff). Drongo working tree at the Gate 5 head;
+sources read directly. Test results in the brief taken as ledger evidence.
+
+### Twelve-property results
+
+1. **Early foreign-signature rejection — PASS.** `parseCanonicalV0` is
+   the sole canonical ingress: `enumerateSigningSlots` calls it first,
+   and `create` checks policy, then enumerates slots, before any
+   randomness generation or AEXS/AEXJ write. The new MixedProvenanceTest
+   case doctors the frozen vector's foreign partial to `(r=1, s=1)` and
+   asserts `INVALID_MESSAGE` from `create` with neither session nor
+   journal file existing.
+2. **Controlled failure — PASS.** `new PSBT(raw, true)` routes through
+   Drongo's existing `verifySignatures`, which throws
+   `PSBTSignatureException` for unverifiable partials;
+   `parseCanonicalV0` catches `PSBTParseException | RuntimeException` and
+   wraps them as `INVALID_MESSAGE` (rethrowing `AntiExfilException`
+   as-is). No unchecked exception escapes; no partial state persists.
+3. **Valid multisig compatibility — PASS.** The unchanged mixed-provenance
+   byte-preservation assertions remain green against the same frozen
+   vector; verification accepts the valid foreign ordinary partial via
+   the supplied UTXO context.
+4. **Proof isolation — PASS.** Reconstruction and `deriveVerifiedSignatures`
+   iterate only authoritative ceremony slots; the foreign partial is
+   preserved in the output PSBT but receives no evidence. Gate 4's
+   package-private minting remains the only evidence source.
+5. **Supported-input compatibility — PASS.** Witness-only SegWit inputs
+   verify against `witness_utxo`; the frozen positive vectors stay
+   byte-identical and the focused suites green. Documented edge: a
+   foreign partial that is *unverifiable because its UTXO context is
+   absent* is also rejected — fail-closed and consistent with the
+   design's "validity against the supplied signing context" criterion.
+6. **Rollback honesty — PASS.** Threat-model §6.7 and the design record
+   state checksums detect corruption only and that no same-domain file
+   (tombstone, second ledger, random journal identifier) provides
+   freshness against joint rollback; a stronger guarantee is explicitly
+   deferred to a separately trusted monotonic authority. No partial
+   mechanism is represented as complete.
+7. **Recovery safety — PASS.** Missing, restored, or reset state is
+   documented as not evidence of safety; the response is to stop
+   protected signing and migrate funds to a wallet generated from fresh
+   independent keys. Backups must not restore session or journal state
+   independently. Consistent across the design record, threat model, and
+   maintainer decision 15.
+8. **Storage honesty — PASS.** POSIX owner-restricted permissions and
+   effective inherited Windows DACL dependence are stated; encryption at
+   rest is explicitly not claimed, and owner-equivalent/administrator/
+   backup exposure is acknowledged rather than papered over.
+9. **Witness-only boundary — PASS.** PsbtTest pins that mutating the
+   supplied witness amount changes the authoritative BIP143 message hash
+   while the unsigned-transaction outpoint stays fixed; §6.8 correctly
+   states false context yields a signature invalid for the actual coin
+   rather than authorization of a different real prevout, and that
+   evidence attests to the supplied context, not chain-state existence.
+10. **Standards compatibility — PASS.** The design record's rationale
+    (animated-QR payload size and standard hardware-wallet workflows) is
+    coherent; non-witness-UTXO consistency checks remain in force when
+    present. Retention is an explicit maintainer decision, not silence.
+11. **No format expansion — PASS.** No AEXB/AEXS/AEXJ, frozen-vector, or
+    SeedSigner wire changes in any range (stat-verified; reference range
+    is docs-only, Sparrow is gitlink-only).
+12. **No unrelated weakening — PASS.** Only `parseCanonicalV0` changed in
+    Drongo production; Gates 1–4 surfaces, provenance, quarantine,
+    finalization, and broadcast paths are untouched.
+
+### Reviewer questions
+
+1. Yes — every coordinator ingress (create overloads, reload,
+   revalidation, reconstruction) reaches `parseCanonicalV0` with
+   verification enabled; pre-fix sessions bearing invalid foreign
+   partials now fail closed on load, which is the intended consequence
+   since their output was unusable downstream anyway.
+2. No — invalid partials fail at parse, before slots, randomness, or
+   durable state.
+3. Yes — the existing Drongo verifier handles all legitimate forms with
+   supplied context; proof attribution remains strictly ceremony-derived.
+   (See the missing-context edge noted in property 5.)
+4. No — the design correctly argues same-domain mechanisms cannot provide
+   freshness against joint rollback and would overstate the guarantee.
+5. Yes — stop-and-fresh-key migration is the right substantive control;
+   the backup/restore atomicity guidance covers the operational step.
+6. Yes — accurate and non-exaggerated.
+7. Yes — the BIP143 commitment analysis is correct.
+8. Yes — mandatory full previous transactions would materially break
+   QR-constrained and standard hardware-wallet workflows; retention is
+   explicit and coherent.
+9. Yes — the pin is exact and no file outside the stated surface changed.
+
+### Disposition
+
+**Gate 5 approved against the brief's twelve properties and all nine
+reviewer questions.** Both review burdens are satisfied: the `#247996`
+preventive fix is minimal, correctly placed at the sole canonical
+boundary, and regression-pinned; the four dispositions follow from the
+pinned implementation and threat model without overstating any guarantee.
+Per the hold point, replacement tested tags and the reviewer-bundle
+freeze remain gated on public Linux CI. This completes independent review
+of all V12 findings (`#247986`–`#248002`).

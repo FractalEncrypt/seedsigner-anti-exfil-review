@@ -6,8 +6,8 @@ this hub.
 
 | Component | Fork | Upstream base | Immutable tested result |
 | --- | --- | --- | --- |
-| Drongo | `FractalEncrypt/drongo` | `a47c2b3f58d7cedd504b2bd07833708866614216` | `1bbafd94f08fd9105e20be30a6fdfe9a091fb675` |
-| Sparrow | `FractalEncrypt/sparrow` | `b99b880c9fe75565921af9ef438d6314fdd73d6f` | `7674cecde48335e0b55454f6fa53c8187a459932` |
+| Drongo | `FractalEncrypt/drongo` | `a47c2b3f58d7cedd504b2bd07833708866614216` | `bb691c7d77290933b3f7d6c411556c1524a29d98` |
+| Sparrow | `FractalEncrypt/sparrow` | `b99b880c9fe75565921af9ef438d6314fdd73d6f` | `f003bfa9575bc7c67b337f8785b1479fd092641a` |
 | SeedSigner | `FractalEncrypt/FractalEncrypt_seedsigner` | `56637104b90325e1bc47b58f5f5e8154ea56cf37` | `aa8395e3576379467d795bb05268533e3a2ac082` |
 | SeedSignerOS | `FractalEncrypt/seedsigner-os` | `d5a1077851a9b41d6637f7317e3f06aaa453bd5d` | `0bf1dc92519906c7db265055abfb07e0ee344342` |
 
@@ -48,7 +48,10 @@ findings and their dispositions. In particular:
 
 A new report may revisit these areas, but should identify a concrete remaining
 bypass at the immutable final revisions rather than assuming the historical
-behavior is still present.
+behavior is still present. Phases 10–15 additionally record the independent
+triage and remediation of V12 findings `#247985` through `#248002`; the Gate 5
+tags include all four implementation gates and the explicit trust-boundary
+dispositions.
 
 ## Out of scope for a production claim
 

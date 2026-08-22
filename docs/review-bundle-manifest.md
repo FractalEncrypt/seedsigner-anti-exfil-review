@@ -22,7 +22,11 @@ Normative and review documents:
 - `docs/physical-evidence-index.md`
 - `docs/ux-proposal.md`
 - the four implementation review-series checkpoint JSON files
-- the P6-F1 and R-F1 remediation briefs, physical gates, and evidence
+- the P6-F1 and R-F1 remediation briefs, physical gates, and evidence;
+- the V12 source report, verification plan, Gate 1–5 designs and review briefs;
+  and
+- `docs/v12-remediation-checkpoint.json`, which binds the final tags, CI-only
+  workflow descendants, public run URLs, local validation, and fixture hashes
 
 Reference oracle and test material:
 
@@ -33,8 +37,10 @@ Reference oracle and test material:
 - `fixtures/protocol-v1-multislot-vectors.json`
 - `fixtures/protocol-v1-mixed-provenance-vector.json`
 - `fixtures/protocol-v1-mixed-provenance.psbt`
+- `fixtures/protocol-v1-negative-vectors.json`
 - `fixtures/protocol-v1-semantic-psbt-vector.json`
 - `fixtures/transport-v1-vectors.json`
+- `scripts/generate_protocol_v1_negative_vectors.py`
 - project packaging/dependency metadata required to run the reference tests
 
 Evidence:
@@ -69,12 +75,11 @@ A password-protected archive or private file share is sufficient for the first
 review. Provide an outer SHA-256 out of band and include a generated manifest of
 every internal file hash. Preserve the exact archive supplied to the reviewer.
 
-The final freeze gate passed on 2026-08-20. The QR-renderer correction and Pi
-Zero image passed static and animated brightness checks including animation
-resumption. Sparrow's signature-scoped provenance remediation and narrow R-F1
-raw-transaction lifecycle fix passed focused review, automated validation,
-public Linux CI, packaging, and the documented physical UI gates. This is a
-reviewed experimental prototype result, not a production security-audit claim.
+The superseded checkpoint freeze passed on 2026-08-20. The replacement bundle
+adds the independently reviewed V12 Gates 1–5 and their public Linux CI
+evidence while retaining the QR-renderer, Pi Zero, P6-F1, R-F1, packaging, and
+physical evidence. This remains a reviewed experimental prototype result, not
+a production security-audit claim.
 
 Create a clean public docs/vector repository only if the selected reviewer
 requires a cloneable Git source of record or if broader public review is later

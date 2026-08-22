@@ -281,6 +281,7 @@ def _validate_message(message: ProtocolMessage) -> None:
     per_input: dict[int, int] = {}
     commitments: set[bytes] = set()
     reveals: set[bytes] = set()
+    openings_by_signer: dict[bytes, set[bytes]] = {}
     for slot in message.slots:
         _validate_slot(stage, slot)
         if previous_identifier is not None and slot.identifier <= previous_identifier:
@@ -302,6 +303,14 @@ def _validate_message(message: ProtocolMessage) -> None:
                     "host reveals must be unique across the slot set",
                 )
             reveals.add(slot.rho)
+        if slot.opening is not None:
+            signer_openings = openings_by_signer.setdefault(slot.signer_pubkey, set())
+            if slot.opening in signer_openings:
+                raise AntiExfilError(
+                    ErrorCode.OPENING_MISMATCH,
+                    "signer openings must be unique per signer public key",
+                )
+            signer_openings.add(slot.opening)
         per_input[slot.input_index] = per_input.get(slot.input_index, 0) + 1
         if per_input[slot.input_index] > MAX_SLOTS_PER_INPUT:
             raise AntiExfilError(

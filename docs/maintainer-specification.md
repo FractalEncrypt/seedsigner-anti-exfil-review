@@ -114,6 +114,13 @@ broadcast boundary.
 Before message 2 is accepted, an unused session MAY be cancelled and replaced;
 that is recorded as pre-reveal and is not a selective-abort event.
 
+Creating a session and accepting the current wallet-key abort history is one
+atomic journal-locked transition. The session durably binds a SHA-256 digest of
+that accepted journal state. The coordinator rechecks the digest under the
+journal lock immediately before the first host reveal; any intervening abort
+permanently revokes the still-pre-reveal session. Nested durable locks always
+use journal then session, with canonical real-path lock identity.
+
 After accepting message 2, the coordinator MUST durably persist the immutable
 session before showing message 3. Every retry reuses byte-identical message 3:
 same PSBT, session ID, ordered slots, commitments, openings, and `rho` values.
@@ -126,6 +133,14 @@ event against wallet-key identity rather than device instance, and warns before
 allowing a fresh challenge. Restoring the same keys on another device does not
 erase the history. Repeated failures require escalating guidance toward moving
 funds to independently generated keys.
+
+Signer-attributable structural, binding, or cryptographic rejection of message
+2 or message 4 journals `SIGNATURE_REJECTED` atomically. Host-state, I/O,
+wrong-stage, and retry-conflict failures do not. The first event for a session
+ID is authoritative; later recording attempts preserve its reason and timestamp
+without growing or rewriting the journal. Exact retries of an already-persisted
+message 3 and valid completion remain usable because they disclose no fresh
+host randomness.
 
 ## 8. Network and transport contract
 

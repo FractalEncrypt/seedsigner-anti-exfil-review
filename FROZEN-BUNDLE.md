@@ -1,27 +1,39 @@
-# Private checkpoint bundle
+# Immutable reviewer bundle
 
-The original private-review handoff was frozen from reference commit
-`dd7b2b26ece992f74daeb3095aa148fc278176ea` and local annotated tag
-`anti-exfil-tested-2026-08-20`.
+The current public handoff is `seedsigner-anti-exfil-review-bundle-v1.2.zip`,
+frozen from the `review-hub-v1.2-2026-08-22` source tag. Its adjacent
+`.zip.sha256` asset and GitHub release record provide the authoritative outer
+archive hash. The archive also contains `BUNDLE-METADATA.json` and a
+`SHA256SUMS.txt` manifest covering every selected payload.
+
+The bundle is the cross-repository review context for the entire project. It
+contains the normative specification, Python reference oracle, shared vectors,
+tests, completed Phase 1–15 findings ledger, Gate 1–5 design and implementation
+review records, build/test runbook, and selected physical evidence. It does not
+duplicate the four implementation repositories; reviewers clone those at the
+exact tags in `repositories.json`.
+
+The current implementation bindings are:
+
+- Drongo `bb691c7d77290933b3f7d6c411556c1524a29d98`;
+- Sparrow `f003bfa9575bc7c67b337f8785b1479fd092641a`, pinning that exact Drongo;
+- SeedSigner `aa8395e3576379467d795bb05268533e3a2ac082`; and
+- SeedSignerOS `0bf1dc92519906c7db265055abfb07e0ee344342`.
+
+Gate 5 intentionally rejects a foreign partial signature when its supplied
+PSBT lacks enough UTXO context to verify it. Pre-Gate-5 durable sessions that
+already contain an invalid foreign partial now fail closed on load; their
+resulting PSBTs were already uncombinable downstream.
+
+The previous private checkpoint remains immutable evidence:
 
 - Filename: `anti-exfil-private-review-bundle-v1.zip`
+- Reference commit: `dd7b2b26ece992f74daeb3095aa148fc278176ea`
 - Bytes: `4686310`
 - SHA-256: `08efdaa268e83e0bf6bd12ed5ae248465396a2f2c885c0441fe08345c6042651`
-- ZIP entries: `106`
-- Internally manifested payloads: `104`
-- Dirty candidate: `false`
 
-Two independently named builds were byte-identical. ZIP CRC verification and
-all internal payload hashes passed.
+It is superseded because it predates the V12 remediation gates and omitted the
+mixed-provenance JSON fixture. Do not supply v1 as the current review input.
 
-During preparation of this public source repository, a clean-room test run
-found that the archive included the mixed-provenance test but omitted its public
-deterministic JSON fixture. The private checkpoint remains immutable and its
-hash remains valid, but it is superseded for public delivery.
-
-Do not publish the checkpoint ZIP as the public release asset. Build a corrected
-self-contained archive from a clean commit of this repository with
-`scripts/build_private_review_bundle.py`. The corrected builder includes
-`fixtures/protocol-v1-mixed-provenance-vector.json` and its byte-pinned
-`fixtures/protocol-v1-mixed-provenance.psbt`, and writes an adjacent SHA-256
-sidecar. Release archives are deliberately not tracked as opaque Git binaries.
+This is a reviewed experimental prototype handoff, not a production security
+audit or a recommendation to use protected signing with mainnet funds.

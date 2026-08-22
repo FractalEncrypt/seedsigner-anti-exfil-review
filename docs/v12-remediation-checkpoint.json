@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-08-22",
+  "scope": "V12 findings 247985 through 248002, Gates 1 through 5",
+  "status": "independently_reviewed_and_linux_ci_green",
+  "reference": {
+    "commit": "f2dc199c08d3b1bfb444ab74e080aec41b6060cd",
+    "tag": "anti-exfil-gate5-tested-2026-08-22",
+    "tag_object": "d541733e5240a40da5bcf24555b368e3b743dfe0",
+    "hub_suite": {"total": 88, "passed": 85, "skipped": 3, "failed": 0},
+    "hub_suite_note": "tagged SeedSigner adapter active; three native-library tests skipped because the pinned DLL was not supplied"
+  },
+  "drongo": {
+    "commit": "bb691c7d77290933b3f7d6c411556c1524a29d98",
+    "tag": "anti-exfil-review-v1-gate5-tested-2026-08-22",
+    "tag_object": "bbf55363c3c53397d1e79c863bf2a41941d3705d",
+    "ci_only_commit": "a1a9420e774d7b7fa893b6372ef6022fc0df6cc6",
+    "linux_ci_run": "https://github.com/FractalEncrypt/drongo/actions/runs/32583635165",
+    "linux_ci_result": "success",
+    "windows_focused": {"total": 53, "passed": 52, "skipped": 1, "failed": 0},
+    "windows_full": {"total": 484, "passed": 481, "skipped": 1, "failed": 2},
+    "known_windows_failures": [
+      "ApplicationDirTest.testXdgDirs",
+      "ApplicationDirTest.testXdgAppliedToMacos"
+    ]
+  },
+  "sparrow": {
+    "commit": "f003bfa9575bc7c67b337f8785b1479fd092641a",
+    "tag": "anti-exfil-review-v1-gate5-tested-2026-08-22",
+    "tag_object": "01c3a2aa31c4b8edac8ec90a80587669f4ebe12c",
+    "drongo_submodule": "bb691c7d77290933b3f7d6c411556c1524a29d98",
+    "ci_only_commit": "c4c086206016d4a388fbe409972d8564c7811612",
+    "linux_ci_run": "https://github.com/FractalEncrypt/sparrow/actions/runs/32583640662",
+    "linux_ci_result": "success",
+    "windows_focused": {"total": 16, "passed": 16, "skipped": 0, "failed": 0},
+    "windows_full": {"total": 156, "passed": 152, "skipped": 0, "failed": 4},
+    "known_windows_failures": [
+      "Caravan export CRLF/LF comparison",
+      "Coldcard export CRLF/LF comparison 1",
+      "Coldcard export CRLF/LF comparison 2",
+      "Specter DIY export CRLF/LF comparison"
+    ]
+  },
+  "unchanged_implementation_inputs": {
+    "seedsigner": "aa8395e3576379467d795bb05268533e3a2ac082",
+    "seedsigner_os": "0bf1dc92519906c7db265055abfb07e0ee344342"
+  },
+  "fixture_sha256": {
+    "protocol-v1-multislot-vectors.json": "bafd399a342e1be965666d4efca970b50218a2fb2e2820c418ad64686bac1bb3",
+    "protocol-v1-semantic-psbt-vector.json": "f28d572d1ae5d2060eeb52ca9814f37ce5d54258811d3af18b78c41744e23a4e",
+    "protocol-v1-mixed-provenance-vector.json": "dc350cc2f4aaff593ea8d5a9b0145757d9c0370da9ac3db31228b1441fe8c2d1",
+    "protocol-v1-negative-vectors.json": "f5b9d3d21210173bb35da0a0de15705b3bc1d3a3d8ab42a14183c2cd7ee97599",
+    "regeneration": "all three generated canonical vector files were byte-identical to the pinned fixtures"
+  },
+  "independent_review": {
+    "ledger": "docs/security-review-findings.md",
+    "phases": "10-15",
+    "gate5_result": "approved_all_12_properties_and_9_questions"
+  },
+  "release_notes": [
+    "A foreign partial signature lacking sufficient supplied UTXO context is rejected fail-closed.",
+    "A pre-Gate-5 durable session containing an invalid foreign partial signature now fails closed on load; its downstream output was already uncombinable."
+  ]
+}

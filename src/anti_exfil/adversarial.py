@@ -82,3 +82,73 @@ class SelectiveAbortJournal:
         if session_id != self.session_id:
             raise AntiExfilError(ErrorCode.RETRY_CONFLICT, "fresh session after selective abort is forbidden")
         self.accept_openings(transcript)
+
+
+@dataclass(frozen=True, slots=True)
+class AbortEvent:
+    session_id: bytes
+    reason: str
+
+
+@dataclass(slots=True)
+class WalletAbortJournal:
+    """Implementation-independent wallet-wide abort-state reference model."""
+    events: dict[bytes, AbortEvent]
+
+    def __init__(self) -> None:
+        self.events = {}
+
+    def digest(self) -> bytes:
+        encoded = bytearray(b"AEXJ-REFERENCE-V1")
+        for event in self.events.values():
+            reason = event.reason.encode("utf-8")
+            encoded.extend(len(event.session_id).to_bytes(2, "big"))
+            encoded.extend(event.session_id)
+            encoded.extend(len(reason).to_bytes(2, "big"))
+            encoded.extend(reason)
+        return hashlib.sha256(encoded).digest()
+
+    def create_session(self, session_id: bytes, *, acknowledge_abort_history: bool = False) -> AbortBoundSession:
+        if not session_id:
+            raise AntiExfilError(ErrorCode.STATE_INVALID, "session ID is required")
+        if self.events and not acknowledge_abort_history:
+            raise AntiExfilError(ErrorCode.RETRY_CONFLICT, "abort history requires explicit acknowledgement")
+        return AbortBoundSession(self, session_id, self.digest())
+
+    def record(self, session_id: bytes, reason: str) -> AbortEvent:
+        if not session_id or not reason:
+            raise AntiExfilError(ErrorCode.STATE_INVALID, "abort event context is required")
+        existing = self.events.get(session_id)
+        if existing is not None:
+            return existing
+        event = AbortEvent(bytes(session_id), reason)
+        self.events[event.session_id] = event
+        return event
+
+
+@dataclass(slots=True)
+class AbortBoundSession:
+    journal: WalletAbortJournal
+    session_id: bytes
+    accepted_journal_digest: bytes
+    transcript_digest: bytes | None = None
+    host_reveal_accepted: bool = False
+
+    def accept_host_reveal(self, transcript: bytes) -> None:
+        digest = hashlib.sha256(transcript).digest()
+        if self.transcript_digest is not None and digest != self.transcript_digest:
+            raise AntiExfilError(ErrorCode.RETRY_CONFLICT, "opening retry changed the transcript")
+        if self.host_reveal_accepted:
+            return
+        if self.journal.digest() != self.accepted_journal_digest:
+            raise AntiExfilError(ErrorCode.RETRY_CONFLICT, "abort history changed after session creation")
+        self.transcript_digest = digest
+        self.host_reveal_accepted = True
+
+    def record_post_reveal_failure(self, reason: str) -> AbortEvent:
+        if not self.host_reveal_accepted:
+            raise AntiExfilError(ErrorCode.STATE_INVALID, "host reveal was not accepted")
+        return self.journal.record(self.session_id, reason)
+
+    def reject_signer_data(self) -> AbortEvent:
+        return self.journal.record(self.session_id, "SIGNATURE_REJECTED")

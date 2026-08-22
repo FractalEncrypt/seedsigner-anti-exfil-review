@@ -41,6 +41,9 @@ SEEDSIGNER_SRC = Path(
 FIXTURE = (
     Path(__file__).resolve().parents[2] / "fixtures" / "protocol-v1-multislot-vectors.json"
 )
+NEGATIVE_FIXTURE = (
+    Path(__file__).resolve().parents[2] / "fixtures" / "protocol-v1-negative-vectors.json"
+)
 
 
 class ProtocolV1CodecTest(unittest.TestCase):
@@ -180,6 +183,74 @@ class ProtocolV1CodecTest(unittest.TestCase):
         bad_slot = replace(message.slots[0], sighash_type=0x81)
         with self.assertRaises(AntiExfilError):
             replace(message, slots=(bad_slot, *message.slots[1:])).encode()
+
+    def test_openings_must_be_unique_per_signer_key(self):
+        openings = self.message(Stage.SIGNER_OPENINGS)
+
+        reused_for_same_key = replace(
+            openings.slots[1],
+            signer_pubkey=openings.slots[0].signer_pubkey,
+            opening=openings.slots[0].opening,
+        )
+        same_key_slots = tuple(
+            sorted(
+                (openings.slots[0], reused_for_same_key, *openings.slots[2:]),
+                key=lambda slot: slot.identifier,
+            )
+        )
+        with self.assertRaises(AntiExfilError) as repeated:
+            replace(openings, slots=same_key_slots).encode()
+        self.assertEqual(repeated.exception.code, ErrorCode.OPENING_MISMATCH)
+
+        distinct_for_same_key = replace(
+            openings.slots[1],
+            signer_pubkey=openings.slots[0].signer_pubkey,
+            opening=signer_opening(
+                self.SECRETS[0],
+                openings.slots[1].message_hash,
+                openings.slots[1].commitment,
+            ),
+        )
+        distinct_same_key_slots = tuple(
+            sorted(
+                (openings.slots[0], distinct_for_same_key, *openings.slots[2:]),
+                key=lambda slot: slot.identifier,
+            )
+        )
+        replace(openings, slots=distinct_same_key_slots).encode()
+
+        reused_across_different_keys = replace(
+            openings.slots[1], opening=openings.slots[0].opening
+        )
+        replace(
+            openings,
+            slots=(openings.slots[0], reused_across_different_keys, *openings.slots[2:]),
+        ).encode()
+
+    def test_shared_host_negative_vectors(self):
+        cases = json.loads(NEGATIVE_FIXTURE.read_text(encoding="utf-8"))["cases"]
+        self.assertEqual(
+            ["same-signer-opening-reused-across-inputs"],
+            [case["name"] for case in cases],
+        )
+        for case in cases:
+            with self.subTest(case=case["name"]):
+                encoded = bytes.fromhex(case["message_hex"])
+                self.assertEqual(case["message_length"], len(encoded))
+                self.assertEqual(case["message_sha256"], hashlib.sha256(encoded).hexdigest())
+                with self.assertRaises(AntiExfilError) as rejected:
+                    decode_message(encoded)
+                self.assertEqual(case["expected_error"], rejected.exception.code.name)
+                package = bytes.fromhex(case["package_hex"])
+                self.assertEqual(case["package_length"], len(package))
+                self.assertEqual(
+                    case["package_sha256"], hashlib.sha256(package).hexdigest()
+                )
+                with self.assertRaises(AntiExfilError) as package_rejected:
+                    ProtocolV1Package.decode(package)
+                self.assertEqual(
+                    case["expected_error"], package_rejected.exception.code.name
+                )
 
     def test_stage_specific_fields_are_exact(self):
         commit = self.message(Stage.HOST_COMMIT)

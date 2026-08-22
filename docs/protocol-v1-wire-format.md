@@ -201,6 +201,11 @@ Record length: 138 bytes.
 The AEXT envelope MUST NOT contain a PSBT. Every requested slot has exactly one
 opening. Signatures and host reveals are forbidden. The coordinator validates
 and atomically accepts the complete opening set before emitting message 3.
+For every canonical signer public key, all opening encodings in the complete
+slot set MUST be distinct. A repeated opening under the same signer key is an
+`OPENING_MISMATCH` and the coordinator MUST reject the entire message before
+returning any host randomness. The uniqueness scope is per signer key, not
+global across unrelated signer keys.
 
 ### 7.3 Message 3: `HOST_REVEAL` (`stage = 3`)
 
@@ -260,6 +265,18 @@ with identical bytes. The coordinator MAY explicitly cancel the unused session
 and start a new one because no host reveal has been disclosed. Cancellation is
 recorded as pre-reveal and is not a selective-abort event.
 
+Session creation MUST atomically bind the durable session to the exact
+wallet-key abort-journal state accepted at creation. The journal decision and
+session creation MUST be serialized under one wallet-journal lock; when both a
+journal and session lock are held, the order is journal then session. An
+implementation that permits explicit acknowledgement of existing abort history
+MUST store a collision-resistant digest of that accepted journal snapshot in
+the session. Immediately before the first message-3 reveal is persisted or
+returned, the coordinator MUST recheck the journal under the same lock order.
+Any newly recorded abort permanently invalidates that pre-reveal session. An
+exact retry after message 3 was already persisted may return only the cached,
+byte-identical reveal and does not repeat this first-disclosure authorization.
+
 After accepting the complete message-2 opening set:
 
 - the coordinator MUST persist the session before displaying message 3;
@@ -276,6 +293,14 @@ to obtain and verify the complete message 4 is a post-reveal abort. The
 coordinator MUST record it durably against the wallet-key identity, retain the
 original session for exact retry, and warn the user that repeatedly abandoning
 sessions and issuing fresh challenges can create a selective-abort channel.
+
+A structural, transcript-binding, or cryptographic rejection attributable to
+signer-supplied message 2 or message 4 MUST record `SIGNATURE_REJECTED` before
+the rejection is returned. Wrong-stage calls, changed exact retries, invalid
+host state, local I/O failures, and implementation faults MUST fail closed but
+MUST NOT be reclassified as signer aborts. The journal stores at most one event
+per `session_id`: the first event, reason, and timestamp are retained, and
+repeated recording is an idempotent no-op.
 
 Replacing the device or restoring the same keys does not reset that history.
 An implementation may define escalating UI thresholds, but it MUST NOT erase,

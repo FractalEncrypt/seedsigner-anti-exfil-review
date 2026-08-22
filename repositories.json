@@ -1,6 +1,6 @@
 {
-  "schema": 1,
-  "recorded_at": "2026-08-20",
+  "schema": 2,
+  "recorded_at": "2026-08-22",
   "protocol": "AEXB-v1-multislot",
   "components": [
     {
@@ -8,18 +8,21 @@
       "fork": "https://github.com/FractalEncrypt/drongo",
       "upstream": "https://github.com/sparrowwallet/drongo",
       "upstream_base": "a47c2b3f58d7cedd504b2bd07833708866614216",
-      "tested_commit": "1bbafd94f08fd9105e20be30a6fdfe9a091fb675",
-      "tested_tag": "anti-exfil-review-v1-tested-2026-08-20",
-      "tag_object": "de20707f09ef9886a6577f64ca87ecbc54bab56c"
+      "tested_commit": "bb691c7d77290933b3f7d6c411556c1524a29d98",
+      "tested_tag": "anti-exfil-review-v1-gate5-tested-2026-08-22",
+      "tag_object": "bbf55363c3c53397d1e79c863bf2a41941d3705d",
+      "linux_ci": "https://github.com/FractalEncrypt/drongo/actions/runs/32583635165"
     },
     {
       "name": "Sparrow",
       "fork": "https://github.com/FractalEncrypt/sparrow",
       "upstream": "https://github.com/sparrowwallet/sparrow",
       "upstream_base": "b99b880c9fe75565921af9ef438d6314fdd73d6f",
-      "tested_commit": "7674cecde48335e0b55454f6fa53c8187a459932",
-      "tested_tag": "anti-exfil-review-v1-tested-2026-08-20",
-      "tag_object": "a26885ed19bcd6e795b59df6f5cb7a82d2b68bb1"
+      "tested_commit": "f003bfa9575bc7c67b337f8785b1479fd092641a",
+      "tested_tag": "anti-exfil-review-v1-gate5-tested-2026-08-22",
+      "tag_object": "01c3a2aa31c4b8edac8ec90a80587669f4ebe12c",
+      "drongo_submodule": "bb691c7d77290933b3f7d6c411556c1524a29d98",
+      "linux_ci": "https://github.com/FractalEncrypt/sparrow/actions/runs/32583640662"
     },
     {
       "name": "SeedSigner",
@@ -40,10 +43,14 @@
       "tag_object": "1575208220d8e3cf7ffbded8ca8765a5b27e9aaf"
     }
   ],
-  "frozen_bundle": {
+  "gate5_reference": {
+    "commit": "f2dc199c08d3b1bfb444ab74e080aec41b6060cd",
+    "tag": "anti-exfil-gate5-tested-2026-08-22",
+    "tag_object": "d541733e5240a40da5bcf24555b368e3b743dfe0"
+  },
+  "superseded_bundle": {
     "reference_commit": "dd7b2b26ece992f74daeb3095aa148fc278176ea",
     "filename": "anti-exfil-private-review-bundle-v1.zip",
-    "bytes": 4686310,
     "sha256": "08efdaa268e83e0bf6bd12ed5ae248465396a2f2c885c0441fe08345c6042651"
   }
 }

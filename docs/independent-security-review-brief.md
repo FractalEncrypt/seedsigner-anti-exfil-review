@@ -1,6 +1,6 @@
 # Independent security and cryptographic review brief
 
-Status: frozen reviewed prototype inputs
+Status: independently reviewed Gate 5 experimental prototype inputs
 
 Protocol: experimental interactive ECDSA anti-exfil v1 (`AEXB-v1-multislot`)
 
@@ -38,8 +38,8 @@ implementation defects, hardening recommendations, and accepted residual risk.
 
 | Component | Public repository | Branch/tag | Reviewed commit |
 | --- | --- | --- | --- |
-| Drongo | `https://github.com/FractalEncrypt/drongo` | `anti-exfil-review-v1-tested-2026-08-20` | `1bbafd94f08fd9105e20be30a6fdfe9a091fb675` |
-| Sparrow | `https://github.com/FractalEncrypt/sparrow` | `anti-exfil-review-v1-tested-2026-08-20` | `7674cecde48335e0b55454f6fa53c8187a459932` |
+| Drongo | `https://github.com/FractalEncrypt/drongo` | `anti-exfil-review-v1-gate5-tested-2026-08-22` | `bb691c7d77290933b3f7d6c411556c1524a29d98` |
+| Sparrow | `https://github.com/FractalEncrypt/sparrow` | `anti-exfil-review-v1-gate5-tested-2026-08-22` | `f003bfa9575bc7c67b337f8785b1479fd092641a` |
 | SeedSigner | `https://github.com/FractalEncrypt/FractalEncrypt_seedsigner` | `anti-exfil-review-v1` / `anti-exfil-review-v1-tested-2026-08-14` | `aa8395e3576379467d795bb05268533e3a2ac082` |
 | SeedSignerOS | `https://github.com/FractalEncrypt/seedsigner-os` | `anti-exfil-review-v1` / `anti-exfil-review-v1-tested-2026-08-12` | `0bf1dc92519906c7db265055abfb07e0ee344342` |
 
@@ -245,10 +245,10 @@ future work. No unsupported case may silently fall back to ordinary signing.
 
 ## 12. Review closure
 
-The signature-scoped provenance remediation and the R-F1 raw-transaction
-lifecycle correction received focused diff review through Sparrow `7674cec`
-and Drongo `1bbafd94`; the completed ledger is included as
-`security-review-findings.md`. Future findings must be fixed on new commits
-without moving these immutable tested tags. A production or mainnet
+The signature-scoped provenance remediation, R-F1 raw-transaction lifecycle
+correction, and V12 Gates 1–5 received independent focused diff review through
+Sparrow `f003bfa` and Drongo `bb691c7`. The completed Phase 1–15 ledger and each
+Gate design/review brief are included. Future findings must be fixed on new
+commits without moving these immutable tested tags. A production or mainnet
 recommendation still requires explicit reviewer sign-off; this completed
 prototype review is not a production security audit.

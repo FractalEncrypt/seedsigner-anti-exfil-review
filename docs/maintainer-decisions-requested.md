@@ -111,12 +111,32 @@ No decision below permits silent fallback to ordinary signing.
     add the differential negative vectors to the shared corpus and port the
     §10 mutation list into `AntiExfilCodecTest` — mechanical, high value for
     upstreaming.
+15. **V12 Gate 5 trusted-storage and PSBT compatibility dispositions.**
+    Evidence: `#247987` and `#247988` correctly demonstrate that authentic
+    coordinator state and abort history can be rolled back or erased, but the
+    actor controls the decision-5 trusted filesystem and no same-domain file
+    can provide monotonic freshness. `#247990` correctly notes plaintext rho
+    and inherited Windows ACLs; supported deployment therefore requires an
+    owner-restricted state directory and does not claim encryption at rest.
+    `#247996` identifies a preventable availability defect: invalid foreign
+    partial signatures could survive a protected ceremony even though valid
+    foreign multisig partials must be preserved. Drongo now verifies every
+    existing partial at canonical anti-exfil ingestion. `#247997` is the
+    standard BIP174 witness-only trust boundary: supplied amount/script are
+    committed by BIP143 but cannot be authenticated to the outpoint without a
+    full previous transaction or external history. Recommendation: accept the
+    rollback/ACL/witness-only residuals with the recovery and deployment
+    contract in `v12-gate5-trust-contracts-design.md`; retain QR-compatible
+    witness-only inputs; reject invalid foreign partials before session
+    creation; revisit external monotonic storage and encryption/ACL provisioning
+    only as separately designed features.
 
 ## Disposition summary
 
 - **Blocking before wider release:** decision 8 (medium defect fix).
 - **Spec/documentation decisions:** 2, 3, 9, 10.
 - **Hardening batches (can be scheduled):** 11, 12, 13, 14.
+- **Trusted-storage/PSBT compatibility contract:** 15.
 - **Already accepted as residual risk under the stated threat model:**
   P2-F1 (Python-side secret retention during ceremony), P2-F3/P5-F1
   (plaintext rho at rest, pending decision 5), P5-F2/P5-F3.

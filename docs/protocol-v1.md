@@ -104,6 +104,12 @@ The signer sends `opening` in protocol message 2. It does not send an ECDSA sign
 
 The opening parser must accept only canonical 33-byte compressed SEC encodings of valid, non-infinity secp256k1 points.
 
+Within one complete message-2 slot set, opening points MUST be unique among
+slots that use the same canonical signer public key. Reusing one opening for
+the same signing key across different inputs is rejected before the host
+reveals any `rho`. Opening equality across different signer public keys is not
+prohibited by this rule.
+
 ### 5.3 Host reveal
 
 After validating and accepting the expected opening set, the host sends the original `rho` in protocol message 3.
@@ -211,6 +217,21 @@ After the host accepts an opening for a slot:
 The host commitment is included as RFC6979 additional data specifically so the signer can deterministically regenerate a unique base nonce for the same message and commitment without persisting `k0`.
 
 A post-opening abort must be reported to the user and recorded by the coordinator. The coordinator must not conceal it by constructing a slightly different transaction or generating a new `rho`. Replacing hardware while retaining the same wallet keys does not reset the cryptographic concern. Repeated events require an escalating recommendation to migrate funds to fresh independently generated keys.
+
+The wallet-wide abort journal is a live revocation boundary, not a creation-time
+advisory check. A session binds the exact acknowledged journal snapshot at
+creation and must revalidate that binding immediately before its first host
+reveal. Creation, reveal authorization, and abort recording serialize on the
+journal with journal-before-session lock order. A later abort revokes every
+older session that has not yet disclosed message 3. Sessions that already
+persisted message 3 may return only that cached reveal and may still complete
+the same transcript.
+
+Rejection of signer-supplied protocol data is itself durable state:
+signer-attributable structural, binding, or signature failures record one
+`SIGNATURE_REJECTED` event for the session. The first event wins and repeated
+recording is idempotent. Failures attributable to host state, I/O, call order,
+or changed exact retries are not mislabeled as signer aborts.
 
 ## 9. Compatibility tests required before implementation use
 

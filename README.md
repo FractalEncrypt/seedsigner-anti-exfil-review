@@ -18,10 +18,12 @@ not duplicate their source trees and is not a monorepo.
 
 ## Status
 
-The reviewed prototype inputs were frozen on 2026-08-20. Automated suites,
-public Linux CI, deterministic vectors, Pi Zero image gates, and unfunded or
-Testnet4 physical workflows have been exercised. Signature-scoped provenance
-and raw-transaction lifecycle remediations received focused diff review.
+The current reviewed prototype inputs were frozen on 2026-08-22. Automated
+suites, public Linux CI, deterministic vectors, Pi Zero image gates, and
+unfunded or Testnet4 physical workflows have been exercised. Signature-scoped
+provenance, raw-transaction lifecycle, repeated-opening, abort-state,
+durability/bounds, API-contract, and PSBT trust-boundary remediations received
+independent focused review.
 
 This is a reviewed experimental prototype, not a production security audit or
 a recommendation to use protected signing with mainnet funds.
@@ -35,6 +37,7 @@ a recommendation to use protected signing with mainnet funds.
 5. [Security-review findings](docs/security-review-findings.md)
 6. [Maintainer decisions](docs/maintainer-decisions-requested.md)
 7. [Frozen bundle record](FROZEN-BUNDLE.md)
+8. [V12 remediation verification plan](docs/v12-findings-verification-plan.md)
 
 The normative reading order is:
 
