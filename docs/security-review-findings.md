@@ -1966,3 +1966,224 @@ pinned implementation and threat model without overstating any guarantee.
 Per the hold point, replacement tested tags and the reviewer-bundle
 freeze remain gated on public Linux CI. This completes independent review
 of all V12 findings (`#247986`–`#248002`).
+
+---
+
+## Phase 16 — 0x follow-up report and GPT correction review (2026-08-22)
+
+Scope: independently verify 0x's follow-up report and GPT's response at
+the pinned revisions. Sparrow working tree was at `c4c0862`
+(`codex/v12-gate5-trust-contracts-ci`); `f003bfa` is an ancestor and the
+only delta is `.github/workflows/gate5-ci.yml`, so every source read is
+pin-valid for `f003bfa`. Drongo at `bb691c7` (Gate 5 head). All handler
+bodies 0x could not retrieve were line-read locally.
+
+### GPT's F-R1 escape claim — CONFIRMED at source
+
+The REQUIRED-policy escape through final-transaction export routes is
+real in the pinned code:
+
+- `HeadersController.finalizePSBT()` evaluates `currentProvenanceStatus()`
+  only **before** `finalise()`; on PERMITTED it finalizes and posts
+  `PSBTFinalizedEvent`.
+- `psbtFinalized(PSBTFinalizedEvent)` does **not** call
+  `applyProvenanceQuarantine()`; it flips `signButtonBox` →
+  `broadcastButtonBox` (making View Final / Broadcast / Show QR / Save
+  visible) and runs connect-to-broadcast logic only. A complete grep
+  confirms `applyProvenanceQuarantine()` has exactly four call sites
+  (initializeView ×2, signed-PSBT import, raw-tx wallet selection) —
+  none post-finalization.
+- FXML wiring: `viewFinalButton→#extractTransaction`,
+  `showTransactionButton→#showTransaction`,
+  `saveFinalButton→#saveFinalTransaction` — none of these handlers
+  re-evaluates provenance; each extracts and displays/writes the final
+  transaction. `TransactionExtractedEvent` subscribers (AppController,
+  TransactionController, InputController, HeadersController) are
+  display-only.
+- `broadcastTransaction()` does recheck `currentProvenanceStatus()` at
+  entry and blocks `REQUIRED_PROOF_MISSING` — so direct in-app broadcast
+  is gated, but QR/hex/file export is not.
+- The evaluator mechanism is exactly as both reports describe:
+  `AntiExfilPolicy.evaluateSignatureProvenance(Wallet, PSBT, proofs)`
+  delegates to the transaction form only when `psbt.isFinalized()`
+  (line 51); the non-finalized form iterates **only**
+  `input.getPartialSignatures()` (line 67), so a finalized input's
+  witness signature (σ_A0) is invisible pre-finalization → PERMITTED;
+  post-finalization `attributeFinalSignature` attributes σ_A0 →
+  `REQUIRED_PROOF_MISSING` (pinned by the existing mixed-provenance
+  test).
+
+Verdict: the FX-1 sequence (ceremony PERMITTED → Finalize → export via
+View/Show/Save without recheck → broadcast elsewhere) is confirmed
+structurally at the pinned source. GPT's escalation to release-blocking
+Medium pending the executed FX-1 controller regression is justified.
+0x's "not exploitable" disposition was over-stated relative to its own
+honestly declared coverage gap (rows 2/6/10); both reviewers converge on
+the same load-bearing regression. Remediation shape confirmed coherent:
+(a) admission-time fail-closed on attributable finalized controlled
+inputs in `enumerateSigningSlots` (tri-implementation flip), plus
+(b) Sparrow defense-in-depth — re-apply quarantine in `psbtFinalized`
+and recheck before every final-transaction export.
+
+### UF-1 key-type correction — verified (Drongo side)
+
+Drongo's `PSBTInput` parse switch has no cases for 0x14/0x15/0x18/0x19;
+the `default:` branch only logs and drops the entry, so any of those
+fields fails the `parseCanonicalV0` canonical round-trip and is rejected
+as `INVALID_MESSAGE`. BIP371 assigns 0x15 = `PSBT_IN_TAP_LEAF_SCRIPT`,
+so 0x's chosen "unknown" type was not unknown to embit; 0x19 is the
+correct test case. The differential conclusion (reference/SeedSigner
+retain 0x19 and accept in canonical position; Drongo drops and rejects —
+host-stricter, safe-direction) survives, with the embit retention side
+per GPT's executed check against pinned embit 0.8.0 rather than left
+conditional.
+
+### Remaining 0x items
+
+- F-R2 closure via the 4/4 pinned-native rerun is sound; the independent
+  rebuild is additional release evidence, not yet performed.
+- F-R3 reclassification to API ergonomics/informational is consistent
+  with the Gate 1–2 journaling analysis (all `recordSignerDataRejection`
+  callers wrap signer-data regions; host faults surface as excluded codes
+  or non-AntiExfilException types).
+- D-1 (UNEXPECTED_RETURN_DATA vs SIGNING_MODE_MISMATCH taxonomy) is real
+  and diagnostic-only; D-2/D-3 are credible low/informational items.
+- QRScanDialog (0x's ⚠ retrieval failure): verified locally to be
+  authority-neutral — a `Dialog<Result>` decoder whose `Result` DTO
+  carries raw `transaction`/`psbt`/`uri` fields with no provenance,
+  signing, or broadcast logic; all gating is in consumers.
+- GPT's four-task review split is sound; isolated per-repo reviews would
+  indeed have missed F-R1, whose consequence only materializes in
+  Sparrow's finalize/export lifecycle.
+
+### Disposition
+
+GPT's two corrections are adopted: F-R1 is **reopened as a credible
+release-blocking Medium** (export-route escape, structurally confirmed,
+pending the executed FX-1 controller regression), and the Decision-9
+matrix is updated to the corrected 0x19 case. The QRScanDialog and
+controller-tail retrieval gaps are now closed by local line-reads;
+remaining unexecuted items are the FX-1 regression itself, the embit
+0x19 one-liner (already executed per GPT), and the previously listed
+release gates (public Linux CI, independent crypto review of the pinned
+secp256k1-zkp S2C binding, reproducible-build review, hardware runbook).
+
+---
+
+## Phase 17 — F-R1 finalized-controlled-input remediation review (2026-08-22)
+
+Inputs: `docs/fr1-finalized-controlled-input-implementation-review-brief.md`.
+Ranges: Reference `af73801..d879f98` (6 files, +178/-6; includes the
+Phase 16 ledger entry and Decision 16), Drongo `a1a9420..e9a692a`
+(2 files, +23/-1; base differs from Gate 5 head `bb691c7` only by the
+reviewed CI-workflow commit), SeedSigner `aa8395e..214793d` (2 files,
++20/-1), Sparrow `c4c0862..5b74d94` (3 files, +33/-18; Drongo gitlink
+pins exactly `e9a692a4ac4eb14901101cd9324e2275a29897cf`). All four
+working trees at their review heads; sources read directly. Validation
+counts taken as ledger evidence; failure tails match the known Windows
+environment/CRLF cases.
+
+### Reviewer questions
+
+1. **Every ceremony path reaches the admission rule — YES.** The rule
+   lives at the sole slot-enumeration boundary of each implementation
+   (reference `enumerate_signing_slots` *and*
+   `enumerate_signing_slots_for_fingerprint`, Drongo
+   `enumerateSigningSlots`, SeedSigner `derive_signing_contexts`).
+   Coordinator creation enumerates before randomness/filesystem; reload
+   revalidates through the same enumeration, so a pre-fix durable session
+   with an attributable finalized input now fails closed on load —
+   intended, since that shape is the finding. SeedSigner rejects before
+   any response is created, so no opening or reveal can be returned.
+2. **Attribution is narrow — YES.** The rejection sits inside the
+   attributable-key branch (fingerprint match + derived-pubkey equality),
+   after the partial-signature check. All three new tests pin both sides:
+   attributable finalized input → whole-request rejection
+   (`UNEXPECTED_RETURN_DATA` in reference/Drongo, `SIGNING_MODE_MISMATCH`
+   in SeedSigner, preserving the known D-1 taxonomy); the same input
+   with the fingerprint swapped to `deadbeef` is skipped and the honest
+   slots `[1,2,2,3]` still enumerate. No global ban on foreign finalized
+   inputs.
+3. **No finalization route escapes the second evaluation — YES.**
+   `finalizePSBT` gates via `requirePermittedProvenance("finalized")`
+   before mutation, finalizes, posts `PSBTFinalizedEvent`, then calls
+   `requirePermittedProvenance("used after finalization")` again;
+   `psbtFinalized` reapplies `applyProvenanceQuarantine()` *after*
+   switching to the final-controls box (correct order). View Final,
+   Show QR, Save, and Broadcast each invoke the common gate at handler
+   entry (FXML `onAction` wiring verified).
+4. **No bypass of `requirePermittedProvenance` — YES, by design shift.**
+   Enforcement moved from button state to handler entry: the gate does a
+   fresh evaluation, reapplies quarantine on failure, and returns a
+   controlled error. Stale enabled buttons (e.g., the wallet-selection
+   handler re-enabling `finalizeTransaction`/`signButton`) cannot bypass
+   it — the handler refuses and re-quarantines. The post-finalization
+   call in `finalizePSBT` discards its return value intentionally; the
+   side effect (quarantine + dialog) is the enforcement. Minor: a short
+   comment there would help future readers.
+5. **Second evaluation sees final signatures — YES.** Post-finalization,
+   `psbt.isFinalized()` routes to the transaction-form evaluator with
+   `attributeFinalSignature` (verified in Phase 16); the new test drives
+   a finalized mixed-provenance `TransactionData` through the
+   package-visible `evaluateTransactionProvenance` boundary and asserts
+   `REQUIRED_PROOF_MISSING`, with matching still bound to exact durable
+   proofs.
+6. **No unrelated behavior changed — YES.** Range stats confirm: no
+   provenance-record, session, or wire format changes; no reconstruction,
+   policy-persistence, OPTIONAL, or internal-sweep changes; the
+   reference range additionally corrects Decision 9 to `0x19` and adds
+   Decision 16 (release-blocking until this review passes).
+7. **`0x19` correctness — YES.** Drongo's parse switch has no 0x19 case
+   (dropped → canonical rejection), verified in Phase 16; embit
+   retention per GPT's executed check; the documented differential is
+   host-stricter, safe-direction.
+8. **Additional JavaFX tests — NOT load-bearing.** The common-gate design
+   collapses per-handler coverage: every final-transaction handler's
+   first statement is the gate, and the boundary is regression-tested.
+   A headless JavaFX test would pin the static FXML wiring but would not
+   catch a future handler added without the gate either; recommend it as
+   optional hardening, not a tag blocker.
+
+### Comments
+
+- The two-invariant structure (protocol admission + Sparrow handler-level
+  recheck) is exactly the remediation shape Phase 16 called for, and the
+  spec wording divergence from F-R1 is closed in both specification
+  documents.
+- Pre-fix durable sessions bearing an attributable finalized input now
+  fail closed on reload — worth one line in release notes.
+- The SeedSigner change is validation-only as claimed; no transport,
+  view, native-backend, or SeedSignerOS files moved.
+
+### Disposition
+
+**F-R1 remediation approved against all eight reviewer questions.** Per
+the hold points: Gate 5 tags remain immutable; replacement tested tags
+and the reviewer-bundle refreeze stay gated on public Linux CI.
+
+### Release-gate closure
+
+Public CI subsequently passed at every changed implementation head:
+
+- Drongo `e9a692a4ac4eb14901101cd9324e2275a29897cf`, run
+  `32599665572`: focused POSIX/anti-exfil regressions and complete Linux
+  suite passed;
+- SeedSigner `214793df4f51466179b792420921b8cdd8d0c1ac`, run
+  `32599594490`: Python 3.10 and 3.12 jobs passed; and
+- Sparrow `5b74d94637516aab6d1c79a2e3a3c13c1347b3ea`, run
+  `32599668532`: complete Linux suite under Xvfb passed.
+
+New annotated replacement tags bind those exact reviewed source commits:
+
+- reference `anti-exfil-finalized-input-tested-2026-08-22` -> `d879f98`;
+- Drongo `anti-exfil-review-v1-finalized-input-tested-2026-08-22` ->
+  `e9a692a`;
+- SeedSigner `anti-exfil-review-v1-finalized-input-tested-2026-08-22` ->
+  `214793d`; and
+- Sparrow `anti-exfil-review-v1-finalized-input-tested-2026-08-22` ->
+  `5b74d94`, pinning Drongo `e9a692a` exactly.
+
+The earlier tags remain unchanged as immutable evidence. SeedSignerOS remains
+at `anti-exfil-review-v1-tested-2026-08-12` / `0bf1dc9`; the validation-only
+SeedSigner change did not require an OS or physical-image rebuild. The public
+CI and immutable-tag hold points are closed.

@@ -14,10 +14,10 @@ Verify the outer SHA-256 supplied separately, preserve the original ZIP, and
 then verify every internal file before running code:
 
 ```sh
-sha256sum seedsigner-anti-exfil-review-bundle-v1.2.zip
+sha256sum anti-exfil-private-review-bundle-v1.zip
 mkdir anti-exfil-reference
 cd anti-exfil-reference
-unzip ../seedsigner-anti-exfil-review-bundle-v1.2.zip
+unzip ../anti-exfil-private-review-bundle-v1.zip
 sha256sum --check SHA256SUMS.txt
 ```
 
@@ -29,19 +29,18 @@ commit and tag.
 
 ```sh
 cd ..
-git clone --branch anti-exfil-review-v1-tested-2026-08-14 \
+git clone --branch anti-exfil-review-v1-finalized-input-tested-2026-08-22 \
   https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git seedsigner
-git clone --recursive --branch anti-exfil-review-v1-gate5-tested-2026-08-22 \
+git clone --recursive --branch anti-exfil-review-v1-finalized-input-tested-2026-08-22 \
   https://github.com/FractalEncrypt/sparrow.git sparrow
-git clone --branch anti-exfil-review-v1-gate5-tested-2026-08-22 \
+git clone --branch anti-exfil-review-v1-finalized-input-tested-2026-08-22 \
   https://github.com/FractalEncrypt/drongo.git drongo
 git clone --recursive --branch anti-exfil-review-v1-tested-2026-08-12 \
   https://github.com/FractalEncrypt/seedsigner-os.git seedsigner-os
 
-test "$(git -C seedsigner rev-parse HEAD)" = aa8395e3576379467d795bb05268533e3a2ac082
-test "$(git -C sparrow rev-parse HEAD)" = f003bfa9575bc7c67b337f8785b1479fd092641a
-test "$(git -C drongo rev-parse HEAD)" = bb691c7d77290933b3f7d6c411556c1524a29d98
-test "$(git -C sparrow rev-parse HEAD:drongo)" = bb691c7d77290933b3f7d6c411556c1524a29d98
+test "$(git -C seedsigner rev-parse HEAD)" = 214793df4f51466179b792420921b8cdd8d0c1ac
+test "$(git -C sparrow rev-parse HEAD)" = 5b74d94637516aab6d1c79a2e3a3c13c1347b3ea
+test "$(git -C drongo rev-parse HEAD)" = e9a692a4ac4eb14901101cd9324e2275a29897cf
 test "$(git -C seedsigner-os rev-parse HEAD)" = 0bf1dc92519906c7db265055abfb07e0ee344342
 git -C sparrow submodule status --recursive
 git -C seedsigner-os submodule status --recursive
@@ -75,7 +74,6 @@ files and internal hashes:
 ```sh
 python scripts/generate_protocol_v1_vectors.py
 python scripts/generate_protocol_v1_semantic_vectors.py
-python scripts/generate_protocol_v1_negative_vectors.py
 ```
 
 The extracted archive is not itself a Git checkout, so use `cmp`, `sha256sum`,
@@ -163,21 +161,25 @@ Normal image (must exclude anti-exfil test init services):
 ```sh
 cd ../seedsigner-os
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
-export SS_ARGS='--pi0 --app-repo=https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git --app-commit-id=aa8395e3576379467d795bb05268533e3a2ac082'
+export SS_ARGS='--pi0 --app-repo=https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git --app-commit-id=214793df4f51466179b792420921b8cdd8d0c1ac'
 docker compose up --force-recreate --build
 ```
 
 Instrumented physical-test image:
 
 ```sh
-export SS_ARGS='--pi0 --anti-exfil-test --app-repo=https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git --app-commit-id=aa8395e3576379467d795bb05268533e3a2ac082'
+export SS_ARGS='--pi0 --anti-exfil-test --app-repo=https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git --app-commit-id=214793df4f51466179b792420921b8cdd8d0c1ac'
 docker compose up --force-recreate --build
 ```
 
-The physically tested Pi Zero instrumented image was
+The last physically tested Pi Zero instrumented image was
 `seedsigner_os.aa8395e3576379467d795bb05268533e3a2ac082.pi0.anti-exfil-test.img`,
 52,428,800 bytes, SHA-256
 `05bf333f3342d3b1229ed2565bf6f4492901ad8962251bf5d6e34a63d375d17e`.
+The replacement SeedSigner tag changes only finalized-input semantic
+validation. It passed its automated suite and did not require a new OS image;
+the commands above let a reviewer rebuild the OS boundary with the replacement
+application input if desired.
 Assess reproducibility against the pinned inputs and Buildroot artifacts; do not
 assume the complete image is bit-for-bit reproducible across uncontrolled hosts.
 

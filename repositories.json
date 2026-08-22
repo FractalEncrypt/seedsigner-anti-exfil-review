@@ -1,5 +1,5 @@
 {
-  "schema": 2,
+  "schema": 3,
   "recorded_at": "2026-08-22",
   "protocol": "AEXB-v1-multislot",
   "components": [
@@ -8,30 +8,31 @@
       "fork": "https://github.com/FractalEncrypt/drongo",
       "upstream": "https://github.com/sparrowwallet/drongo",
       "upstream_base": "a47c2b3f58d7cedd504b2bd07833708866614216",
-      "tested_commit": "bb691c7d77290933b3f7d6c411556c1524a29d98",
-      "tested_tag": "anti-exfil-review-v1-gate5-tested-2026-08-22",
-      "tag_object": "bbf55363c3c53397d1e79c863bf2a41941d3705d",
-      "linux_ci": "https://github.com/FractalEncrypt/drongo/actions/runs/32583635165"
+      "tested_commit": "e9a692a4ac4eb14901101cd9324e2275a29897cf",
+      "tested_tag": "anti-exfil-review-v1-finalized-input-tested-2026-08-22",
+      "tag_object": "fb8bc60368eca6ccbe82471e1c7e1524596b883a",
+      "linux_ci": "https://github.com/FractalEncrypt/drongo/actions/runs/32599665572"
     },
     {
       "name": "Sparrow",
       "fork": "https://github.com/FractalEncrypt/sparrow",
       "upstream": "https://github.com/sparrowwallet/sparrow",
       "upstream_base": "b99b880c9fe75565921af9ef438d6314fdd73d6f",
-      "tested_commit": "f003bfa9575bc7c67b337f8785b1479fd092641a",
-      "tested_tag": "anti-exfil-review-v1-gate5-tested-2026-08-22",
-      "tag_object": "01c3a2aa31c4b8edac8ec90a80587669f4ebe12c",
-      "drongo_submodule": "bb691c7d77290933b3f7d6c411556c1524a29d98",
-      "linux_ci": "https://github.com/FractalEncrypt/sparrow/actions/runs/32583640662"
+      "tested_commit": "5b74d94637516aab6d1c79a2e3a3c13c1347b3ea",
+      "tested_tag": "anti-exfil-review-v1-finalized-input-tested-2026-08-22",
+      "tag_object": "50c65866dc570de86d9ee88dc3d4ee6075817b4b",
+      "drongo_submodule": "e9a692a4ac4eb14901101cd9324e2275a29897cf",
+      "linux_ci": "https://github.com/FractalEncrypt/sparrow/actions/runs/32599668532"
     },
     {
       "name": "SeedSigner",
       "fork": "https://github.com/FractalEncrypt/FractalEncrypt_seedsigner",
       "upstream": "https://github.com/SeedSigner/seedsigner",
       "upstream_base": "56637104b90325e1bc47b58f5f5e8154ea56cf37",
-      "tested_commit": "aa8395e3576379467d795bb05268533e3a2ac082",
-      "tested_tag": "anti-exfil-review-v1-tested-2026-08-14",
-      "tag_object": "9511574e2c13e33e47b18c0dbebd1910198c67f6"
+      "tested_commit": "214793df4f51466179b792420921b8cdd8d0c1ac",
+      "tested_tag": "anti-exfil-review-v1-finalized-input-tested-2026-08-22",
+      "tag_object": "1e19267ce6d7f69ab814bd17ba7fb10e1db4871a",
+      "linux_ci": "https://github.com/FractalEncrypt/FractalEncrypt_seedsigner/actions/runs/32599594490"
     },
     {
       "name": "SeedSignerOS",
@@ -43,24 +44,27 @@
       "tag_object": "1575208220d8e3cf7ffbded8ca8765a5b27e9aaf"
     }
   ],
-  "gate5_reference": {
-    "commit": "f2dc199c08d3b1bfb444ab74e080aec41b6060cd",
-    "tag": "anti-exfil-gate5-tested-2026-08-22",
-    "tag_object": "d541733e5240a40da5bcf24555b368e3b743dfe0"
+  "reference": {
+    "commit": "d879f983ad5170f86538b007366fee879c1bfc6a",
+    "tag": "anti-exfil-finalized-input-tested-2026-08-22",
+    "tag_object": "45c183dcf017e1bc5245642783053ef8ab819543"
   },
-  "frozen_bundle": {
-    "source_commit": "8df2d3e21e53043fe3cec8b444c9008027876999",
-    "source_tag": "review-hub-v1.2-2026-08-22",
-    "tag_object": "52a94c082054e8ed049feaf7c6398611b079665c",
-    "filename": "seedsigner-anti-exfil-review-bundle-v1.2.zip",
-    "bytes": 4897532,
-    "entries": 128,
-    "sha256": "7f19ea4f0f315f421c915b3c584707d4a48b0f9f5fce9faf9abcd3bf9fbeca34",
-    "release": "https://github.com/FractalEncrypt/seedsigner-anti-exfil-review/releases/tag/review-hub-v1.2-2026-08-22"
+  "bundle_freeze": {
+    "status": "source-tag-pending-outer-hash",
+    "target_source_tag": "review-hub-v1.3-2026-08-22",
+    "target_filename": "seedsigner-anti-exfil-review-bundle-v1.3.zip"
   },
-  "superseded_bundle": {
-    "reference_commit": "dd7b2b26ece992f74daeb3095aa148fc278176ea",
-    "filename": "anti-exfil-private-review-bundle-v1.zip",
-    "sha256": "08efdaa268e83e0bf6bd12ed5ae248465396a2f2c885c0441fe08345c6042651"
-  }
+  "superseded_bundles": [
+    {
+      "source_commit": "8df2d3e21e53043fe3cec8b444c9008027876999",
+      "source_tag": "review-hub-v1.2-2026-08-22",
+      "filename": "seedsigner-anti-exfil-review-bundle-v1.2.zip",
+      "sha256": "7f19ea4f0f315f421c915b3c584707d4a48b0f9f5fce9faf9abcd3bf9fbeca34"
+    },
+    {
+      "reference_commit": "dd7b2b26ece992f74daeb3095aa148fc278176ea",
+      "filename": "anti-exfil-private-review-bundle-v1.zip",
+      "sha256": "08efdaa268e83e0bf6bd12ed5ae248465396a2f2c885c0441fe08345c6042651"
+    }
+  ]
 }

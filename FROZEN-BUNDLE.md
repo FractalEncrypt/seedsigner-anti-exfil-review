@@ -1,43 +1,40 @@
 # Immutable reviewer bundle
 
-The current public handoff is `seedsigner-anti-exfil-review-bundle-v1.2.zip`,
-frozen from the `review-hub-v1.2-2026-08-22` source tag. Its adjacent
+The current public handoff is `seedsigner-anti-exfil-review-bundle-v1.3.zip`,
+frozen from the `review-hub-v1.3-2026-08-22` source tag. Its adjacent
 `.zip.sha256` asset and GitHub release record provide the authoritative outer
 archive hash. The archive also contains `BUNDLE-METADATA.json` and a
 `SHA256SUMS.txt` manifest covering every selected payload.
 
-- Source commit: `8df2d3e21e53043fe3cec8b444c9008027876999`
-- Annotated tag object: `52a94c082054e8ed049feaf7c6398611b079665c`
-- Bytes: `4897532`
-- SHA-256: `7f19ea4f0f315f421c915b3c584707d4a48b0f9f5fce9faf9abcd3bf9fbeca34`
-- ZIP entries: `128`
-- Dirty candidate: `false`
-- Release: `https://github.com/FractalEncrypt/seedsigner-anti-exfil-review/releases/tag/review-hub-v1.2-2026-08-22`
-
-Two independently named clean builds were byte-identical. ZIP CRC, entry
-ordering, and every internal payload hash were verified by the deterministic
-builder before publication.
+The authoritative source commit, annotated tag object, byte count, SHA-256,
+entry count, and release URL are recorded in the post-freeze repository commit
+and GitHub release. Two independently named clean builds must be byte-identical
+before publication; the builder verifies ZIP CRC, entry ordering, and every
+internal payload hash.
 
 The bundle is the cross-repository review context for the entire project. It
 contains the normative specification, Python reference oracle, shared vectors,
-tests, completed Phase 1–15 findings ledger, Gate 1–5 design and implementation
-review records, build/test runbook, and selected physical evidence. It does not
+tests, completed Phase 1–17 findings ledger, Gate 1–5 and F-R1 design and
+implementation review records, build/test runbook, and selected physical evidence. It does not
 duplicate the four implementation repositories; reviewers clone those at the
 exact tags in `repositories.json`.
 
 The current implementation bindings are:
 
-- Drongo `bb691c7d77290933b3f7d6c411556c1524a29d98`;
-- Sparrow `f003bfa9575bc7c67b337f8785b1479fd092641a`, pinning that exact Drongo;
-- SeedSigner `aa8395e3576379467d795bb05268533e3a2ac082`; and
+- Drongo `e9a692a4ac4eb14901101cd9324e2275a29897cf`;
+- Sparrow `5b74d94637516aab6d1c79a2e3a3c13c1347b3ea`, pinning that exact Drongo;
+- SeedSigner `214793df4f51466179b792420921b8cdd8d0c1ac`; and
 - SeedSignerOS `0bf1dc92519906c7db265055abfb07e0ee344342`.
 
-Gate 5 intentionally rejects a foreign partial signature when its supplied
-PSBT lacks enough UTXO context to verify it. Pre-Gate-5 durable sessions that
-already contain an invalid foreign partial now fail closed on load; their
-resulting PSBTs were already uncombinable downstream.
+The replacement inputs retain Gate 5's foreign-partial validation and add
+whole-request rejection for signer-attributable finalized inputs. Sparrow also
+rechecks provenance after finalization and at every final-transaction handler.
+Pre-fix durable sessions with an attributable finalized input now fail closed
+on reload. SeedSignerOS is unchanged; its prior physical image remains the
+native/QR integration evidence.
 
-The previous private checkpoint remains immutable evidence:
+The superseded v1.2 public bundle remains immutable evidence and is retained as
+its own GitHub release. The earlier private checkpoint also remains evidence:
 
 - Filename: `anti-exfil-private-review-bundle-v1.zip`
 - Reference commit: `dd7b2b26ece992f74daeb3095aa148fc278176ea`

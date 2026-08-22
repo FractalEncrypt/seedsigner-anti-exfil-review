@@ -1,6 +1,6 @@
 # Independent security and cryptographic review brief
 
-Status: independently reviewed Gate 5 experimental prototype inputs
+Status: frozen reviewed prototype inputs
 
 Protocol: experimental interactive ECDSA anti-exfil v1 (`AEXB-v1-multislot`)
 
@@ -38,9 +38,9 @@ implementation defects, hardening recommendations, and accepted residual risk.
 
 | Component | Public repository | Branch/tag | Reviewed commit |
 | --- | --- | --- | --- |
-| Drongo | `https://github.com/FractalEncrypt/drongo` | `anti-exfil-review-v1-gate5-tested-2026-08-22` | `bb691c7d77290933b3f7d6c411556c1524a29d98` |
-| Sparrow | `https://github.com/FractalEncrypt/sparrow` | `anti-exfil-review-v1-gate5-tested-2026-08-22` | `f003bfa9575bc7c67b337f8785b1479fd092641a` |
-| SeedSigner | `https://github.com/FractalEncrypt/FractalEncrypt_seedsigner` | `anti-exfil-review-v1` / `anti-exfil-review-v1-tested-2026-08-14` | `aa8395e3576379467d795bb05268533e3a2ac082` |
+| Drongo | `https://github.com/FractalEncrypt/drongo` | `anti-exfil-review-v1-finalized-input-tested-2026-08-22` | `e9a692a4ac4eb14901101cd9324e2275a29897cf` |
+| Sparrow | `https://github.com/FractalEncrypt/sparrow` | `anti-exfil-review-v1-finalized-input-tested-2026-08-22` | `5b74d94637516aab6d1c79a2e3a3c13c1347b3ea` |
+| SeedSigner | `https://github.com/FractalEncrypt/FractalEncrypt_seedsigner` | `anti-exfil-review-v1-finalized-input-tested-2026-08-22` | `214793df4f51466179b792420921b8cdd8d0c1ac` |
 | SeedSignerOS | `https://github.com/FractalEncrypt/seedsigner-os` | `anti-exfil-review-v1` / `anti-exfil-review-v1-tested-2026-08-12` | `0bf1dc92519906c7db265055abfb07e0ee344342` |
 
 SeedSignerOS pins Buildroot
@@ -245,10 +245,19 @@ future work. No unsupported case may silently fall back to ordinary signing.
 
 ## 12. Review closure
 
-The signature-scoped provenance remediation, R-F1 raw-transaction lifecycle
-correction, and V12 Gates 1–5 received independent focused diff review through
-Sparrow `f003bfa` and Drongo `bb691c7`. The completed Phase 1–15 ledger and each
-Gate design/review brief are included. Future findings must be fixed on new
-commits without moving these immutable tested tags. A production or mainnet
-recommendation still requires explicit reviewer sign-off; this completed
-prototype review is not a production security audit.
+The immutable inputs above include the signature-scoped provenance and R-F1
+raw-transaction lifecycle remediations, V12 Gates 1–5, and the finalized
+controlled-input/export-route correction identified during the 0x follow-up.
+The last correction rejects signer-attributable finalized inputs at reference,
+Drongo, and SeedSigner admission boundaries and rechecks Sparrow provenance
+after finalization and at every final-transaction handler. Kimi K3 approved the
+exact ranges as Phase 17, and public CI passed at all three changed
+implementation heads. The completed ledger is included as
+`security-review-findings.md`.
+
+SeedSignerOS is unchanged. Its existing physical image remains evidence for the
+native/QR integration at application commit `aa8395e`; the later SeedSigner
+change is validation-only and did not require an OS rebuild. Future findings
+must be fixed on new commits without moving these immutable tested tags. A
+production or mainnet recommendation still requires explicit reviewer
+sign-off; this completed prototype review is not a production security audit.

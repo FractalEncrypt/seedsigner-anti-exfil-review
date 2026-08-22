@@ -23,7 +23,10 @@ suites, public Linux CI, deterministic vectors, Pi Zero image gates, and
 unfunded or Testnet4 physical workflows have been exercised. Signature-scoped
 provenance, raw-transaction lifecycle, repeated-opening, abort-state,
 durability/bounds, API-contract, and PSBT trust-boundary remediations received
-independent focused review.
+independent focused review. The later finalized controlled-input/export-route
+finding was also remediated across the reference, Drongo, SeedSigner, and
+Sparrow, independently approved, and validated by public CI at the replacement
+immutable heads.
 
 This is a reviewed experimental prototype, not a production security audit or
 a recommendation to use protected signing with mainnet funds.

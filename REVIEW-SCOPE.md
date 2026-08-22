@@ -6,9 +6,9 @@ this hub.
 
 | Component | Fork | Upstream base | Immutable tested result |
 | --- | --- | --- | --- |
-| Drongo | `FractalEncrypt/drongo` | `a47c2b3f58d7cedd504b2bd07833708866614216` | `bb691c7d77290933b3f7d6c411556c1524a29d98` |
-| Sparrow | `FractalEncrypt/sparrow` | `b99b880c9fe75565921af9ef438d6314fdd73d6f` | `f003bfa9575bc7c67b337f8785b1479fd092641a` |
-| SeedSigner | `FractalEncrypt/FractalEncrypt_seedsigner` | `56637104b90325e1bc47b58f5f5e8154ea56cf37` | `aa8395e3576379467d795bb05268533e3a2ac082` |
+| Drongo | `FractalEncrypt/drongo` | `a47c2b3f58d7cedd504b2bd07833708866614216` | `e9a692a4ac4eb14901101cd9324e2275a29897cf` |
+| Sparrow | `FractalEncrypt/sparrow` | `b99b880c9fe75565921af9ef438d6314fdd73d6f` | `5b74d94637516aab6d1c79a2e3a3c13c1347b3ea` |
+| SeedSigner | `FractalEncrypt/FractalEncrypt_seedsigner` | `56637104b90325e1bc47b58f5f5e8154ea56cf37` | `214793df4f51466179b792420921b8cdd8d0c1ac` |
 | SeedSignerOS | `FractalEncrypt/seedsigner-os` | `d5a1077851a9b41d6637f7317e3f06aaa453bd5d` | `0bf1dc92519906c7db265055abfb07e0ee344342` |
 
 See [repositories.json](repositories.json) for tag names and tag-object hashes.
@@ -51,7 +51,9 @@ bypass at the immutable final revisions rather than assuming the historical
 behavior is still present. Phases 10–15 additionally record the independent
 triage and remediation of V12 findings `#247985` through `#248002`; the Gate 5
 tags include all four implementation gates and the explicit trust-boundary
-dispositions.
+dispositions. Phases 16–17 record the later finalized controlled-input and
+final-transaction export-route finding, its cross-implementation remediation,
+independent approval, and exact public CI evidence at the replacement tags.
 
 ## Out of scope for a production claim
 

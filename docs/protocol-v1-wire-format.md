@@ -61,6 +61,10 @@ the resulting full public key to equal the PSBT key exactly. Every matching key
 that requires a new signature becomes one slot. A pre-existing partial
 signature for a key controlled by the selected seed is rejected rather than
 silently retained or replaced. A request with no matching new slots is rejected.
+If an input is already finalized but retains a BIP32 derivation attributable to
+the selected seed, the entire request is rejected rather than silently skipping
+that controlled signature. A finalized input without any key attributable to
+the selected seed remains outside the signer's slot set.
 
 ## 2. Network codes
 

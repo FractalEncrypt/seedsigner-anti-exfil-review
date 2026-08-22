@@ -42,6 +42,13 @@ pre-existing signatures for a controlled key, or a mixed supported/unsupported
 transaction MUST fail the complete ceremony and produce zero new openings or
 signatures. There is no partial or ordinary-signing fallback.
 
+A finalized input MAY be skipped only when no signing key in that input is
+attributable to the participating signer. If a finalized input retains a
+matching BIP32 derivation for the participating signer, the complete ceremony
+MUST fail before any opening or host randomness is disclosed. Final-script
+fields are never evidence that an attributable signature received protected
+signing.
+
 ## 3. Authoritative signing slots
 
 One slot is `(input_index, signer_pubkey)`, where the public key is the exact

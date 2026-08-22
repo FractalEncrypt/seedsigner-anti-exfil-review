@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-08-22",
+  "status": "passed",
+  "finding": "F-R1 finalized controlled-input and final-transaction export-route enforcement",
+  "reference": {
+    "commit": "d879f983ad5170f86538b007366fee879c1bfc6a",
+    "tag": "anti-exfil-finalized-input-tested-2026-08-22",
+    "tag_object": "45c183dcf017e1bc5245642783053ef8ab819543"
+  },
+  "drongo": {
+    "commit": "e9a692a4ac4eb14901101cd9324e2275a29897cf",
+    "tag": "anti-exfil-review-v1-finalized-input-tested-2026-08-22",
+    "tag_object": "fb8bc60368eca6ccbe82471e1c7e1524596b883a",
+    "linux_ci": "https://github.com/FractalEncrypt/drongo/actions/runs/32599665572"
+  },
+  "seedsigner": {
+    "commit": "214793df4f51466179b792420921b8cdd8d0c1ac",
+    "tag": "anti-exfil-review-v1-finalized-input-tested-2026-08-22",
+    "tag_object": "1e19267ce6d7f69ab814bd17ba7fb10e1db4871a",
+    "linux_ci": "https://github.com/FractalEncrypt/FractalEncrypt_seedsigner/actions/runs/32599594490"
+  },
+  "sparrow": {
+    "commit": "5b74d94637516aab6d1c79a2e3a3c13c1347b3ea",
+    "tag": "anti-exfil-review-v1-finalized-input-tested-2026-08-22",
+    "tag_object": "50c65866dc570de86d9ee88dc3d4ee6075817b4b",
+    "drongo_submodule": "e9a692a4ac4eb14901101cd9324e2275a29897cf",
+    "linux_ci": "https://github.com/FractalEncrypt/sparrow/actions/runs/32599668532"
+  },
+  "seedsigner_os": {
+    "commit": "0bf1dc92519906c7db265055abfb07e0ee344342",
+    "tag": "anti-exfil-review-v1-tested-2026-08-12",
+    "tag_object": "1575208220d8e3cf7ffbded8ca8765a5b27e9aaf",
+    "changed": false,
+    "physical_rebuild_required": false
+  },
+  "validation": {
+    "independent_review": "Phase 17 approved all eight requested properties",
+    "reference": "89 passed, 38 subtests passed",
+    "drongo_windows": "482 passed, 2 unchanged platform failures, 1 skip",
+    "seedsigner": "42 passed, 2 native-library-dependent skips",
+    "sparrow_windows": "152 passed, 4 unchanged CRLF/LF fixture failures",
+    "public_ci": "all changed implementation heads passed"
+  },
+  "release_note": "Pre-fix durable sessions containing a signer-attributable finalized input now fail closed on reload.",
+  "production_claim": false
+}

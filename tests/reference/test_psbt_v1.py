@@ -10,10 +10,16 @@ from embit.psbt import DerivationPath, PSBT
 from embit.transaction import SIGHASH, Transaction, TransactionInput, TransactionOutput
 
 from anti_exfil.crypto import anti_exfil_sign, public_key
-from anti_exfil.errors import AntiExfilError
+from anti_exfil.errors import AntiExfilError, ErrorCode
 from anti_exfil.protocol_v1_codec import Network, ProtocolMessage, SigningSlot, Stage, decode_message
 from anti_exfil.protocol_v1_transport import ProtocolV1Package
-from anti_exfil.psbt_v1 import build_host_commit_message, enumerate_signing_slots, parse_psbt_v0, reconstruct_signed_psbt_v1
+from anti_exfil.psbt_v1 import (
+    build_host_commit_message,
+    enumerate_signing_slots,
+    enumerate_signing_slots_for_fingerprint,
+    parse_psbt_v0,
+    reconstruct_signed_psbt_v1,
+)
 from anti_exfil.psbt_v1_fixtures import build_multiscript_fixture
 
 
@@ -117,6 +123,36 @@ class SemanticPsbtV1Test(unittest.TestCase):
         for mutation in (wrong_path, foreign_key, signed):
             with self.subTest(mutation=mutation), self.assertRaises(AntiExfilError):
                 enumerate_signing_slots(self.mutate(mutation), self.fixture.root)
+
+    def test_finalized_input_attributable_to_signer_fails_whole_ceremony(self):
+        finalized = PSBT.parse(self.fixture.psbt)
+        pub = next(iter(finalized.inputs[0].bip32_derivations))
+        finalized.inputs[0].final_scriptwitness = script.Witness([b"ordinary-signature", pub.sec()])
+        raw = finalized.serialize()
+
+        for enumerate_slots in (
+            lambda: enumerate_signing_slots(raw, self.fixture.root),
+            lambda: enumerate_signing_slots_for_fingerprint(raw, self.fixture.root.my_fingerprint),
+        ):
+            with self.subTest(enumerator=enumerate_slots), self.assertRaises(AntiExfilError) as raised:
+                enumerate_slots()
+            self.assertEqual(ErrorCode.UNEXPECTED_RETURN_DATA, raised.exception.code)
+
+        foreign_finalized = PSBT.parse(self.fixture.psbt)
+        foreign_pub = next(iter(foreign_finalized.inputs[0].bip32_derivations))
+        foreign_origin = foreign_finalized.inputs[0].bip32_derivations[foreign_pub]
+        foreign_finalized.inputs[0].bip32_derivations[foreign_pub] = DerivationPath(
+            b"\xde\xad\xbe\xef", foreign_origin.derivation
+        )
+        foreign_finalized.inputs[0].final_scriptwitness = script.Witness(
+            [b"foreign-signature", foreign_pub.sec()]
+        )
+        self.assertEqual(
+            [1, 2, 2, 3],
+            [slot.input_index for slot in enumerate_signing_slots(
+                foreign_finalized.serialize(), self.fixture.root
+            )],
+        )
 
     def test_taproot_and_mixed_legacy_inputs_fail_whole_request(self):
         pub = ec.PublicKey.parse(public_key(bytes.fromhex("11" * 32)))

@@ -1,7 +1,7 @@
 # Maintainer review package
 
-Status: independently reviewed Gate 5 prototype inputs; immutable experimental
-implementation tags published and Linux-tested
+Status: frozen reviewed prototype inputs; clean experimental implementation
+tags published and tested
 
 Recorded: 2026-08-22
 
@@ -29,8 +29,9 @@ historical development notes.
    adversarial, Sparrow, multi-input, and multisig gates.
 8. [UX proposal](ux-proposal.md) — device-neutral policy, signing ceremony,
    retry/abort language, multisig behavior, and error presentation.
-9. [Repository hygiene publication checkpoint](repository-hygiene-publication-checkpoint.json)
-   — public-tree hygiene, immutable inputs, and publication disposition.
+9. [Repository hygiene and upstream patch-series audit](upstreaming-readiness-audit.md)
+   — publication blockers, dependency order, clean review series, and the
+   packaged Sparrow acceptance gate.
 10. [Drongo review-series checkpoint](drongo-review-series-checkpoint.json) —
     exact three-commit series, tree-equivalence proof, Windows results, and
     clean Linux CI evidence.
@@ -47,15 +48,17 @@ historical development notes.
 15. [Security-review findings](security-review-findings.md) and
     [maintainer decisions](maintainer-decisions-requested.md) — completed phase
     ledger, remediation reviews, residuals, and explicit dispositions.
-16. [Review rounds and remediation history](review-rounds-summary.md) — concise
-    provenance for the Kimi/Cascade, V12, and 0x review rounds.
-17. [Private review-bundle manifest](review-bundle-manifest.md) — selected
+16. [Private review-bundle manifest](review-bundle-manifest.md) — selected
     normative docs, vectors, oracle/tests, evidence, and explicit exclusions.
-18. [Final smoke checkpoint](final-smoke-checkpoint.json) — completed xpub,
+17. [Final smoke checkpoint](final-smoke-checkpoint.json) — completed xpub,
     duplicate, direct-continuation, stateless-recovery, P6-F1 provenance, and
     R-F1 raw-transaction lifecycle observations.
-19. [QR brightness correction gate](qr-brightness-correction-gate.md) — passed
+18. [QR brightness correction gate](qr-brightness-correction-gate.md) — passed
     replacement application/image/physical gate included in the final freeze.
+19. [F-R1 implementation-review brief](fr1-finalized-controlled-input-implementation-review-brief.md)
+    and [checkpoint](fr1-finalized-controlled-input-checkpoint.json) — final
+    controlled-input admission/export-route remediation, independent approval,
+    replacement tags, and exact public CI evidence.
 
 ## Implementation snapshots
 
@@ -74,9 +77,9 @@ it is not part of the maintainer patch series.
 | Component | Branch | Review head | Responsibility |
 | --- | --- | --- | --- |
 | Reference/coordinator | `master` | See `BUNDLE-METADATA.json` | Python oracle, generators, adversarial harnesses, camera/file coordinator, evidence |
-| SeedSigner | `anti-exfil-review-v1` | `aa8395e3576379467d795bb05268533e3a2ac082` | Strict signer semantics, native S2C signing, stateless QR UX, fail-closed policy, QR-renderer compatibility |
-| Drongo | `anti-exfil-review-v1-gate5-tested-2026-08-22` | `bb691c7d77290933b3f7d6c411556c1524a29d98` | Codec, public verification, PSBT semantics, reconstruction, durable coordinator model, signature-scoped proofs, Gates 1–5 state and trust hardening |
-| Sparrow | `anti-exfil-review-v1-gate5-tested-2026-08-22` | `f003bfa9575bc7c67b337f8785b1479fd092641a` | AEXT/UR bridge, persistence, policy, ceremony, signature-scoped enforcement, quarantine, and exact Gate 5 Drongo pin |
+| SeedSigner | `anti-exfil-review-v1-finalized-input-tested-2026-08-22` | `214793df4f51466179b792420921b8cdd8d0c1ac` | Strict signer semantics, native S2C signing, stateless QR UX, fail-closed policy, finalized controlled-input admission |
+| Drongo | `anti-exfil-review-v1-finalized-input-tested-2026-08-22` | `e9a692a4ac4eb14901101cd9324e2275a29897cf` | Codec, public verification, PSBT semantics, reconstruction, durable coordinator model, signature-scoped proof records, finalized controlled-input admission |
+| Sparrow | `anti-exfil-review-v1-finalized-input-tested-2026-08-22` | `5b74d94637516aab6d1c79a2e3a3c13c1347b3ea` | AEXT/UR bridge, persistence, policy, JavaFX ceremony, signature-scoped downgrade enforcement, raw-transaction lifecycle policy, final-transaction handler gates |
 | SeedSignerOS | `anti-exfil-review-v1` | `0bf1dc92519906c7db265055abfb07e0ee344342` | Native package and opt-in Pi Zero test-image integration |
 
 The chronological SeedSignerOS checkout retains extensive Windows
@@ -119,17 +122,18 @@ Historical/non-normative:
 
 - Reference semantic/adversarial corpus: canonical four-input/five-slot PSBT,
   native/nested P2WPKH, native/nested P2WSH multisig, malformed transcripts,
-  repeated same-key openings, Dark Skippy, predetermined nonce, nonce grinding,
-  selective abort, and returned-metadata injection. The final hub run reports
-  85 passed and 3 native-library skips with the tagged SeedSigner adapter active.
-- SeedSigner: 185 applicable tests pass and 2 skip; the stock Windows
-  CompactSeedQR bitmap module remains excluded for the documented Pillow/pyzbar
-  issue.
-- Sparrow Gate 5: 156 tests discovered, 152 pass; the same four upstream-style Windows
-  CRLF/LF export comparisons fail.
-- Drongo Gate 5: 484 tests discovered, 481 pass and one POSIX-only test skips on
-  Windows; the same two Windows/XDG
-  `ApplicationDirTest` cases fail.
+  Dark Skippy, predetermined nonce, nonce grinding, selective abort, and
+  returned-metadata injection, and finalized controlled-input admission. The
+  final scoped reference run reports 89 passed with 38 subtests.
+- SeedSigner: the final anti-exfil suite reports 42 passed and 2
+  native-library-dependent skips; public Python 3.10 and 3.12 CI passed at the
+  replacement head.
+- Sparrow: the final Windows run reports 152/156 passed, with the same four
+  upstream-style CRLF/LF export comparisons failing; the complete public Linux
+  suite passed at the replacement head.
+- Drongo: the final Windows run reports 482/485 passed with one skip and the
+  same two Windows/XDG `ApplicationDirTest` cases failing; focused and complete
+  public Linux suites passed at the replacement head.
 - Physical: honest and adversarial SeedSigner QR ceremonies, normal OS image,
   confirmed funded Testnet4 signing, Sparrow-to-SeedSigner ceremony, required
   policy downgrade rejection, exact post-reveal retry, real multi-input

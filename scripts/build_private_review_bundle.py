@@ -38,6 +38,8 @@ EXACT_FILES = [
     "docs/ux-proposal.md",
     "docs/review-bundle-manifest.md",
     "docs/review-rounds-summary.md",
+    "docs/fr1-finalized-controlled-input-implementation-review-brief.md",
+    "docs/fr1-finalized-controlled-input-checkpoint.json",
     "docs/v12-audit-export.md",
     "docs/v12-findings-verification-plan.md",
     "docs/v12-gate1-implementation-review-brief.md",

@@ -1,13 +1,14 @@
-# Independent review context: anti-exfil v1 final Gate 5 inputs
+# Independent review context: anti-exfil v1 finalized-input replacement inputs
 
 ## Exact immutable inputs
 
-- Drongo: `bb691c7d77290933b3f7d6c411556c1524a29d98`, tag
-  `anti-exfil-review-v1-gate5-tested-2026-08-22`
-- Sparrow: `f003bfa9575bc7c67b337f8785b1479fd092641a`, tag
-  `anti-exfil-review-v1-gate5-tested-2026-08-22`
-- Sparrow Drongo pin: `bb691c7d77290933b3f7d6c411556c1524a29d98`
-- SeedSigner: `aa8395e3576379467d795bb05268533e3a2ac082`
+- Drongo: `e9a692a4ac4eb14901101cd9324e2275a29897cf`, tag
+  `anti-exfil-review-v1-finalized-input-tested-2026-08-22`
+- Sparrow: `5b74d94637516aab6d1c79a2e3a3c13c1347b3ea`, tag
+  `anti-exfil-review-v1-finalized-input-tested-2026-08-22`
+- Sparrow Drongo pin: `e9a692a4ac4eb14901101cd9324e2275a29897cf`
+- SeedSigner: `214793df4f51466179b792420921b8cdd8d0c1ac`, tag
+  `anti-exfil-review-v1-finalized-input-tested-2026-08-22`
 - SeedSignerOS: `0bf1dc92519906c7db265055abfb07e0ee344342`
 
 The repository is a cross-project review hub containing the reference oracle,
@@ -46,6 +47,12 @@ durable-state bounds and locking, complete-transcript/API enforcement, invalid
 foreign-signature rejection, and explicit storage/rollback/witness-UTXO trust
 contracts. Re-report one of these as open only with a concrete bypass at the
 immutable heads above.
+
+Phases 16–17 additionally close F-R1: signer-attributable finalized inputs are
+rejected at every protocol admission boundary, and Sparrow re-evaluates
+provenance after finalization and immediately before every final-transaction
+view, QR, save, or broadcast action. Re-report it as open only with a concrete
+bypass at the replacement heads.
 
 The project remains an experimental prototype. The completed reviews do not
 replace independent cryptographic review, upstream review, reproducible-release

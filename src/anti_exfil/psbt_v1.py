@@ -68,7 +68,10 @@ def enumerate_signing_slots(raw: bytes, root: bip32.HDKey) -> tuple[SemanticSign
             if pub in scope.partial_sigs:
                 raise AntiExfilError(ErrorCode.UNEXPECTED_RETURN_DATA, f"input {index} already has a controlled signature")
             if scope.final_scriptsig is not None or scope.final_scriptwitness is not None:
-                continue
+                raise AntiExfilError(
+                    ErrorCode.UNEXPECTED_RETURN_DATA,
+                    f"input {index} is finalized for a controlled key",
+                )
             slots.append(SemanticSigningSlot(index, pubkey, message_hash, int(SIGHASH.ALL), tuple(derivation.derivation), kind))
     slots.sort(key=lambda item: item.identifier)
     if not slots:
@@ -154,7 +157,10 @@ def enumerate_signing_slots_for_fingerprint(
             if pub in scope.partial_sigs:
                 raise AntiExfilError(ErrorCode.UNEXPECTED_RETURN_DATA, f"input {index} already has a requested signature")
             if scope.final_scriptsig is not None or scope.final_scriptwitness is not None:
-                continue
+                raise AntiExfilError(
+                    ErrorCode.UNEXPECTED_RETURN_DATA,
+                    f"input {index} is finalized for the requested signer",
+                )
             slots.append(SemanticSigningSlot(index, pub.sec(), digest, int(SIGHASH.ALL), tuple(origin.derivation), kind))
     slots.sort(key=lambda slot: slot.identifier)
     if not slots:

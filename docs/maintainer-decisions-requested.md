@@ -75,7 +75,10 @@ No decision below permits silent fallback to ordinary signing.
    finding in the review.
 9. **Exclude unknown non-proprietary PSBT fields from strict v1.** Evidence:
    P4-F1 — Python/embit preserves unknown input maps and proceeds; Drongo
-   logs and drops them. Recommendation: adopt an explicit byte-level
+   logs and drops them. The differential is confirmed with the unassigned
+   input key type `0x19` in serializer-canonical position under pinned embit
+   0.8.0; the earlier proposed `0x15` example was invalid because BIP371
+   assigns it to `PSBT_IN_TAP_LEAF_SCRIPT`. Recommendation: adopt an explicit byte-level
    allowlist at global, input, and output map levels for the BIP174/BIP371
    fields needed by the four supported script forms plus recognized
    proprietary namespaces. Reject all other non-proprietary keys consistently
@@ -130,10 +133,26 @@ No decision below permits silent fallback to ordinary signing.
     witness-only inputs; reject invalid foreign partials before session
     creation; revisit external monotonic storage and encryption/ACL provisioning
     only as separately designed features.
+16. **Reject finalized inputs attributable to a protected signer and recheck
+    every final-transaction action.** Evidence: Phase 16 / F-R1 shows that
+    reference, Drongo, and SeedSigner previously skipped a finalized input
+    after checking only its partial-signature map. Sparrow consequently could
+    treat the remaining protected partial signatures as `PERMITTED`, finalize
+    the PSBT, and export the resulting transaction through View Final, Show QR,
+    or Save without evaluating the newly visible final-witness signature.
+    Direct in-app broadcast did recheck, but an exported transaction could be
+    broadcast elsewhere. Recommendation: reject any finalized input retaining
+    a signer-attributable derivation before ceremony creation/acceptance in all
+    three protocol implementations; re-apply quarantine after Sparrow
+    finalization; and re-evaluate immediately before every final transaction
+    view, QR, save, or broadcast action.
 
 ## Disposition summary
 
-- **Blocking before wider release:** decision 8 (medium defect fix).
+- **Closed release blocker:** decision 16 (F-R1 finalized-input/export escape)
+  was implemented across the reference, Drongo, SeedSigner, and Sparrow;
+  independently approved in Phase 17; and passed public CI at the replacement
+  immutable heads.
 - **Spec/documentation decisions:** 2, 3, 9, 10.
 - **Hardening batches (can be scheduled):** 11, 12, 13, 14.
 - **Trusted-storage/PSBT compatibility contract:** 15.

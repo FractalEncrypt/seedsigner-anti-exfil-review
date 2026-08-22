@@ -78,14 +78,15 @@ critical and policy findings. No Critical or High defect was substantiated.
 
 The report produced four low/hygiene groups:
 
-1. **Finalized controlled-key inputs (credible low specification/defense-in-depth
-   defect):** Drongo and SeedSigner both reject controlled partial signatures
-   but silently skip a matching controlled key when that input is already
-   finalized. This preserves host/signer agreement and Sparrow's REQUIRED
-   provenance layer currently rejects the unproved final signature, but it
-   contradicts the maintainer specification's whole-ceremony rejection rule.
-   A cross-implementation rejection regression and explicit finalized-input
-   rule are recommended before broader release claims.
+1. **Finalized controlled-key inputs and export routes (confirmed Medium;
+   remediated):** Drongo and SeedSigner rejected controlled partial signatures
+   but silently skipped a matching controlled key when that input was already
+   finalized. Sparrow's pre-finalization evaluator then could miss that final
+   signature and expose a finalized transaction through View Final, Show QR,
+   or Save; direct broadcast still rechecked. The accepted remediation rejects
+   signer-attributable finalized inputs at reference, Drongo, and SeedSigner
+   admission, reapplies Sparrow quarantine after finalization, and performs a
+   fresh provenance check at every final-transaction handler.
 2. **Native differential evidence (hygiene, now locally closed):** the public
    hub run recorded three native tests skipped because the DLL is intentionally
    excluded from the bundle. The checkpointed pinned-source Windows DLL
@@ -109,14 +110,19 @@ The report produced four low/hygiene groups:
 
 The 0x review was static and explicitly did not execute code, exhaustively audit
 the large Sparrow controllers, inspect every reference/SeedSigner parser, or
-reproduce physical and build evidence. Those limitations define useful targets
-for a follow-up pass.
+reproduce physical and build evidence. Those limitations defined the follow-up
+source review. Kimi K3 independently approved the exact F-R1 remediation ranges
+as Phase 17. Public CI then passed at Drongo `e9a692a`, SeedSigner `214793d`,
+and Sparrow `5b74d94`; annotated replacement tags bind those exact source
+commits. No SeedSignerOS change or physical rebuild was required for the
+validation-only signer rule.
 
 ## Cumulative status
 
-- No known Critical or High finding remains open at the Gate 5 immutable heads.
-- The finalized controlled-key input rule is the only newly credible code/spec
-  correction from Round 3.
+- No known Critical or High finding remains open at the replacement immutable
+  heads.
+- The only newly credible code/spec correction from Round 3—the finalized
+  controlled-input/export-route defect—is closed and independently reviewed.
 - Native differential tests pass with the checkpointed artifact; independent
   rebuilding and execution remain desirable for external release assurance.
 - Unknown PSBT-field policy, encryption at rest, monotonic rollback authority,
