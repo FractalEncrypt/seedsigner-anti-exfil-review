@@ -6,11 +6,18 @@ frozen from the `review-hub-v1.3-2026-08-22` source tag. Its adjacent
 archive hash. The archive also contains `BUNDLE-METADATA.json` and a
 `SHA256SUMS.txt` manifest covering every selected payload.
 
-The authoritative source commit, annotated tag object, byte count, SHA-256,
-entry count, and release URL are recorded in the post-freeze repository commit
-and GitHub release. Two independently named clean builds must be byte-identical
-before publication; the builder verifies ZIP CRC, entry ordering, and every
-internal payload hash.
+- Source commit: `31f0dcc24a6ae7b676065f244486200d1ee9d713`
+- Annotated tag object: `be45b831de7e7f82779ab96b26d973da692bba1c`
+- Bytes: `4913228`
+- SHA-256: `08984dfdd39604f5470ab708a5d5da4bf6157c0e40dfb2d7f11f5dfdfa5da18a`
+- ZIP entries: `131`
+- Dirty candidate: `false`
+- Release: `https://github.com/FractalEncrypt/seedsigner-anti-exfil-review/releases/tag/review-hub-v1.3-2026-08-22`
+
+Two independently named clean builds were byte-identical. ZIP CRC, entry
+ordering, bundle metadata, and all 129 internal payload hashes were verified
+before publication. GitHub records the same SHA-256 and byte count for the
+uploaded ZIP asset.
 
 The bundle is the cross-repository review context for the entire project. It
 contains the normative specification, Python reference oracle, shared vectors,

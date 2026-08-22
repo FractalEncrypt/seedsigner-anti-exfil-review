@@ -49,10 +49,15 @@
     "tag": "anti-exfil-finalized-input-tested-2026-08-22",
     "tag_object": "45c183dcf017e1bc5245642783053ef8ab819543"
   },
-  "bundle_freeze": {
-    "status": "source-tag-pending-outer-hash",
-    "target_source_tag": "review-hub-v1.3-2026-08-22",
-    "target_filename": "seedsigner-anti-exfil-review-bundle-v1.3.zip"
+  "frozen_bundle": {
+    "source_commit": "31f0dcc24a6ae7b676065f244486200d1ee9d713",
+    "source_tag": "review-hub-v1.3-2026-08-22",
+    "tag_object": "be45b831de7e7f82779ab96b26d973da692bba1c",
+    "filename": "seedsigner-anti-exfil-review-bundle-v1.3.zip",
+    "bytes": 4913228,
+    "entries": 131,
+    "sha256": "08984dfdd39604f5470ab708a5d5da4bf6157c0e40dfb2d7f11f5dfdfa5da18a",
+    "release": "https://github.com/FractalEncrypt/seedsigner-anti-exfil-review/releases/tag/review-hub-v1.3-2026-08-22"
   },
   "superseded_bundles": [
     {
