@@ -1,0 +1,29 @@
+{
+  "schema": "anti-exfil-review-hub-v2-evidence-bindings-v1",
+  "m8_closure": {
+    "inventory_bytes": 3246,
+    "inventory_sha256": "4192f67ab626becdf3f27223098217ac07904e5148cbd68976be028580a8db3e",
+    "accepted_review_bytes": 12613,
+    "accepted_review_sha256": "3f38c858e30f10bc71b4306981e781a4d457f1f92a0e3e0223982e42a106fd60"
+  },
+  "p1_drongo": {
+    "inventory_bytes": 23711,
+    "inventory_sha256": "8636e54c2128fc671ca7ef7ff42078abf9d54c166b55a6c9dbd4f4fea353d27b",
+    "candidate_commit": "948f586f0e523e0ef67d973a72eac67aa8148968",
+    "candidate_tree": "d5943708b3cb71779e7c2cd5fbf931dcf67e54d4"
+  },
+  "p2_sparrow": {
+    "inventory_bytes": 56291,
+    "inventory_sha256": "8c1a50fdff38381c7d735c1ffeae21034789d7ed5da8345cc3e8329dd86f993c",
+    "candidate_commit": "cc760814c855dfaf3d27890d10ba86b635e3a033",
+    "candidate_tree": "6ce0ff0953560008e1832929540e5c2ebdb5b042"
+  },
+  "p3_signers": {
+    "manifest_bytes": 1599,
+    "manifest_sha256": "f78099d7ae6b5468e95f8ec066414906181ee276a673cde0e78c7be5310b12b7",
+    "kern_candidate_commit": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
+    "kern_candidate_tree": "196a182647ded7825d0f3e524d72a611add70950"
+  },
+  "raw_campaign_evidence_embedded": false,
+  "binding_model": "Public candidate carries concise claims and immutable inventory hashes; authenticated raw local evidence remains outside the publication archive."
+}

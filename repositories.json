@@ -1,6 +1,7 @@
 {
-  "schema": 3,
-  "recorded_at": "2026-08-22",
+  "schema": 4,
+  "recorded_at": "2026-09-21",
+  "status": "LOCAL_V2_CANDIDATE_PENDING_INDEPENDENT_REVIEW",
   "protocol": "AEXB-v1-multislot",
   "components": [
     {
@@ -8,68 +9,87 @@
       "fork": "https://github.com/FractalEncrypt/drongo",
       "upstream": "https://github.com/sparrowwallet/drongo",
       "upstream_base": "a47c2b3f58d7cedd504b2bd07833708866614216",
-      "tested_commit": "e9a692a4ac4eb14901101cd9324e2275a29897cf",
-      "tested_tag": "anti-exfil-review-v1-finalized-input-tested-2026-08-22",
-      "tag_object": "fb8bc60368eca6ccbe82471e1c7e1524596b883a",
-      "linux_ci": "https://github.com/FractalEncrypt/drongo/actions/runs/32599665572"
+      "august_hardened_base": "e9a692a4ac4eb14901101cd9324e2275a29897cf",
+      "m8_final_source": "e1c46f232b56d7d1b59d4264b33920f031f18a75",
+      "candidate_commit": "948f586f0e523e0ef67d973a72eac67aa8148968",
+      "candidate_tree": "d5943708b3cb71779e7c2cd5fbf931dcf67e54d4",
+      "candidate_tag": null,
+      "local_branch": "codex/m9-drongo-integration-v2",
+      "evidence_inventory_sha256": "8636e54c2128fc671ca7ef7ff42078abf9d54c166b55a6c9dbd4f4fea353d27b"
     },
     {
       "name": "Sparrow",
       "fork": "https://github.com/FractalEncrypt/sparrow",
       "upstream": "https://github.com/sparrowwallet/sparrow",
       "upstream_base": "b99b880c9fe75565921af9ef438d6314fdd73d6f",
-      "tested_commit": "5b74d94637516aab6d1c79a2e3a3c13c1347b3ea",
-      "tested_tag": "anti-exfil-review-v1-finalized-input-tested-2026-08-22",
-      "tag_object": "50c65866dc570de86d9ee88dc3d4ee6075817b4b",
-      "drongo_submodule": "e9a692a4ac4eb14901101cd9324e2275a29897cf",
-      "linux_ci": "https://github.com/FractalEncrypt/sparrow/actions/runs/32599668532"
+      "august_hardened_base": "5b74d94637516aab6d1c79a2e3a3c13c1347b3ea",
+      "m8_final_source": "c681560d826d9340ef3cfd0768899823f3329229",
+      "candidate_commit": "cc760814c855dfaf3d27890d10ba86b635e3a033",
+      "candidate_tree": "6ce0ff0953560008e1832929540e5c2ebdb5b042",
+      "candidate_tag": null,
+      "local_branch": "codex/m9-sparrow-integration-v2",
+      "drongo_submodule": "948f586f0e523e0ef67d973a72eac67aa8148968",
+      "lark_submodule": "ddffe556f0d1ba6a138be3b362ce74219fed0710",
+      "evidence_inventory_sha256": "8c1a50fdff38381c7d735c1ffeae21034789d7ed5da8345cc3e8329dd86f993c"
     },
     {
       "name": "SeedSigner",
       "fork": "https://github.com/FractalEncrypt/FractalEncrypt_seedsigner",
       "upstream": "https://github.com/SeedSigner/seedsigner",
       "upstream_base": "56637104b90325e1bc47b58f5f5e8154ea56cf37",
-      "tested_commit": "214793df4f51466179b792420921b8cdd8d0c1ac",
-      "tested_tag": "anti-exfil-review-v1-finalized-input-tested-2026-08-22",
-      "tag_object": "1e19267ce6d7f69ab814bd17ba7fb10e1db4871a",
-      "linux_ci": "https://github.com/FractalEncrypt/FractalEncrypt_seedsigner/actions/runs/32599594490"
+      "candidate_commit": "214793df4f51466179b792420921b8cdd8d0c1ac",
+      "candidate_tree": "97308cf847e0415737f72e64a60c8aa6c745a0bc",
+      "candidate_tag": "anti-exfil-review-v1-finalized-input-tested-2026-08-22",
+      "tag_object": "1e19267ce6d7f69ab814bd17ba7fb10e1db4871a"
     },
     {
       "name": "SeedSignerOS",
       "fork": "https://github.com/FractalEncrypt/seedsigner-os",
       "upstream": "https://github.com/SeedSigner/seedsigner-os",
       "upstream_base": "d5a1077851a9b41d6637f7317e3f06aaa453bd5d",
-      "tested_commit": "0bf1dc92519906c7db265055abfb07e0ee344342",
-      "tested_tag": "anti-exfil-review-v1-tested-2026-08-12",
-      "tag_object": "1575208220d8e3cf7ffbded8ca8765a5b27e9aaf"
-    }
-  ],
-  "reference": {
-    "commit": "d879f983ad5170f86538b007366fee879c1bfc6a",
-    "tag": "anti-exfil-finalized-input-tested-2026-08-22",
-    "tag_object": "45c183dcf017e1bc5245642783053ef8ab819543"
-  },
-  "frozen_bundle": {
-    "source_commit": "31f0dcc24a6ae7b676065f244486200d1ee9d713",
-    "source_tag": "review-hub-v1.3-2026-08-22",
-    "tag_object": "be45b831de7e7f82779ab96b26d973da692bba1c",
-    "filename": "seedsigner-anti-exfil-review-bundle-v1.3.zip",
-    "bytes": 4913228,
-    "entries": 131,
-    "sha256": "08984dfdd39604f5470ab708a5d5da4bf6157c0e40dfb2d7f11f5dfdfa5da18a",
-    "release": "https://github.com/FractalEncrypt/seedsigner-anti-exfil-review/releases/tag/review-hub-v1.3-2026-08-22"
-  },
-  "superseded_bundles": [
-    {
-      "source_commit": "8df2d3e21e53043fe3cec8b444c9008027876999",
-      "source_tag": "review-hub-v1.2-2026-08-22",
-      "filename": "seedsigner-anti-exfil-review-bundle-v1.2.zip",
-      "sha256": "7f19ea4f0f315f421c915b3c584707d4a48b0f9f5fce9faf9abcd3bf9fbeca34"
+      "candidate_commit": "0bf1dc92519906c7db265055abfb07e0ee344342",
+      "candidate_tree": "1ed46cd81f95c9b372c5248e30b883ac33c13a0c",
+      "candidate_tag": "anti-exfil-review-v1-tested-2026-08-12",
+      "tag_object": "1575208220d8e3cf7ffbded8ca8765a5b27e9aaf",
+      "buildroot_submodule": "bf2a2858aa675a14b60f1f9142c65b32652609c1"
     },
     {
-      "reference_commit": "dd7b2b26ece992f74daeb3095aa148fc278176ea",
-      "filename": "anti-exfil-private-review-bundle-v1.zip",
-      "sha256": "08efdaa268e83e0bf6bd12ed5ae248465396a2f2c885c0441fe08345c6042651"
+      "name": "Kern",
+      "fork": "https://github.com/FractalEncrypt/Kern",
+      "upstream": "https://github.com/odudex/Kern",
+      "upstream_base": "b1efd8412934e10e4ffcb4c35e7abd49708a09d1",
+      "m8_accepted_product_commit": "5180dbb603e01e33698bb388a400f92bff722d4c",
+      "m8_accepted_product_tree": "ba595bc3278cbb8353f4c84d2e06797cfbf61260",
+      "candidate_commit": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
+      "candidate_tree": "196a182647ded7825d0f3e524d72a611add70950",
+      "candidate_tag": null,
+      "local_branch": "codex/m9-p3-kern-publication",
+      "candidate_delta": "test-only canonical fixture byte preservation; no product C or build-config change",
+      "submodules": {
+        "components/cUR": "09724a010622460733e5e5d60f9505f5989b2fe8",
+        "components/k_quirc": "f1887f25baee9603027302ef50d382509d6e977b",
+        "components/libwally-core/upstream": "247f2001f0e751f9fb79e12a7908ee7d5f765800",
+        "components/libwally-core/upstream/src/secp256k1": "45f6f0f158c5ae80a2c8a53398ea4adbf19af6dc"
+      },
+      "p3_manifest_sha256": "f78099d7ae6b5468e95f8ec066414906181ee276a673cde0e78c7be5310b12b7"
     }
-  ]
+  ],
+  "m8_closure": {
+    "status": "CLOSED_COMPLETION_RULE_MET",
+    "package_inventory_bytes": 3246,
+    "package_inventory_sha256": "4192f67ab626becdf3f27223098217ac07904e5148cbd68976be028580a8db3e",
+    "accepted_review_sha256": "3f38c858e30f10bc71b4306981e781a4d457f1f92a0e3e0223982e42a106fd60"
+  },
+  "review_hub": {
+    "candidate_commit_and_tree": "recorded in BUNDLE-METADATA.json and the external P4 candidate receipt",
+    "base_commit": "535407519c8f74d73e7ee3cae94b728bb650fe3c",
+    "previous_public_bundle": {
+      "tag": "review-hub-v1.3-2026-08-22",
+      "sha256": "08984dfdd39604f5470ab708a5d5da4bf6157c0e40dfb2d7f11f5dfdfa5da18a"
+    }
+  },
+  "publication": {
+    "authorized": false,
+    "p5_independent_review_required": true
+  }
 }

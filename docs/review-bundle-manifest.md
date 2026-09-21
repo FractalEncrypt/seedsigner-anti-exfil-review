@@ -1,86 +1,32 @@
-# Independent review bundle manifest
+# Review bundle v2 manifest and exclusions
 
-The engineering reference repository does not need to be public. An external
-reviewer can receive a private, immutable archive containing the files below,
-while cloning the four implementation repositories from their public tested
-tags listed in `independent-security-review-brief.md`.
+The deterministic v2 archive is built by
+`scripts/build_review_bundle_v2.py`. It contains:
 
-## Include
+- exact repository/evidence bindings and current review scope;
+- the bounded M8 closure summary with every retained limitation;
+- the P1–P3 integration summary;
+- normative protocol, wire-format, transport, and threat-model documents;
+- the reference oracle, public fixtures, generators, and tests;
+- clean third-party build/test instructions and a reproduction checklist; and
+- archive verification and sanitization tools.
 
-Normative and review documents:
+It intentionally excludes:
 
-- `docs/independent-security-review-brief.md`
-- `docs/reviewer-build-and-test-runbook.md`
-- `docs/security-review-findings.md`
-- `docs/maintainer-decisions-requested.md`
-- `docs/maintainer-specification.md`
-- `docs/protocol-v1.md`
-- `docs/protocol-v1-wire-format.md`
-- `docs/transport-aext.md`
-- `docs/threat-model.md`
-- `docs/shared-vector-index.md`
-- `docs/physical-evidence-index.md`
-- `docs/ux-proposal.md`
-- the four implementation review-series checkpoint JSON files
-- the P6-F1 and R-F1 remediation briefs, physical gates, and evidence
-- the V12 Gate 1–5 design/review records and the F-R1 finalized-input
-  implementation-review brief/checkpoint
+- raw M8 campaign directories and physical/camera/serial captures;
+- wallet profiles, databases, persistent settings, coordinator state, `.aexs`
+  or `.aexj` files, and non-public secrets;
+- Gradle, Docker, Buildroot, ESP-IDF, simulator, virtual-environment, and package
+  build outputs or caches;
+- local test logs and machine-specific absolute paths;
+- firmware/images/application distributions; and
+- the P5 review result, which does not exist when P4 is frozen.
 
-Reference oracle and test material:
+Authenticated raw evidence stays local and is bound by the inventory hashes in
+`docs/m9-evidence-bindings.json`. The earlier public v1.3 release remains the
+historical detailed-review bundle; v2 need not duplicate every legacy image or
+machine transcript.
 
-- `src/anti_exfil/`
-- `tests/reference/`
-- `scripts/generate_protocol_v1_vectors.py`
-- `scripts/generate_protocol_v1_semantic_vectors.py`
-- `fixtures/protocol-v1-multislot-vectors.json`
-- `fixtures/protocol-v1-semantic-psbt-vector.json`
-- `fixtures/transport-v1-vectors.json`
-- project packaging/dependency metadata required to run the reference tests
-
-Evidence:
-
-- checkpoint JSON/Markdown referenced by `physical-evidence-index.md`;
-- selected redacted photographs listed there; and
-- exact image, executable, branch, tree, CI, and transaction hashes.
-
-The archive is produced by `scripts/build_private_review_bundle.py`. It refuses
-to freeze a dirty reference worktree, uses fixed ZIP metadata, writes an
-internal `SHA256SUMS.txt`, and prints the outer archive SHA-256. A dirty
-`--allow-dirty` build is a candidate only and must not be supplied for review.
-For a clean freeze it also writes an adjacent `.zip.sha256` sidecar containing
-the outer archive hash.
-The reviewer runbook gives exact immutable-tag clone, dependency, focused/full
-test, package, SeedSignerOS normal/instrumented build, and physical-smoke steps.
-
-## Exclude
-
-- private wallet files, Sparrow profiles/databases, and persistent settings;
-- mnemonics or descriptors other than explicitly public deterministic fixtures;
-- funded PSBT working directories unless independently reviewed and sanitized;
-- Docker/Buildroot caches, generated images, Gradle output, virtual
-  environments, QR frame directories, camera recordings, and logs;
-- machine-specific paths except where clearly labeled historical evidence; and
-- the historical non-normative single-slot fixture unless requested for
-  compatibility analysis.
-
-## Delivery
-
-A password-protected archive or private file share is sufficient for the first
-review. Provide an outer SHA-256 out of band and include a generated manifest of
-every internal file hash. Preserve the exact archive supplied to the reviewer.
-
-The replacement freeze gate passed on 2026-08-22. The QR-renderer correction and Pi
-Zero image passed static and animated brightness checks including animation
-resumption. Sparrow's signature-scoped provenance remediation and narrow R-F1
-raw-transaction lifecycle fix passed focused review, automated validation,
-public Linux CI, packaging, and the documented physical UI gates. V12 Gates
-1–5 and the subsequent finalized controlled-input/export-route correction were
-independently reviewed; the replacement Drongo, SeedSigner, and Sparrow heads
-passed public CI. SeedSignerOS remains at its unchanged physically tested tag.
-This is a reviewed experimental prototype result, not a production
-security-audit claim.
-
-Create a clean public docs/vector repository only if the selected reviewer
-requires a cloneable Git source of record or if broader public review is later
-desired. Do not publish the full engineering workspace merely to begin an
-independent review.
+The external P4 receipt records final Git identity, archive bytes/hash, two-build
+determinism, internal verification, and sanitization results. Publication is a
+separate owner-authorized step after accepted P5 review.

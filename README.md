@@ -1,49 +1,37 @@
 # SeedSigner Anti-Exfil Review Hub
 
-This repository is the cross-repository review hub for an experimental,
-interactive ECDSA anti-exfil signing protocol implemented across SeedSigner,
-SeedSignerOS, Drongo, and Sparrow Wallet.
+This repository is the cross-project review hub for an experimental,
+testnet/public-test-only ECDSA anti-exfil prototype spanning SeedSigner,
+SeedSignerOS, Kern, Drongo, and Sparrow Wallet.
 
-It gives reviewers one concise source for:
+The v2 candidate adds the closed Kern M8 campaign result, integrates the August
+hardening and M8 coordinator histories into new Drongo/Sparrow candidates, adds
+Kern as a second signer, and gives independent reviewers clean build and test
+instructions. It remains a prototype—not a production security audit, mainnet
+recommendation, upstream release, or assertion that complete firmware/images
+are bit-for-bit reproducible across uncontrolled hosts.
 
-- the protocol and threat model;
-- immutable implementation revisions and upstream comparison bases;
-- the Python reference oracle, shared vectors, and adversarial tests;
-- build and test instructions for each implementation repository;
-- the completed review and remediation ledger; and
-- selected physical interoperability evidence.
+## Current status
 
-The implementation code remains in the four linked repositories. This hub does
-not duplicate their source trees and is not a monorepo.
-
-## Status
-
-The current reviewed prototype inputs were frozen on 2026-08-22. Automated
-suites, public Linux CI, deterministic vectors, Pi Zero image gates, and
-unfunded or Testnet4 physical workflows have been exercised. Signature-scoped
-provenance, raw-transaction lifecycle, repeated-opening, abort-state,
-durability/bounds, API-contract, and PSBT trust-boundary remediations received
-independent focused review. The later finalized controlled-input/export-route
-finding was also remediated across the reference, Drongo, SeedSigner, and
-Sparrow, independently approved, and validated by public CI at the replacement
-immutable heads.
-
-This is a reviewed experimental prototype, not a production security audit or
-a recommendation to use protected signing with mainnet funds.
+- M8 is closed for its frozen execution identities. Its completion rule passed
+  and `F-IDENTITY-BRIDGE-01` was resolved.
+- The v2 Drongo, Sparrow, and Kern candidates are new local identities. They do
+  not inherit M8 physical-execution credit automatically.
+- SeedSigner and SeedSignerOS remain at their previously accepted public tags.
+- This branch and its deterministic v2 archive are local P4 candidates pending
+  independent P5 review. Nothing is published or pushed by P4.
 
 ## Start here
 
-1. [Review scope and immutable revisions](REVIEW-SCOPE.md)
-2. [Maintainer review index](docs/maintainer-review-index.md)
-3. [Independent security-review brief](docs/independent-security-review-brief.md)
-4. [Reviewer build and test runbook](docs/reviewer-build-and-test-runbook.md)
-5. [Security-review findings](docs/security-review-findings.md)
-6. [Maintainer decisions](docs/maintainer-decisions-requested.md)
-7. [Frozen bundle record](FROZEN-BUNDLE.md)
-8. [V12 remediation verification plan](docs/v12-findings-verification-plan.md)
-9. [Security review rounds and remediation history](docs/review-rounds-summary.md)
+1. [Review scope and exact inputs](REVIEW-SCOPE.md)
+2. [Repository bindings](repositories.json)
+3. [M8 closure summary](docs/m8-campaign-closure-summary.md)
+4. [M9 integration candidate](docs/m9-integration-candidate.md)
+5. [Reviewer build and test runbook](docs/reviewer-build-and-test-runbook.md)
+6. [Interoperability and reproduction checklist](docs/interoperability-reproduction-checklist.md)
+7. [Publication boundary](docs/p4-publication-boundary.md)
 
-The normative reading order is:
+The normative protocol reading order remains:
 
 1. [Maintainer specification](docs/maintainer-specification.md)
 2. [Cryptographic construction](docs/protocol-v1.md)
@@ -51,42 +39,16 @@ The normative reading order is:
 4. [AEXT transport](docs/transport-aext.md)
 5. [Threat model](docs/threat-model.md)
 
-## Repository layout
+## Reference tests
 
-```text
-docs/              Normative documents, review ledger, checkpoints, evidence
-fixtures/          Frozen shared protocol and transport vectors
-scripts/           Vector generators and deterministic bundle builder
-src/anti_exfil/    Python reference oracle and coordinator model
-tests/reference/   Reference, cross-implementation, and adversarial tests
-repositories.json  Machine-readable repository and revision bindings
-V12-CONTEXT.md     Concise context for repository-scanning tools
-```
-
-All mnemonics, private keys, PSBTs, and transactions committed here are
-explicitly public deterministic test fixtures. Never send funds to fixture
-addresses or reuse fixture keys.
-
-## Run the reference tests
-
-Python 3.11 or newer is recommended.
-
-```bash
-python -m venv .venv
+```sh
+python3 -m venv .venv
+. .venv/bin/activate
 python -m pip install -e .
 python -m unittest discover -s tests/reference -t . -v
 ```
 
-Cross-implementation SeedSigner adapter tests require the separately cloned,
-tagged SeedSigner source described in the reviewer runbook.
+All private keys, mnemonics, PSBTs, and transactions committed here are
+explicitly public deterministic fixtures. Never fund or reuse fixture keys.
 
-## Reporting security issues
-
-See [SECURITY.md](SECURITY.md). Please do not publish exploitable details in a
-normal issue before a private reporting channel has been established.
-
-## Licensing
-
-The reference implementation and review-hub material are distributed under the
-Apache License 2.0 in [LICENSE](LICENSE). Each linked implementation fork keeps
-the license of its upstream project.
+See [SECURITY.md](SECURITY.md) for private vulnerability reporting.

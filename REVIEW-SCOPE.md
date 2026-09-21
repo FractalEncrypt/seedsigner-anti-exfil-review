@@ -1,62 +1,44 @@
 # Review scope and immutable inputs
 
-The project crosses four independently maintained repositories. Review claims
-apply only to the exact commits below and to the protocol/reference material in
-this hub.
+The v2 candidate binds five implementation repositories and this reference hub.
+Exact commits and trees are authoritative; local branch names are descriptive
+only. New P1–P3 candidates are not yet public tags.
 
-| Component | Fork | Upstream base | Immutable tested result |
+| Component | Candidate commit | Candidate tree | Basis |
 | --- | --- | --- | --- |
-| Drongo | `FractalEncrypt/drongo` | `a47c2b3f58d7cedd504b2bd07833708866614216` | `e9a692a4ac4eb14901101cd9324e2275a29897cf` |
-| Sparrow | `FractalEncrypt/sparrow` | `b99b880c9fe75565921af9ef438d6314fdd73d6f` | `5b74d94637516aab6d1c79a2e3a3c13c1347b3ea` |
-| SeedSigner | `FractalEncrypt/FractalEncrypt_seedsigner` | `56637104b90325e1bc47b58f5f5e8154ea56cf37` | `214793df4f51466179b792420921b8cdd8d0c1ac` |
-| SeedSignerOS | `FractalEncrypt/seedsigner-os` | `d5a1077851a9b41d6637f7317e3f06aaa453bd5d` | `0bf1dc92519906c7db265055abfb07e0ee344342` |
+| Drongo | `948f586f0e523e0ef67d973a72eac67aa8148968` | `d5943708b3cb71779e7c2cd5fbf931dcf67e54d4` | August hardened head plus all five M8 changes |
+| Sparrow | `cc760814c855dfaf3d27890d10ba86b635e3a033` | `6ce0ff0953560008e1832929540e5c2ebdb5b042` | August hardened head plus all thirteen M7/M8 changes; pins P1 Drongo |
+| SeedSigner | `214793df4f51466179b792420921b8cdd8d0c1ac` | `97308cf847e0415737f72e64a60c8aa6c745a0bc` | Existing accepted public tag |
+| SeedSignerOS | `0bf1dc92519906c7db265055abfb07e0ee344342` | `1ed46cd81f95c9b372c5248e30b883ac33c13a0c` | Existing accepted public tag; Buildroot `bf2a2858…` |
+| Kern | `bc382c2c458e81230b5c0c434cd5b2219eef76b6` | `196a182647ded7825d0f3e524d72a611add70950` | M8-accepted product commit plus P3 fixture-byte portability fix |
 
-See [repositories.json](repositories.json) for tag names and tag-object hashes.
+The review-hub commit and tree are recorded by `BUNDLE-METADATA.json` and the
+external P4 candidate receipt because a file cannot recursively contain its own
+final Git identity.
 
-## Security boundary
+## Claims to review
 
-The claimed property is that, when the coordinator supplies unpredictable host
-randomness after accepting the signer's nonce opening, every accepted ECDSA
-signature is bound to the frozen transaction/signing context and the committed
-base nonce. Malformed, unsupported, substituted, replayed, downgraded, or
-incomplete ceremonies are intended to fail closed.
+- The sign-to-contract construction and canonical AEXB/AEXT framing remain
+  fail-closed across supported parsing and transition paths.
+- PSBT slot attribution, frozen-context binding, signature provenance,
+  persistence, retry/abort handling, and final-action quarantine retain both the
+  August hardening and M8 changes in the integrated Drongo/Sparrow trees.
+- SeedSigner and Kern implement the bounded signer-side protocol described by
+  their exact sources and test evidence.
+- The documented source, test, and build procedures are sufficient for a clean
+  third-party reproduction without the campaign workstation.
+- M8 closure is accurately summarized without expanding any bounded claim.
 
-The review should cover:
+## Explicit non-claims
 
-- the ECDSA sign-to-contract construction and native binding;
-- canonical AEXB v1 and AEXT parsing;
-- PSBT v0 canonicalization and reconstruction;
-- slot attribution and exact per-signature ceremony provenance;
-- multisig mixed-provenance behavior;
-- persistence, retry, abort, and rehydration semantics;
-- REQUIRED/OPTIONAL/UNSUPPORTED policy enforcement on every signing, combine,
-  finalize, import, cross-window, and broadcast route;
-- raw signed-transaction quarantine and the narrow internal-sweep exemption;
-- resource limits and fail-closed parser behavior; and
-- divergence among the reference, Drongo, Sparrow, and SeedSigner consumers.
+- No upstream acceptance, production readiness, mainnet recommendation, formal
+  proof, or complete independent production security audit.
+- No automatic transfer of physical M8 credit to the new integrated trees.
+- No threshold-completion claim for M8 P04/P05, physical C3 claim for D/P01, or
+  all-campaign zero-finalization/zero-broadcast claim.
+- No bit-for-bit firmware/image reproducibility claim across uncontrolled hosts.
+- No Jade implementation is included or evaluated by this bundle; issue #1 is
+  coordination context for later work.
 
-## Prior review is context, not a waiver
-
-The completed ledger in `docs/security-review-findings.md` records earlier
-findings and their dispositions. In particular:
-
-- P6-F1 identified transaction-wide authorization and missing secondary-route
-  enforcement. It was replaced by signature-scoped provenance.
-- R-F1 identified over-broad quarantine of PSBT-less raw transactions. It was
-  fixed with positive wallet attribution and a local, digest-bound internal
-  sweep exemption.
-
-A new report may revisit these areas, but should identify a concrete remaining
-bypass at the immutable final revisions rather than assuming the historical
-behavior is still present. Phases 10–15 additionally record the independent
-triage and remediation of V12 findings `#247985` through `#248002`; the Gate 5
-tags include all four implementation gates and the explicit trust-boundary
-dispositions. Phases 16–17 record the later finalized controlled-input and
-final-transaction export-route finding, its cross-implementation remediation,
-independent approval, and exact public CI evidence at the replacement tags.
-
-## Out of scope for a production claim
-
-This package does not establish upstream acceptance, reproducible production
-release binaries, a general Taproot/Schnorr anti-exfil protocol, or a mainnet
-deployment recommendation. Those require separate review and release work.
+The public v1.3 release remains immutable historical context. P5 should assess
+the new v2 delta and may revisit older areas when it identifies a concrete risk.
