@@ -30,17 +30,18 @@ not prove them.
 
 ## 2. Clone and bind the exact sources
 
-Drongo, Sparrow, and Kern are local P4 candidates until publication is separately
-authorized. SeedSigner and SeedSignerOS are existing public immutable tags. The Kern review
-branch is based on the M8-accepted product commit and adds one P3 test-only fix
+Drongo, Sparrow, and Kern are reviewed v2 candidate commits whose public-remote
+availability depends on the separately authorized publication step. SeedSigner
+and SeedSignerOS also use the exact commits below; older public tags may not
+name those final commits directly. The Kern review branch is based on the
+M8-accepted product commit and adds one P3 test-only fix
 which preserves the original byte streams of three already-hash-pinned public
 JSON corpora. That commit changes no C product source or build configuration.
 
-The Drongo and Sparrow commit IDs below are not obtainable from their public
-remotes until a later, separately authorized publication step, just like the
-Kern candidate. Before publication, reviewers must receive the local Git
-objects or patch sets from the owner. Do not substitute a moving branch or an
-older public head when verifying these identities.
+Before publication, reviewers must receive unavailable Git objects or patch
+sets from the owner. After publication, the commands below obtain the exact
+objects from the fork remotes. In either case, do not substitute a moving branch
+or an older public head when verifying these identities.
 
 ```sh
 git clone --recursive https://github.com/FractalEncrypt/sparrow.git sparrow
@@ -57,8 +58,8 @@ git clone --recursive https://github.com/FractalEncrypt/seedsigner-os.git seedsi
 git -C seedsigner-os checkout --detach anti-exfil-review-v1-tested-2026-08-12
 git -C seedsigner-os submodule update --init --recursive
 
-# Available after the later publication step. Until then obtain the local bundle
-# or patch set from the owner; do not substitute a moving branch silently.
+# Available after publication. Until then obtain the local object or patch set
+# from the owner; do not substitute a moving branch silently.
 git clone --recursive https://github.com/FractalEncrypt/Kern.git kern
 git -C kern checkout --detach bc382c2c458e81230b5c0c434cd5b2219eef76b6
 git -C kern submodule update --init --recursive

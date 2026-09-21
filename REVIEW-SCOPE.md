@@ -1,8 +1,9 @@
 # Review scope and immutable inputs
 
 The v2 candidate binds five implementation repositories and this reference hub.
-Exact commits and trees are authoritative; local branch names are descriptive
-only. New P1–P3 candidates are not yet public tags.
+Exact commits and trees are authoritative; branch and tag names are discovery
+aids only. Availability from public remotes depends on the separately
+authorized publication operation.
 
 | Component | Candidate commit | Candidate tree | Basis |
 | --- | --- | --- | --- |
@@ -40,5 +41,7 @@ final Git identity.
 - No Jade implementation is included or evaluated by this bundle; issue #1 is
   coordination context for later work.
 
-The public v1.3 release remains immutable historical context. P5 should assess
-the new v2 delta and may revisit older areas when it identifies a concrete risk.
+The public v1.3 release remains immutable historical context. P5/P5.1 accepted
+the v2 integration and portability repair with no blocker. Outside reviewers
+are invited to reassess any new or older area when they identify a concrete
+risk; those model-based reviews are not a substitute for community scrutiny.

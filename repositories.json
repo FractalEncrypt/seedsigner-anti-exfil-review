@@ -1,7 +1,7 @@
 {
   "schema": 4,
   "recorded_at": "2026-09-21",
-  "status": "LOCAL_V2_CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+  "status": "P5_P5_1_ACCEPTED_OUTSIDE_REVIEW_REQUESTED_PUBLICATION_SEPARATELY_AUTHORIZED",
   "protocol": "AEXB-v1-multislot",
   "components": [
     {
@@ -90,6 +90,11 @@
   },
   "publication": {
     "authorized": false,
-    "p5_independent_review_required": true
+    "p5_independent_review_required": false,
+    "p5_accepted": true,
+    "p5_review_sha256": "8f506d9aae69ab13e61e4421accc25b0923513e763acbbfd84a587fe180bdc39",
+    "p5_1_accepted": true,
+    "p5_1_review_sha256": "d55cabd9f70190f4a2e48c686a853c979bd7d0daf6d375e3cd18b4e1232583b3",
+    "outside_human_community_review_requested": true
   }
 }
