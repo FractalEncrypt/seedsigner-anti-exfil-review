@@ -2,7 +2,9 @@
 import argparse
 import hashlib
 import json
+import subprocess
 import zipfile
+from pathlib import Path
 
 
 def sha256(data: bytes) -> str:
@@ -12,6 +14,11 @@ def sha256(data: bytes) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("archive")
+    parser.add_argument(
+        "--repo",
+        type=Path,
+        help="optional exact Git repository used to verify every payload against its committed blob",
+    )
     args = parser.parse_args()
     failures = []
     with zipfile.ZipFile(args.archive, "r") as archive:
@@ -41,12 +48,46 @@ def main() -> int:
             failures.append("bundle metadata is not clean")
         if metadata.get("payload_file_count") != len(payload_names):
             failures.append("payload count mismatch")
+        git_payloads_verified = None
+        if args.repo is not None:
+            repo = args.repo.resolve()
+            commit = metadata.get("source_commit")
+            tree = metadata.get("source_tree")
+            try:
+                actual_commit = subprocess.check_output(
+                    ["git", "rev-parse", f"{commit}^{{commit}}"], cwd=repo, text=True
+                ).strip()
+                actual_tree = subprocess.check_output(
+                    ["git", "rev-parse", f"{commit}^{{tree}}"], cwd=repo, text=True
+                ).strip()
+            except (OSError, subprocess.CalledProcessError) as exc:
+                failures.append(f"Git identity lookup failed: {exc}")
+                actual_commit = actual_tree = None
+            if actual_commit != commit:
+                failures.append("Git source commit mismatch")
+            if actual_tree != tree:
+                failures.append("Git source tree mismatch")
+            verified = 0
+            for name in payload_names:
+                try:
+                    blob = subprocess.check_output(
+                        ["git", "show", f"{commit}:{name}"], cwd=repo
+                    )
+                except (OSError, subprocess.CalledProcessError) as exc:
+                    failures.append(f"Git blob lookup failed: {name}: {exc}")
+                    continue
+                if archive.read(name) != blob:
+                    failures.append(f"Git blob mismatch: {name}")
+                else:
+                    verified += 1
+            git_payloads_verified = verified
     print(json.dumps({
         "archive_sha256": sha256(open(args.archive, "rb").read()),
         "entries": len(names),
         "payloads_verified": len(expected),
         "source_commit": metadata.get("source_commit"),
         "source_tree": metadata.get("source_tree"),
+        "git_payloads_verified": git_payloads_verified,
         "failures": failures,
     }, indent=2))
     return 1 if failures else 0

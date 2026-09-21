@@ -6,7 +6,7 @@ import hashlib
 import json
 import subprocess
 import zipfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXED_ZIP_TIME = (1980, 1, 1, 0, 0, 0)
@@ -61,24 +61,30 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def selected_files() -> list[Path]:
-    files: set[Path] = set()
+def git_bytes(relative: str) -> bytes:
+    """Read the exact blob bytes from HEAD, independent of checkout filters."""
+    return subprocess.check_output(["git", "show", f"HEAD:{relative}"], cwd=ROOT)
+
+
+def selected_files() -> list[str]:
+    files: set[str] = set()
     for relative in EXACT_FILES:
-        path = ROOT / relative
-        if not path.is_file():
-            raise FileNotFoundError(relative)
-        files.add(path)
-    for relative in TREE_ROOTS:
-        root = ROOT / relative
-        if not root.is_dir():
-            raise FileNotFoundError(relative)
-        files.update(
-            path for path in root.rglob("*")
-            if path.is_file()
-            and "__pycache__" not in path.parts
-            and path.suffix not in {".pyc", ".pyo"}
+        subprocess.check_call(
+            ["git", "cat-file", "-e", f"HEAD:{relative}"],
+            cwd=ROOT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
         )
-    return sorted(files, key=lambda path: path.relative_to(ROOT).as_posix())
+        files.add(relative)
+    for relative in TREE_ROOTS:
+        names = git("ls-tree", "-r", "--name-only", "HEAD", "--", relative)
+        if not names:
+            raise FileNotFoundError(relative)
+        for name in names.splitlines():
+            path = PurePosixPath(name)
+            if "__pycache__" not in path.parts and path.suffix not in {".pyc", ".pyo"}:
+                files.add(path.as_posix())
+    return sorted(files)
 
 
 def write_entry(archive: zipfile.ZipFile, name: str, data: bytes) -> None:
@@ -98,8 +104,8 @@ def main() -> int:
         raise SystemExit("Refusing to freeze a dirty review-hub worktree")
 
     payloads = {
-        path.relative_to(ROOT).as_posix(): path.read_bytes()
-        for path in selected_files()
+        relative: git_bytes(relative)
+        for relative in selected_files()
     }
     sums = "".join(
         f"{sha256(data)}  {name}\n" for name, data in payloads.items()
@@ -112,6 +118,8 @@ def main() -> int:
             "source_tree": git("rev-parse", "HEAD^{tree}"),
             "source_commit_time": git("show", "-s", "--format=%cI", "HEAD"),
             "dirty_candidate": False,
+            "payload_source": "exact Git blob bytes from source_commit",
+            "payloads_match_source_blobs": True,
             "payload_file_count": len(payloads),
             "hash_manifest": "SHA256SUMS.txt",
             "publication_authorized": False,

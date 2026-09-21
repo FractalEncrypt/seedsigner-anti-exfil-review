@@ -1,7 +1,9 @@
 # Review bundle v2 manifest and exclusions
 
 The deterministic v2 archive is built by
-`scripts/build_review_bundle_v2.py`. It contains:
+`scripts/build_review_bundle_v2.py` from exact committed Git blob bytes, not
+from line-ending-filtered working-tree files. Its verifier can bind every
+payload back to the source commit with `--repo`. It contains:
 
 - exact repository/evidence bindings and current review scope;
 - the bounded M8 closure summary with every retained limitation;
@@ -27,6 +29,7 @@ Authenticated raw evidence stays local and is bound by the inventory hashes in
 historical detailed-review bundle; v2 need not duplicate every legacy image or
 machine transcript.
 
-The external P4 receipt records final Git identity, archive bytes/hash, two-build
-determinism, internal verification, and sanitization results. Publication is a
-separate owner-authorized step after accepted P5 review.
+The external P4.1 receipt records final Git identity, archive bytes/hash,
+cross-line-ending-checkout determinism, Git-blob verification, internal
+verification, and sanitization results. Publication is a separate
+owner-authorized step after an accepted proportional P5 repair review.

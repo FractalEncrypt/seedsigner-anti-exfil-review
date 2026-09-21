@@ -36,6 +36,12 @@ branch is based on the M8-accepted product commit and adds one P3 test-only fix
 which preserves the original byte streams of three already-hash-pinned public
 JSON corpora. That commit changes no C product source or build configuration.
 
+The Drongo and Sparrow commit IDs below are not obtainable from their public
+remotes until a later, separately authorized publication step, just like the
+Kern candidate. Before publication, reviewers must receive the local Git
+objects or patch sets from the owner. Do not substitute a moving branch or an
+older public head when verifying these identities.
+
 ```sh
 git clone --recursive https://github.com/FractalEncrypt/sparrow.git sparrow
 git -C sparrow checkout --detach cc760814c855dfaf3d27890d10ba86b635e3a033
@@ -81,6 +87,47 @@ git -C kern diff --exit-code 5180dbb603e01e33698bb388a400f92bff722d4c..HEAD -- \
   ':(exclude)main/core/test/fixtures/anti_exfil/semantic_protocol/protocol-v1-semantic-psbt-vector.json' \
   ':(exclude)main/core/test/fixtures/anti_exfil/transport/protocol-v1-multislot-vectors.json'
 git -C kern submodule status --recursive
+```
+
+## 2.1 Frozen-evidence portability notes
+
+Two historical evidence-package portability details do not alter the product
+or review-hub identities:
+
+- The frozen P1 verifier binds a planning document as it existed when P1 was
+  sealed. That living plan later evolved through P2–P4, so rerunning
+  `verify-p1.py` against the current workspace copy reports a stale external
+  authority-document binding. Authenticate the immutable P1 inventory itself;
+  do not rewrite the frozen P1 package or mistake later plan edits for a Drongo
+  source change.
+- The frozen P3 `MANIFEST.sha256` has CRLF line endings. GNU
+  `sha256sum -c MANIFEST.sha256` therefore treats the carriage return as part
+  of each filename on Linux. Verify it portably without modifying the frozen
+  manifest:
+
+```sh
+python - <<'PY'
+import hashlib
+from pathlib import Path
+
+root = Path('.')
+manifest = root / 'MANIFEST.sha256'
+for line in manifest.read_text(encoding='utf-8').splitlines():
+    expected, name = line.split('  ', 1)
+    actual = hashlib.sha256((root / name).read_bytes()).hexdigest()
+    if actual != expected:
+        raise SystemExit(f'hash mismatch: {name}')
+print('P3 manifest: PASS')
+PY
+```
+
+For the v2 review ZIP, the builder reads exact bytes from the committed Git
+tree rather than from checkout files. This makes the archive independent of
+`core.autocrlf` and other working-tree line-ending conversion. Verify every
+archived payload against the exact source commit with:
+
+```sh
+python scripts/verify_review_bundle_v2.py /path/to/review-bundle.zip --repo .
 ```
 
 Expected Kern submodule commits are:
