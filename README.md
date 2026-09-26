@@ -41,6 +41,11 @@ details—and the boundaries—are why outside review matters.
 - The bounded M8 campaign is closed for its frozen public-test execution
   identities. Its completion rule passed and `F-IDENTITY-BRIDGE-01` was
   resolved.
+- The M9 hardening track is closed for the bounded experimental,
+  Testnet/public-test-only, off-by-default scope after an accepted fresh H31
+  independent review. The exact dispositions, residuals, findings, and
+  post-publication Kern identities are in the
+  [M9 hardening closure](docs/m9-hardening-closure.md).
 - The integrated v2 Drongo, Sparrow, SeedSigner, SeedSignerOS, and Kern source
   identities are pinned in [REVIEW-SCOPE.md](REVIEW-SCOPE.md) and
   [repositories.json](repositories.json).
@@ -101,10 +106,11 @@ For a practical review:
 3. [Reviewer build and test runbook](docs/reviewer-build-and-test-runbook.md)
 4. [Interoperability and reproduction checklist](docs/interoperability-reproduction-checklist.md)
 5. [M8 closure summary and retained limitations](docs/m8-campaign-closure-summary.md)
-6. [M9 integration summary](docs/m9-integration-candidate.md)
-7. [Security-review findings](docs/security-review-findings.md)
-8. [Maintainer decisions and open questions](docs/maintainer-decisions-requested.md)
-9. [Review rounds and remediation history](docs/review-rounds-summary.md)
+6. [M9 bounded hardening closure](docs/m9-hardening-closure.md)
+7. [M9 integration summary](docs/m9-integration-candidate.md)
+8. [Security-review findings](docs/security-review-findings.md)
+9. [Maintainer decisions and open questions](docs/maintainer-decisions-requested.md)
+10. [Review rounds and remediation history](docs/review-rounds-summary.md)
 
 The normative reading order is:
 
@@ -166,6 +172,11 @@ physical-test credit for the newer integrated trees, or bit-for-bit firmware
 image reproducibility across uncontrolled hosts. Start with the
 [M8 closure summary](docs/m8-campaign-closure-summary.md) for the six retained
 residuals and historical disclosure.
+
+The later M9 hardening closure adds further bounded results and explicit
+residuals; it does not erase or supersede the M8 limitations. Review
+[its complete closure record](docs/m9-hardening-closure.md), especially the
+identity separation and informational-observation register.
 
 No Jade implementation is included or evaluated here. Jade work is relevant
 cross-implementation context tracked in

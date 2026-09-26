@@ -1,5 +1,5 @@
 {
-  "schema": "anti-exfil-review-hub-v2-evidence-bindings-v1",
+  "schema": "anti-exfil-review-hub-v2-evidence-bindings-v2",
   "m8_closure": {
     "inventory_bytes": 3246,
     "inventory_sha256": "4192f67ab626becdf3f27223098217ac07904e5148cbd68976be028580a8db3e",
@@ -23,6 +23,28 @@
     "manifest_sha256": "f78099d7ae6b5468e95f8ec066414906181ee276a673cde0e78c7be5310b12b7",
     "kern_candidate_commit": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
     "kern_candidate_tree": "196a182647ded7825d0f3e524d72a611add70950"
+  },
+  "m9_hardening_closure": {
+    "status": "CLOSED_BOUNDED_COMPLETION_RULE_MET",
+    "scope": "experimental; Testnet/public-test only; off by default",
+    "h31_report_bytes": 35522,
+    "h31_report_sha256": "9129f8dd62a092078e4123033913a8fc3e1a516f277027e9e700e73a10f5fe11",
+    "h31_inventory_sha256": "57c57e4d2a780f6279e7696676791be95c8f86557c8144f01542482379291350",
+    "h31_verifier_sha256": "be98f60e6ef20edad1ca5fc3e9e0d8d1d1d6c8c6562437ea93c50e15509db361",
+    "h31_stdout_sha256": "acf3a1c976f393e4dbde7970ca054a417806afd48935873c63834886bf71ed4a",
+    "kern_identity_layers": {
+      "published": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
+      "h3_product_repair": "ac2f1382d62072e3dd150d7626d04b96ff4af89a",
+      "telemetry_evidence": "1def1b9a6049f3f57f19205e5b20aed4abb13374",
+      "h30_case4_diagnostic": "5bddd829ae9e284b055b2ea5d9778afdd7fd014c"
+    },
+    "accepted_residuals": [
+      "H28_NOT_RUN_HELD",
+      "H30_CASE4_NOT_RUN",
+      "H18_RENDERED_INSPECTION_NOT_RUN",
+      "H19_RENDERED_QR_ERROR_CORPUS_INSPECTION_NOT_RUN"
+    ],
+    "push_or_publication_authorized": false
   },
   "raw_campaign_evidence_embedded": false,
   "binding_model": "Public candidate carries concise claims and immutable inventory hashes; authenticated raw local evidence remains outside the publication archive."

@@ -1,7 +1,7 @@
 {
-  "schema": 4,
-  "recorded_at": "2026-09-21",
-  "status": "P5_P5_1_ACCEPTED_OUTSIDE_REVIEW_REQUESTED_PUBLICATION_SEPARATELY_AUTHORIZED",
+  "schema": 5,
+  "recorded_at": "2026-09-26",
+  "status": "M9_BOUNDED_CLOSED_LOCAL_REVIEWER_HUB_UPDATE_REVIEW_PENDING_PUBLICATION_NOT_AUTHORIZED",
   "protocol": "AEXB-v1-multislot",
   "components": [
     {
@@ -80,16 +80,29 @@
     "package_inventory_sha256": "4192f67ab626becdf3f27223098217ac07904e5148cbd68976be028580a8db3e",
     "accepted_review_sha256": "3f38c858e30f10bc71b4306981e781a4d457f1f92a0e3e0223982e42a106fd60"
   },
+  "m9_hardening_closure": {
+    "status": "CLOSED_BOUNDED_COMPLETION_RULE_MET",
+    "scope": "experimental; Testnet/public-test only; off by default",
+    "h31_report_sha256": "9129f8dd62a092078e4123033913a8fc3e1a516f277027e9e700e73a10f5fe11",
+    "kern_published_commit": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
+    "kern_h3_product_repair_commit": "ac2f1382d62072e3dd150d7626d04b96ff4af89a",
+    "kern_telemetry_evidence_commit": "1def1b9a6049f3f57f19205e5b20aed4abb13374",
+    "kern_h30_case4_diagnostic_commit": "5bddd829ae9e284b055b2ea5d9778afdd7fd014c",
+    "local_update_independent_review_required": true,
+    "push_or_publication_authorized": false
+  },
   "review_hub": {
     "candidate_commit_and_tree": "recorded in BUNDLE-METADATA.json and the external P4 candidate receipt",
     "base_commit": "535407519c8f74d73e7ee3cae94b728bb650fe3c",
+    "published_v2_commit": "88c92b062e6abb7aba5190235d4b2ec8de9c1a6f",
     "previous_public_bundle": {
       "tag": "review-hub-v1.3-2026-08-22",
       "sha256": "08984dfdd39604f5470ab708a5d5da4bf6157c0e40dfb2d7f11f5dfdfa5da18a"
     }
   },
   "publication": {
-    "authorized": false,
+    "published_v2_completed": true,
+    "this_update_authorized": false,
     "p5_independent_review_required": false,
     "p5_accepted": true,
     "p5_review_sha256": "8f506d9aae69ab13e61e4421accc25b0923513e763acbbfd84a587fe180bdc39",

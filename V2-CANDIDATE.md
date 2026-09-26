@@ -1,7 +1,7 @@
 # Review-hub v2 reviewed publication candidate
 
-Date: 2026-09-21  
-Status: **P5/P5.1 accepted; outside review requested; publication separately authorized**
+Date: 2026-09-26
+Status: **PUBLISHED V2 IDENTITY RETAINED; LOCAL BOUNDED M9 CLOSURE UPDATE AWAITS INDEPENDENT REVIEW AND SEPARATE PUBLICATION AUTHORIZATION**
 
 This candidate incorporates the closed M8 result and retained limitations, the
 P1 Drongo synthesis, P2 Sparrow synthesis, P3 signer/build work, exact repository
@@ -27,9 +27,29 @@ The earlier v1 bundle also received outside review input from BitcoinShooter
 and an anonymous reviewer identified as “Joe.” They are acknowledged for that
 historical contribution without implying review or endorsement of v2.
 
-No publication, tag, push, release, issue update, upstream PR, device activity,
-signing, funding, finalization, or broadcast is authorized by this document.
-Publication remains a separate owner-authorized operation.
+No additional publication, tag, push, release, issue update, upstream PR,
+device activity, signing, funding, finalization, or broadcast is authorized by
+this document. Publication of this closure update remains a separate
+owner-authorized operation.
 
 The previously published v1.3 bundle remains immutable historical evidence:
 SHA-256 `08984dfdd39604f5470ab708a5d5da4bf6157c0e40dfb2d7f11f5dfdfa5da18a`.
+
+## Post-publication M9 hardening closure update
+
+The v2 review identity was subsequently published at review-hub commit
+`88c92b062e6abb7aba5190235d4b2ec8de9c1a6f`. M9 then completed a separate
+hardening track. A fresh H31 independent review accepted the consolidated
+33-row ledger and made M9 eligible for bounded closure; the owner separately
+authorized that closure on 2026-09-26.
+
+The complete result is in [docs/m9-hardening-closure.md](docs/m9-hardening-closure.md).
+It retains every finding, limitation, informational observation, resolved
+packaging defect, and explicit residual required by H31. The update also keeps
+the published Kern identity, H3 product-repair candidate, telemetry evidence
+branch, and H30 diagnostic branch distinct.
+
+This new commit is a local reviewer candidate only. It does not amend the
+already-published commit, push itself, create a tag/release, or authorize
+production, Mainnet, hardware, signing, finalization, broadcast, or upstream
+activity.

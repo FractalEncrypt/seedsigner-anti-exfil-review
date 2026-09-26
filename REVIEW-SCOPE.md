@@ -1,9 +1,10 @@
 # Review scope and immutable inputs
 
-The v2 candidate binds five implementation repositories and this reference hub.
+The published v2 review set binds five implementation repositories and this
+reference hub.
 Exact commits and trees are authoritative; branch and tag names are discovery
-aids only. Availability from public remotes depends on the separately
-authorized publication operation.
+aids only. The later M9 hardening identities are separately identified below;
+this local closure update does not publish them.
 
 | Component | Candidate commit | Candidate tree | Basis |
 | --- | --- | --- | --- |
@@ -45,3 +46,20 @@ The public v1.3 release remains immutable historical context. P5/P5.1 accepted
 the v2 integration and portability repair with no blocker. Outside reviewers
 are invited to reassess any new or older area when they identify a concrete
 risk; those model-based reviews are not a substitute for community scrutiny.
+
+## Post-publication M9 hardening identities
+
+The public v2 Kern identity remains `bc382c2c…`. Later hardening evidence uses
+three distinct descendants:
+
+| Purpose | Commit | Tree | Publication status |
+| --- | --- | --- | --- |
+| H3 dependency repair candidate | `ac2f1382d62072e3dd150d7626d04b96ff4af89a` | `44413413d87ebb495764307f59ac983a12311adb` | Only post-publication product-repair candidate; not yet published by this update. |
+| H25/H26/H27/H30 telemetry | `1def1b9a6049f3f57f19205e5b20aed4abb13374` | `4193a00544107bea480086febdc762f5cd16a574` | Source-modifying measurement branch; evidence only, not a product/publication candidate. |
+| H30 case-4 diagnostic | `5bddd829ae9e284b055b2ea5d9778afdd7fd014c` | `68c3ba177d50df42033a29c83426badfb0083a84` | Compile-time-off-by-default diagnostic; evidence only, not a product/publication candidate. |
+
+The H3 diff from the published Kern commit is exactly
+`dependencies.lock` plus `main/idf_component.yml`. Its accepted claim is a
+six-board ESP-IDF 6.0.2 tested-build boundary, not physical camera/screen
+behavior. See the [M9 hardening closure](docs/m9-hardening-closure.md) for the
+full H01–H33 disposition and all retained limitations.

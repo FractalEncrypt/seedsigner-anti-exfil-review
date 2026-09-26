@@ -7,6 +7,8 @@ payload back to the source commit with `--repo`. It contains:
 
 - exact repository/evidence bindings and current review scope;
 - the bounded M8 closure summary with every retained limitation;
+- the bounded M9 hardening closure, H01–H33 disposition, identity layers,
+  retained findings, residuals, and informational observations;
 - the P1–P3 integration summary;
 - normative protocol, wire-format, transport, and threat-model documents;
 - the reference oracle, public fixtures, generators, and tests;
@@ -22,7 +24,10 @@ It intentionally excludes:
   build outputs or caches;
 - local test logs and machine-specific absolute paths;
 - firmware/images/application distributions; and
-- the P5 review result, which does not exist when P4 is frozen.
+- raw H31 request/review packages and machine-specific physical captures; the
+  public closure document instead binds their exact accepted hashes; and
+- historical external review transcripts that are not needed to reproduce the
+  concise reviewer-facing disposition.
 
 Authenticated raw evidence stays local and is bound by the inventory hashes in
 `docs/m9-evidence-bindings.json`. The earlier public v1.3 release remains the

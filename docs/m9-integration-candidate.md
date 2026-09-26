@@ -51,10 +51,15 @@ product source or build configuration changes. A clean Linux checkout passes
 all fixture-freshness and host suites. P3 manifest SHA-256:
 `f78099d7ae6b5468e95f8ec066414906181ee276a673cde0e78c7be5310b12b7`.
 
-## Publication state
+## Publication and later hardening state
 
-All three candidates are local and untagged. Push URLs were disabled during
-preparation. P4 packages them for independent review but does not publish them.
-P5 must independently accept the histories, tests, claims, sanitization, and
-exact proposed publication operation before separate owner publication
-authority can be requested.
+The reviewed v2 identities were subsequently published, with the review hub at
+commit `88c92b062e6abb7aba5190235d4b2ec8de9c1a6f`. This document remains the
+historical P1–P3 integration record.
+
+Later M9 hardening did not rewrite those public identities. It introduced an
+H3 Kern dependency-repair candidate and separate source-modifying telemetry and
+diagnostic evidence branches. Their identities and the bounded closure are in
+[m9-hardening-closure.md](m9-hardening-closure.md). Only H3 is a product-repair
+candidate; the measurement and diagnostic branches are not proposed for
+production or publication.

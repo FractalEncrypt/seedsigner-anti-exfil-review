@@ -20,6 +20,7 @@ EXACT_FILES = [
     "repositories.json",
     "pyproject.toml",
     "docs/m8-campaign-closure-summary.md",
+    "docs/m9-hardening-closure.md",
     "docs/m9-integration-candidate.md",
     "docs/m9-evidence-bindings.json",
     "docs/reviewer-build-and-test-runbook.md",
