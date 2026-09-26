@@ -1,4 +1,4 @@
-"""Build the deterministic, sanitized anti-exfil v2 review candidate."""
+"""Build the deterministic, sanitized Airgap Anti-Exfil review candidate."""
 from __future__ import annotations
 
 import argparse
@@ -14,6 +14,7 @@ FIXED_ZIP_TIME = (1980, 1, 1, 0, 0, 0)
 EXACT_FILES = [
     "LICENSE",
     "README.md",
+    "TESTING-QUICKSTART.md",
     "REVIEW-SCOPE.md",
     "SECURITY.md",
     "V2-CANDIDATE.md",
@@ -24,6 +25,12 @@ EXACT_FILES = [
     "docs/m9-integration-candidate.md",
     "docs/m9-evidence-bindings.json",
     "docs/reviewer-build-and-test-runbook.md",
+    "docs/seedsigner-test-image.md",
+    "docs/kern-test-firmware.md",
+    "docs/sparrow-isolated-test-profile.md",
+    "docs/end-to-end-testnet-testing.md",
+    "docs/user-test-feedback-template.md",
+    "docs/review-versions.md",
     "docs/interoperability-reproduction-checklist.md",
     "docs/p4-publication-boundary.md",
     "docs/review-bundle-manifest.md",
@@ -113,7 +120,7 @@ def main() -> int:
     ).encode("utf-8")
     metadata = json.dumps(
         {
-            "bundle": "SeedSigner anti-exfil review hub v2 candidate",
+            "bundle": "Airgap Anti-Exfil review hub candidate",
             "protocol_status": "experimental; testnet/public-test only; not a production audit",
             "source_commit": git("rev-parse", "HEAD^{commit}"),
             "source_tree": git("rev-parse", "HEAD^{tree}"),

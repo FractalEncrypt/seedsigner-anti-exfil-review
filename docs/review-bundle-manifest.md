@@ -13,6 +13,8 @@ payload back to the source commit with `--repo`. It contains:
 - normative protocol, wire-format, transport, and threat-model documents;
 - the reference oracle, public fixtures, generators, and tests;
 - clean third-party build/test instructions and a reproduction checklist; and
+- novice SeedSigner/Kern installation, isolated Sparrow, singlesig/multisig,
+  faucet/network-safety, and community-feedback instructions; and
 - archive verification and sanitization tools.
 
 It intentionally excludes:

@@ -29,9 +29,9 @@ historical development notes.
    adversarial, Sparrow, multi-input, and multisig gates.
 8. [UX proposal](ux-proposal.md) — device-neutral policy, signing ceremony,
    retry/abort language, multisig behavior, and error presentation.
-9. [Repository hygiene and upstream patch-series audit](upstreaming-readiness-audit.md)
-   — publication blockers, dependency order, clean review series, and the
-   packaged Sparrow acceptance gate.
+9. [Repository hygiene publication checkpoint](repository-hygiene-publication-checkpoint.json)
+   — fork boundaries, disabled upstream pushes, exact review identities, and
+   the clean recursive-clone result.
 10. [Drongo review-series checkpoint](drongo-review-series-checkpoint.json) —
     exact three-commit series, tree-equivalence proof, Windows results, and
     clean Linux CI evidence.

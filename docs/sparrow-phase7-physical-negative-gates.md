@@ -28,7 +28,7 @@ camera behavior remains an explicit observation item below.
 1. Make a filesystem copy of `run/profile-phase6-01` while Sparrow is closed.
 2. Launch the phase-7 Sparrow worktree with that isolated profile and
    `--network testnet4`, using the command in
-   `docs/sparrow-isolated-development-profile.md`.
+   [the isolated Sparrow test-profile guide](sparrow-isolated-test-profile.md).
 3. Open the phase-6 wallet. Its SeedSigner brand, xpub, UTXOs, and protected
    policy must remain intact. Settings must show **Protected signing: Required**.
 4. Optional non-SeedSigner UI smoke test: if another air-gapped device is

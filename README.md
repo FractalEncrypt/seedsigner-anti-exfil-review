@@ -1,4 +1,7 @@
-# SeedSigner Anti-Exfil Review Hub
+# Airgap Anti-Exfil
+
+> Experimental anti-exfil Bitcoin signing over animated QR for DIY air-gapped
+> signers. Formerly the SeedSigner Anti-Exfil Review Hub.
 
 This repository is the cross-project review hub for an experimental ECDSA
 anti-exfil signing protocol spanning SeedSigner, SeedSignerOS, Kern, Drongo,
@@ -15,6 +18,26 @@ It gives outside reviewers one place to find:
 
 The implementation code remains in the linked project forks. This hub binds
 those repositories and supplies common review material; it is not a monorepo.
+
+## Try it with disposable testnet funds
+
+You do not need to be a protocol developer to contribute useful evidence. If
+you have a SeedSigner or supported Kern board, start with the
+[novice testing quickstart](TESTING-QUICKSTART.md). It provides:
+
+- a dedicated Sparrow build and home folder that do not touch an ordinary
+  installed Sparrow profile;
+- SeedSigner microSD and Kern firmware preparation paths;
+- singlesig and multisig test flows using device-generated disposable seeds;
+- tested Testnet4 and Testnet3 faucet starting points; and
+- a [feedback template](docs/user-test-feedback-template.md) for timing, QR UX,
+  platform, hardware, success, and failure observations.
+
+The central community-testing question is experiential: does the additional
+QR exchange feel like unacceptable friction, a reasonable security tradeoff,
+or something else? Do not inherit anyone else's answer. Try it on your own
+hardware, camera, display, operating system, and room lighting, then tell us
+what it felt like and what actually happened.
 
 ## What this is—and why you should care
 
@@ -99,7 +122,16 @@ You do not need to review everything. Useful contributions include:
 
 ## Start here
 
-For a practical review:
+For a first hardware test:
+
+1. [Novice testing quickstart](TESTING-QUICKSTART.md)
+2. [Isolated Sparrow build and profile](docs/sparrow-isolated-test-profile.md)
+3. [SeedSigner test image](docs/seedsigner-test-image.md) or
+   [Kern test firmware](docs/kern-test-firmware.md)
+4. [Singlesig and multisig test ceremonies](docs/end-to-end-testnet-testing.md)
+5. [Useful feedback template](docs/user-test-feedback-template.md)
+
+For a technical review:
 
 1. [Review scope and immutable revisions](REVIEW-SCOPE.md)
 2. [Repository bindings](repositories.json)
@@ -111,6 +143,7 @@ For a practical review:
 8. [Security-review findings](docs/security-review-findings.md)
 9. [Maintainer decisions and open questions](docs/maintainer-decisions-requested.md)
 10. [Review rounds and remediation history](docs/review-rounds-summary.md)
+11. [Review snapshot and branch guide](docs/review-versions.md)
 
 The normative reading order is:
 
