@@ -1,7 +1,7 @@
 # Review-hub v2 reviewed publication candidate
 
-Date: 2026-09-26
-Status: **PUBLISHED V2 IDENTITY RETAINED; LOCAL BOUNDED M9 CLOSURE UPDATE AWAITS INDEPENDENT REVIEW AND SEPARATE PUBLICATION AUTHORIZATION**
+Date: 2026-09-27
+Status: **PUBLISHED V2 IDENTITY RETAINED; LOCAL POST-M9 KERN BINDING UPDATE AWAITS INDEPENDENT REVIEW AND SEPARATE PUBLICATION AUTHORIZATION**
 
 This candidate incorporates the closed M8 result and retained limitations, the
 P1 Drongo synthesis, P2 Sparrow synthesis, P3 signer/build work, exact repository
@@ -53,3 +53,20 @@ This new commit is a local reviewer candidate only. It does not amend the
 already-published commit, push itself, create a tag/release, or authorize
 production, Mainnet, hardware, signing, finalization, broadcast, or upstream
 activity.
+
+## Accepted post-M9 Kern CI and formatting update
+
+After bounded M9 closure, Kern's CI/formatting work proceeded on a clean linear
+branch from the original v2 Kern identity. Independent review and follow-up
+remediation accepted exact candidate
+`6894087db687e7febf7ccafe4429d8a0446a3ba5`, tree
+`fb38f6d2b25b588f8f8db0d2d9103f5ce8d6f393`, with no low-or-higher finding.
+The source branch was separately authorized and published.
+
+This review-hub candidate updates the current Kern binding and reviewer
+instructions while retaining the original v2 identity and earlier M9 evidence
+branches as historical layers. It introduces no protocol or reference-oracle
+change and requires no new physical test. See the
+[accepted update record](docs/post-m9-kern-ci-formatting-accepted-update.md) for
+the six-commit ancestry, hash-bound evidence, build/flash observation, and
+retained limitations.

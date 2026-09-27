@@ -25,6 +25,7 @@ EXACT_FILES = [
     "pyproject.toml",
     "docs/independent-security-review-brief.md",
     "docs/reviewer-build-and-test-runbook.md",
+    "docs/post-m9-kern-ci-formatting-accepted-update.md",
     "docs/maintainer-review-index.md",
     "docs/security-review-findings.md",
     "docs/maintainer-decisions-requested.md",

@@ -1,7 +1,7 @@
 {
-  "schema": 5,
-  "recorded_at": "2026-09-26",
-  "status": "M9_BOUNDED_CLOSED_LOCAL_REVIEWER_HUB_UPDATE_REVIEW_PENDING_PUBLICATION_NOT_AUTHORIZED",
+  "schema": 6,
+  "recorded_at": "2026-09-27",
+  "status": "POST_M9_KERN_CI_FORMATTING_ACCEPTED_LOCAL_REVIEW_HUB_UPDATE_REVIEW_PENDING_PUBLICATION_NOT_AUTHORIZED",
   "protocol": "AEXB-v1-multislot",
   "components": [
     {
@@ -60,18 +60,24 @@
       "upstream_base": "b1efd8412934e10e4ffcb4c35e7abd49708a09d1",
       "m8_accepted_product_commit": "5180dbb603e01e33698bb388a400f92bff722d4c",
       "m8_accepted_product_tree": "ba595bc3278cbb8353f4c84d2e06797cfbf61260",
-      "candidate_commit": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
-      "candidate_tree": "196a182647ded7825d0f3e524d72a611add70950",
+      "candidate_commit": "6894087db687e7febf7ccafe4429d8a0446a3ba5",
+      "candidate_tree": "fb38f6d2b25b588f8f8db0d2d9103f5ce8d6f393",
       "candidate_tag": null,
-      "local_branch": "codex/m9-p3-kern-publication",
-      "candidate_delta": "test-only canonical fixture byte preservation; no product C or build-config change",
+      "local_branch": "codex/post-m9-kern-ci-formatting",
+      "candidate_delta": "six linear post-v2 commits: qualified sanitizer lanes, pinned clang-format 18.1.8, mechanical formatting, esp_video 2.5 dependency repair, Wave 7B boot-warning remediation, and sanitizer-symbol enforcement",
+      "v2_original_candidate_commit": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
+      "v2_original_candidate_tree": "196a182647ded7825d0f3e524d72a611add70950",
       "submodules": {
         "components/cUR": "09724a010622460733e5e5d60f9505f5989b2fe8",
         "components/k_quirc": "f1887f25baee9603027302ef50d382509d6e977b",
         "components/libwally-core/upstream": "247f2001f0e751f9fb79e12a7908ee7d5f765800",
         "components/libwally-core/upstream/src/secp256k1": "45f6f0f158c5ae80a2c8a53398ea4adbf19af6dc"
       },
-      "p3_manifest_sha256": "f78099d7ae6b5468e95f8ec066414906181ee276a673cde0e78c7be5310b12b7"
+      "p3_manifest_sha256": "f78099d7ae6b5468e95f8ec066414906181ee276a673cde0e78c7be5310b12b7",
+      "post_m9_ci_remediation_manifest_sha256": "ffa0d7a241ba165c3fa9eafc1e43cc4cc17fa5a8e1033b5c05c0927aa40390ae",
+      "post_m9_ci_remediation_manifest_entries": 139,
+      "post_m9_ci_independent_review_sha256": "e570af3b807e6424c2e277646fbf6d4348d9c2c841664dfae4109c40b8789d0d",
+      "post_m9_ci_independent_review_verdict": "ACCEPTED"
     }
   ],
   "m8_closure": {
@@ -84,7 +90,12 @@
     "status": "CLOSED_BOUNDED_COMPLETION_RULE_MET",
     "scope": "experimental; Testnet/public-test only; off by default",
     "h31_report_sha256": "9129f8dd62a092078e4123033913a8fc3e1a516f277027e9e700e73a10f5fe11",
-    "kern_published_commit": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
+    "kern_v2_original_published_commit": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
+    "kern_current_accepted_commit": "6894087db687e7febf7ccafe4429d8a0446a3ba5",
+    "kern_current_accepted_tree": "fb38f6d2b25b588f8f8db0d2d9103f5ce8d6f393",
+    "kern_current_branch": "codex/post-m9-kern-ci-formatting",
+    "kern_current_evidence_manifest_sha256": "ffa0d7a241ba165c3fa9eafc1e43cc4cc17fa5a8e1033b5c05c0927aa40390ae",
+    "kern_current_independent_review_sha256": "e570af3b807e6424c2e277646fbf6d4348d9c2c841664dfae4109c40b8789d0d",
     "kern_h3_product_repair_commit": "ac2f1382d62072e3dd150d7626d04b96ff4af89a",
     "kern_telemetry_evidence_commit": "1def1b9a6049f3f57f19205e5b20aed4abb13374",
     "kern_h30_case4_diagnostic_commit": "5bddd829ae9e284b055b2ea5d9778afdd7fd014c",

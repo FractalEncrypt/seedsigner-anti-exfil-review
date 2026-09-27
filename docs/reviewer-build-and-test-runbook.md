@@ -1,4 +1,4 @@
-# Reviewer build and test runbook — v2 candidate
+# Reviewer build and test runbook — v2 plus accepted Kern update
 
 This runbook is for independent reviewers of the experimental/testnet-only
 anti-exfil work. It covers the reference oracle, Drongo, Sparrow, SeedSigner,
@@ -30,13 +30,11 @@ not prove them.
 
 ## 2. Clone and bind the exact sources
 
-Drongo, Sparrow, and Kern are reviewed v2 candidate commits whose public-remote
-availability depends on the separately authorized publication step. SeedSigner
-and SeedSignerOS also use the exact commits below; older public tags may not
-name those final commits directly. The Kern review branch is based on the
-M8-accepted product commit and adds one P3 test-only fix
-which preserves the original byte streams of three already-hash-pinned public
-JSON corpora. That commit changes no C product source or build configuration.
+Drongo, Sparrow, SeedSigner, and SeedSignerOS use the exact v2 commits below.
+Kern's current accepted branch is a six-commit linear descendant of the
+original v2 candidate. It adds qualified sanitizer lanes, a pinned formatter
+and verified mechanical rewrite, the accepted dependency repair, and two
+bounded Wave 7B boot-warning remediations.
 
 Before publication, reviewers must receive unavailable Git objects or patch
 sets from the owner. After publication, the commands below obtain the exact
@@ -58,10 +56,8 @@ git clone --recursive https://github.com/FractalEncrypt/seedsigner-os.git seedsi
 git -C seedsigner-os checkout --detach anti-exfil-review-v1-tested-2026-08-12
 git -C seedsigner-os submodule update --init --recursive
 
-# Available after publication. Until then obtain the local object or patch set
-# from the owner; do not substitute a moving branch silently.
 git clone --recursive https://github.com/FractalEncrypt/Kern.git kern
-git -C kern checkout --detach bc382c2c458e81230b5c0c434cd5b2219eef76b6
+git -C kern checkout --detach 6894087db687e7febf7ccafe4429d8a0446a3ba5
 git -C kern submodule update --init --recursive
 ```
 
@@ -79,14 +75,10 @@ test "$(git -C seedsigner rev-parse HEAD^{tree})" = 97308cf847e0415737f72e64a60c
 test "$(git -C seedsigner-os rev-parse HEAD^{commit})" = 0bf1dc92519906c7db265055abfb07e0ee344342
 test "$(git -C seedsigner-os rev-parse HEAD^{tree})" = 1ed46cd81f95c9b372c5248e30b883ac33c13a0c
 test "$(git -C seedsigner-os rev-parse HEAD:opt/buildroot)" = bf2a2858aa675a14b60f1f9142c65b32652609c1
-test "$(git -C kern rev-parse HEAD^{commit})" = bc382c2c458e81230b5c0c434cd5b2219eef76b6
-test "$(git -C kern rev-parse HEAD^{tree})" = 196a182647ded7825d0f3e524d72a611add70950
-test "$(git -C kern rev-parse HEAD^1)" = 5180dbb603e01e33698bb388a400f92bff722d4c
-git -C kern diff --exit-code 5180dbb603e01e33698bb388a400f92bff722d4c..HEAD -- \
-  ':(exclude).gitattributes' \
-  ':(exclude)main/core/test/fixtures/anti_exfil/semantic_protocol/protocol-v1-negative-vectors.json' \
-  ':(exclude)main/core/test/fixtures/anti_exfil/semantic_protocol/protocol-v1-semantic-psbt-vector.json' \
-  ':(exclude)main/core/test/fixtures/anti_exfil/transport/protocol-v1-multislot-vectors.json'
+test "$(git -C kern rev-parse HEAD^{commit})" = 6894087db687e7febf7ccafe4429d8a0446a3ba5
+test "$(git -C kern rev-parse HEAD^{tree})" = fb38f6d2b25b588f8f8db0d2d9103f5ce8d6f393
+test "$(git -C kern rev-parse HEAD~6)" = bc382c2c458e81230b5c0c434cd5b2219eef76b6
+test "$(git -C kern rev-list --count bc382c2c458e81230b5c0c434cd5b2219eef76b6..HEAD)" = 6
 git -C kern submodule status --recursive
 ```
 
@@ -316,8 +308,22 @@ make -C main/core/test run
 
 The final command includes fixture freshness, independent collaboration-corpus
 checks, production anti-exfil semantics, authoritative slot enumeration, signer,
-transport, and response tests. P3 ran all three commands successfully from a
-fresh native-Linux checkout of `bc382c2...`; see `logs/kern-host-tests-linux.log`.
+transport, and response tests. They passed at the final `6894087…` tip. The
+original P3 run at `bc382c2…` remains historical portability evidence.
+
+Run the pinned formatter check and both two-repeat sanitizer lanes with Docker:
+
+```sh
+./scripts/run-pinned-toolchain.sh format --check
+./scripts/run-pinned-toolchain.sh sanitize-clang .sanitizer-clang 2
+./scripts/run-pinned-toolchain.sh sanitize-gcc .sanitizer-gcc 2
+```
+
+The accepted evidence records 52 PASS classifications and zero failures per
+lane. All positive controls detected their injected fault; all 40 real records
+entered `main`; and every real binary had non-zero `__asan`/`__lsan` symbol
+counts. This remains host-only coverage and does not exercise ESP32-only,
+camera, display, board-driver, or firmware paths.
 
 ## 9. Kern simulator build (no camera required)
 
@@ -378,11 +384,13 @@ done
 git status --short
 ```
 
-The accepted M8 lineage previously produced a wave_7b `kern.bin` of 1,970,176
-bytes with SHA-256 `ed344a28...17d563` under pinned ESP-IDF 6.0.2. It predates
-the P3 fixture-byte commit and is historical evidence only. Since P3 changes no
-compiled source/configuration, it should not change product behavior, but a
-reviewer must record rather than assume the new output.
+The accepted `6894087…` remediation build produced a signed Wave 7B `kern.bin`
+of 1,970,176 bytes with SHA-256
+`0145126b844bee0a6a5dab208ca2834547fe010f2361987e1f5d512c0ff2e283`
+under pinned ESP-IDF 6.0.2. Its image header and generated sdkconfig select
+32 MB. This is an authenticated build observation, not a cross-host
+bit-for-bit reproducibility promise; a reviewer must record rather than assume
+their new output.
 
 ## 11. Optional physical checks—separate gate
 

@@ -49,6 +49,12 @@ details—and the boundaries—are why outside review matters.
 - The integrated v2 Drongo, Sparrow, SeedSigner, SeedSignerOS, and Kern source
   identities are pinned in [REVIEW-SCOPE.md](REVIEW-SCOPE.md) and
   [repositories.json](repositories.json).
+- Kern's accepted post-M9 CI/formatting line now ends at `6894087…`. Its six
+  linear commits preserve the v2 anti-exfil base while qualifying sanitizer
+  lanes, pinning formatting, applying the mechanical rewrite, repairing the
+  firmware dependency boundary, and resolving two Wave 7B boot warnings. The
+  exact evidence and retained limitations are in the
+  [accepted update record](docs/post-m9-kern-ci-formatting-accepted-update.md).
 - The deterministic review archive is assembled from exact committed Git blobs
   and has reproduced byte-for-byte across CRLF and LF checkout policies.
 - The campaign artifacts and publication candidate received structured local
@@ -128,7 +134,7 @@ The normative reading order is:
 | Sparrow | `cc760814c855dfaf3d27890d10ba86b635e3a033` | Wallet UI, policy, protected workflow, persistence, and export quarantine |
 | SeedSigner | `214793df4f51466179b792420921b8cdd8d0c1ac` | Air-gapped signer implementation and QR workflow |
 | SeedSignerOS | `0bf1dc92519906c7db265055abfb07e0ee344342` | Opt-in review/test image integration |
-| Kern | `bc382c2c458e81230b5c0c434cd5b2219eef76b6` | Second air-gapped signer implementation |
+| Kern | `6894087db687e7febf7ccafe4429d8a0446a3ba5` | Second air-gapped signer implementation; accepted post-M9 CI/formatting and Wave 7B remediation line |
 
 Commits and trees—not moving branch names—are authoritative. See
 [repositories.json](repositories.json) for trees, bases, submodules, and
