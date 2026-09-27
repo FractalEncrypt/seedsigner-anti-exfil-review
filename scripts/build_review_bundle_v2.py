@@ -22,6 +22,7 @@ EXACT_FILES = [
     "pyproject.toml",
     "docs/m8-campaign-closure-summary.md",
     "docs/m9-hardening-closure.md",
+    "docs/post-m9-kern-ci-formatting-accepted-update.md",
     "docs/m9-integration-candidate.md",
     "docs/m9-evidence-bindings.json",
     "docs/reviewer-build-and-test-runbook.md",

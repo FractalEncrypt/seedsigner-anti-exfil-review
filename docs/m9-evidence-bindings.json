@@ -1,5 +1,5 @@
 {
-  "schema": "anti-exfil-review-hub-v2-evidence-bindings-v2",
+  "schema": "anti-exfil-review-hub-v2-evidence-bindings-v3",
   "m8_closure": {
     "inventory_bytes": 3246,
     "inventory_sha256": "4192f67ab626becdf3f27223098217ac07904e5148cbd68976be028580a8db3e",
@@ -19,10 +19,41 @@
     "candidate_tree": "6ce0ff0953560008e1832929540e5c2ebdb5b042"
   },
   "p3_signers": {
+    "status": "HISTORICAL_V2_BINDING",
     "manifest_bytes": 1599,
     "manifest_sha256": "f78099d7ae6b5468e95f8ec066414906181ee276a673cde0e78c7be5310b12b7",
     "kern_candidate_commit": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
     "kern_candidate_tree": "196a182647ded7825d0f3e524d72a611add70950"
+  },
+  "post_m9_kern_ci_formatting": {
+    "status": "ACCEPTED_AND_KERN_SOURCE_BRANCH_PUBLISHED",
+    "scope": "sanitizer and formatter qualification, mechanical formatting, dependency repair, Wave 7B boot-warning remediation, and sanitizer-symbol enforcement",
+    "base_commit": "bc382c2c458e81230b5c0c434cd5b2219eef76b6",
+    "base_tree": "196a182647ded7825d0f3e524d72a611add70950",
+    "candidate_commit": "6894087db687e7febf7ccafe4429d8a0446a3ba5",
+    "candidate_tree": "fb38f6d2b25b588f8f8db0d2d9103f5ce8d6f393",
+    "branch": "codex/post-m9-kern-ci-formatting",
+    "linear_commits": [
+      "ddd95c4db62f04d2e52f38a99bdd93ceb8eab024",
+      "d393a2c74c7649034a19723eeadf5e6c1e2c3e07",
+      "868e3573aa2429e0759ed6c537e4cd6a3be375db",
+      "88a1a4b792e23330d086bd04ca0b49dc4d9615b2",
+      "0e0f853fc2ebca3e7f6901b0ec3934bea3639d68",
+      "6894087db687e7febf7ccafe4429d8a0446a3ba5"
+    ],
+    "remediation_manifest_bytes": 24798,
+    "remediation_manifest_sha256": "ffa0d7a241ba165c3fa9eafc1e43cc4cc17fa5a8e1033b5c05c0927aa40390ae",
+    "remediation_manifest_entries": 139,
+    "independent_review_report_bytes": 11710,
+    "independent_review_report_sha256": "e570af3b807e6424c2e277646fbf6d4348d9c2c841664dfae4109c40b8789d0d",
+    "independent_review_inventory_bytes": 2091,
+    "independent_review_inventory_sha256": "c1e9510bf438e88f538d7567adf055330524f7bc6c9be4b7a7b76c08e81de18f",
+    "independent_review_verifier_sha256": "63a04e0600535965d6979912228693698c0ab0eb8179befa8691ce45f08fe6be",
+    "independent_review_verifier_stdout_sha256": "db0a84adbd82cb594fcf781c2e43bb48d7f102cab6e5f28a7b8d8d2a3dd083d9",
+    "independent_review_verdict": "ACCEPTED",
+    "wave_7b_firmware_bytes": 1970176,
+    "wave_7b_firmware_sha256": "0145126b844bee0a6a5dab208ca2834547fe010f2361987e1f5d512c0ff2e283",
+    "review_hub_update_publication_authorized": false
   },
   "m9_hardening_closure": {
     "status": "CLOSED_BOUNDED_COMPLETION_RULE_MET",

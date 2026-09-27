@@ -1,7 +1,7 @@
 # Prepare Kern test firmware
 
-This path builds and flashes the reviewed Kern source with Espressif ESP-IDF
-6.0.2. Supported build names in the reviewed tree are `wave_4b`, `wave_35`,
+This path builds and flashes the accepted Kern source with Espressif ESP-IDF
+6.0.2. Supported build names in the accepted tree are `wave_4b`, `wave_35`,
 `wave_5`, `wave_43`, `crowpanel`, and `wave_7b`. Select the value matching the
 physical board; do not guess.
 
@@ -12,7 +12,7 @@ devices where practical and identify the exact port before proceeding.
 
 ```sh
 git clone --recursive https://github.com/FractalEncrypt/Kern.git kern-airgap-anti-exfil
-git -C kern-airgap-anti-exfil checkout --detach bc382c2c458e81230b5c0c434cd5b2219eef76b6
+git -C kern-airgap-anti-exfil checkout --detach 6894087db687e7febf7ccafe4429d8a0446a3ba5
 git -C kern-airgap-anti-exfil submodule update --init --recursive
 git -C kern-airgap-anti-exfil rev-parse HEAD^{commit}
 git -C kern-airgap-anti-exfil rev-parse HEAD^{tree}
@@ -22,12 +22,35 @@ git -C kern-airgap-anti-exfil submodule status --recursive
 Expected commit and tree:
 
 ```text
-bc382c2c458e81230b5c0c434cd5b2219eef76b6
-196a182647ded7825d0f3e524d72a611add70950
+6894087db687e7febf7ccafe4429d8a0446a3ba5
+fb38f6d2b25b588f8f8db0d2d9103f5ce8d6f393
 ```
 
 Expected submodules are recorded in [REVIEW-SCOPE.md](../REVIEW-SCOPE.md) and
 `repositories.json`. Stop on any mismatch.
+
+## Device-free preflight and public CI
+
+The exact accepted commit has two successful public push workflows:
+
+- [GitHub Actions test](https://github.com/FractalEncrypt/Kern/actions/runs/36322622617);
+- [Host sanitizers](https://github.com/FractalEncrypt/Kern/actions/runs/36322622611).
+
+Before attaching a board, run the host suites and pinned formatting check. If
+Docker is available, also reproduce the two sanitizer lanes:
+
+```sh
+make -C components/deflate_codec/test run
+make -C components/bbqr/test run
+make -C main/core/test run
+./scripts/run-pinned-toolchain.sh format --check
+./scripts/run-pinned-toolchain.sh sanitize-clang .sanitizer-clang 2
+./scripts/run-pinned-toolchain.sh sanitize-gcc .sanitizer-gcc 2
+```
+
+Stop on a device-free failure instead of flashing. The sanitizer lanes cover
+host tests only; they do not claim coverage of camera, display, board-driver,
+or ESP32-only firmware paths.
 
 ## Build one board
 

@@ -9,8 +9,9 @@ Attach logs and hashes; do not replace discrepancies with inherited PASS labels.
 - [ ] Verify Sparrow pins Drongo `948f586…` and Lark `ddffe55…`.
 - [ ] Verify SeedSignerOS pins Buildroot `bf2a285…`.
 - [ ] Verify all four Kern submodules.
-- [ ] Verify Kern candidate parent is M8 product commit `5180dbb…` and its only
-      changed paths are `.gitattributes` plus the three pinned fixture JSONs.
+- [ ] Verify Kern candidate `6894087…` is exactly six linear commits after the
+      original v2 candidate `bc382c2…`, with the chain recorded in
+      `REVIEW-SCOPE.md`.
 - [ ] Verify those JSON objects and LF-normalized bytes are unchanged.
 
 ## Automated gates
@@ -21,6 +22,9 @@ Attach logs and hashes; do not replace discrepancies with inherited PASS labels.
 - [ ] Run Sparrow focused/full tests, `installDist`, and `jpackageImage`.
 - [ ] Run all Kern host suites, including fixture freshness and independent
       collaboration-corpus checks.
+- [ ] Run Kern's pinned clang-format 18.1.8 check and both two-repeat sanitizer
+      lanes; require positive-control detection, real-target `main` markers,
+      and non-zero instrumentation symbols.
 - [ ] Record any platform exclusions by exact method; do not hide the unfiltered
       result.
 

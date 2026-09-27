@@ -9,10 +9,12 @@ payload back to the source commit with `--repo`. It contains:
 - the bounded M8 closure summary with every retained limitation;
 - the bounded M9 hardening closure, H01–H33 disposition, identity layers,
   retained findings, residuals, and informational observations;
+- the accepted post-M9 Kern CI/formatting and Wave 7B update, including exact
+  source, evidence, review, firmware, and limitation bindings;
 - the P1–P3 integration summary;
 - normative protocol, wire-format, transport, and threat-model documents;
 - the reference oracle, public fixtures, generators, and tests;
-- clean third-party build/test instructions and a reproduction checklist; and
+- clean third-party build/test instructions and a reproduction checklist;
 - novice SeedSigner/Kern installation, isolated Sparrow, singlesig/multisig,
   faucet/network-safety, and community-feedback instructions; and
 - archive verification and sanitization tools.
