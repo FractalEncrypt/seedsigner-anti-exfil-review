@@ -5,9 +5,10 @@ already installed. **Start here and follow sections 0–11 in order.** You do
 not need the quickstart or the separate recovery document during this run;
 all recovery instructions are included below.
 
-For your current setup, test **post-sync first**. When finished, reflash both
-devices with the **normal frozen SeedSigner image** and the matching frozen
-Kern firmware, launch **frozen Sparrow**, and repeat this same document.
+Use the current repaired Sparrow application with the chosen device firmware.
+Most testers need one post-sync run. A deliberate frozen-device compatibility
+run uses frozen firmware and a separate repaired-app profile; it does not use
+the original unfixed frozen Sparrow. Keep each pairing's result separate.
 
 Stay offline on Testnet4 throughout. No server, faucet, funded wallet, Docker,
 WSL, Git, or Java installation is needed. Open the kit's **Open-Test-Cases.html**
@@ -40,8 +41,9 @@ both devices, whereas this kit uses seed B on Kern.
    **results-frozen.md**, then open it in Notepad or any text editor. Keep the
    original template unchanged.
 4. Fill the short setup fields once: date, Windows version, devices, and camera.
-   Its application/firmware hashes are already filled from the October 3
-   candidates. Confirm they match the packages you verified; otherwise stop.
+   Its firmware hashes identify the retained October 3 images; its application
+   hash identifies the repaired convenience ZIP. Confirm they match the packages
+   you verified; otherwise stop.
    Keep the verified **SHA256SUMS-v2.2** file beside your results file so you
    do not have to type the kit's long hash by hand.
 5. After each test, replace that row's **Not run** with **Pass**, **Fail**, or
