@@ -1,111 +1,63 @@
-# Prepare Kern test firmware
+# Kern test firmware and initial setup
 
-This path builds and flashes the accepted Kern source with Espressif ESP-IDF
-6.0.2. Supported build names in the accepted tree are `wave_4b`, `wave_35`,
-`wave_5`, `wave_43`, `crowpanel`, and `wave_7b`. Select the value matching the
-physical board; do not guess.
+The downloadable Windows flasher targets **wave_7b, ESP32-P4 revision v1.3**.
+Confirm the physical board first. Other boards and the `_v3` target require
+their own matching firmware; do not guess or override the identification gate.
+Verify the ZIP using [Download and verify](download-and-test.md#2-verify-before-opening-applications-or-flashing).
 
-Flashing overwrites the selected device firmware. Disconnect other serial
-devices where practical and identify the exact port before proceeding.
+Flashing replaces firmware. Use a test device containing only disposable data.
+The package includes esptool; no Python, ESP-IDF, WSL, or Docker installation
+is needed. Disconnect other serial devices where practical.
 
-## Exact reviewed source
+## Windows flash
 
-```sh
-git clone --recursive https://github.com/FractalEncrypt/Kern.git kern-airgap-anti-exfil
-git -C kern-airgap-anti-exfil checkout --detach 6894087db687e7febf7ccafe4429d8a0446a3ba5
-git -C kern-airgap-anti-exfil submodule update --init --recursive
-git -C kern-airgap-anti-exfil rev-parse HEAD^{commit}
-git -C kern-airgap-anti-exfil rev-parse HEAD^{tree}
-git -C kern-airgap-anti-exfil submodule status --recursive
-```
+1. Extract `kern-wave_7b-SET-windows-x64.zip` completely.
+2. Double-click **Check-Package.cmd**; all file checks must pass.
+3. Connect Kern using a USB **data** cable. In Device Manager identify the
+   newly appearing **Ports (COM & LPT)** entry and its COM number.
+4. Double-click **Flash-Kern.cmd**, enter that port, and read the chip/revision
+   output. Type **FLASH** only when it identifies the expected device.
+5. Wait for all four writes to verify. Stop on identification or write failure.
+   A board-specific serial driver or documented BOOT/reset procedure may be
+   needed if identification does not work.
+6. Boot and confirm display, touch, and camera operation.
 
-Expected commit and tree:
+The script uses a per-process PowerShell execution-policy option; it does not
+change the machine policy or perform whole-device erase/eFuse provisioning.
 
-```text
-6894087db687e7febf7ccafe4429d8a0446a3ba5
-fb38f6d2b25b588f8f8db0d2d9103f5ce8d6f393
-```
+## Load the public seed and export the account
 
-Expected submodules are recorded in [REVIEW-SCOPE.md](../REVIEW-SCOPE.md) and
-`repositories.json`. Stop on any mismatch.
+1. Open the v2 kit's **Open-Test-Cases.html** and select **B — Kern**.
+2. On Kern choose **Load Mnemonic → From QR Code**, scan the seed QR, and
+   finish loading with an empty BIP39 passphrase. Verify fingerprint **05d027a5**.
+   Manual input of the 12 words in `seed-B.txt` is an alternative.
+3. In wallet settings select **Network → Testnet** and turn **Anti-exfil
+   signing** on. Recheck after restarting.
+4. From Home choose **Extended Public Key**. Select **Singlesig**, **Native
+   SegWit**, and account **0**. Verify `m/84'/1'/0'` and the fingerprint.
+5. Display the key-origin/xpub QR. In isolated Sparrow choose **File → New
+   Wallet**, name it **Offline Kern B**, select **Single Signature / Native
+   Segwit**, then **Airgapped Hardware Wallet → Kern → Scan**.
+6. Scan the account QR, verify fingerprint/path, set **Protected signing →
+   Required**, and click **Apply**. Maximize/scroll the keystore pane if needed;
+   reopen Settings to confirm the saved Required value.
 
-## Device-free preflight and public CI
+Continue with [Offline public-fixture testing](offline-public-fixture-testing.md)
+and the explicit [recovery/next-ceremony walkthrough](recovery-tests.md).
+Kern's second-round continuity disclosure is expected; retain the same Sparrow
+session and scan the final protected response before dismissing its viewer.
 
-The exact accepted commit has two successful public push workflows:
+For 2-of-2, export the same seed's **Multisig**, native SegWit account 0 using
+`m/48'/1'/0'/2'`. Follow the offline guide's separate multisig wallet setup.
 
-- [GitHub Actions test](https://github.com/FractalEncrypt/Kern/actions/runs/36322622617);
-- [Host sanitizers](https://github.com/FractalEncrypt/Kern/actions/runs/36322622611).
+## Sources and frozen binary identity
 
-Before attaching a board, run the host suites and pinned formatting check. If
-Docker is available, also reproduce the two sanitizer lanes:
+Frozen Kern preserves the accepted product binary built at `5180dbb`; its
+review source binding `bc382c2` adds test-fixture changes. The manifest records
+both identities. Post-sync firmware uses `0c2446a`. No new physical test result
+is implied for frozen by a successful post-sync trial.
 
-```sh
-make -C components/deflate_codec/test run
-make -C components/bbqr/test run
-make -C main/core/test run
-./scripts/run-pinned-toolchain.sh format --check
-./scripts/run-pinned-toolchain.sh sanitize-clang .sanitizer-clang 2
-./scripts/run-pinned-toolchain.sh sanitize-gcc .sanitizer-gcc 2
-```
-
-Stop on a device-free failure instead of flashing. The sanitizer lanes cover
-host tests only; they do not claim coverage of camera, display, board-driver,
-or ESP32-only firmware paths.
-
-## Build one board
-
-Install and activate Espressif ESP-IDF 6.0.2 using Espressif's instructions.
-Network access may be required to install the toolchain and populate managed
-components. In the activated ESP-IDF shell:
-
-```sh
-cd kern-airgap-anti-exfil
-. "$IDF_PATH/export.sh"
-idf.py --version
-
-board=wave_7b  # replace with the exact physical board name
-idf.py -B "build_${board}" \
-  -D "SDKCONFIG=build_${board}/sdkconfig" \
-  -D "SDKCONFIG_DEFAULTS=sdkconfig.defaults;sdkconfig.defaults.${board}" \
-  build all size-components size 2>&1 | tee "build_${board}.log"
-```
-
-On Windows, run the equivalent commands inside the ESP-IDF PowerShell or
-Command Prompt environment and set `$board`/`%board%` using normal shell syntax.
-
-Each clean clone may create a development signing key, so firmware hashes can
-differ between controlled source-identical builds. Never publish a private
-signing key. Record the source commit, submodules, ESP-IDF version, board,
-configuration, flash manifest, binary sizes, SHA-256 values, and the supported
-public-key fingerprint.
-
-## Identify the port and flash
-
-List serial ports before and after connecting Kern and identify the newly
-appearing port. Examples are `/dev/ttyACM0`, `/dev/ttyUSB0`, or `COM5`; these
-are examples only.
-
-```sh
-idf.py -B "build_${board}" -p /dev/ttyACM0 flash
-idf.py -B "build_${board}" -p /dev/ttyACM0 monitor
-```
-
-Replace the port with the observed device port. Record the boot log and visible
-version. Exit the monitor using the ESP-IDF monitor shortcut shown on screen.
-
-## Prepare disposable signing material
-
-1. Confirm Sparrow is already on the intended test network.
-2. On Kern, create a fresh disposable seed using a supported camera or dice
-   workflow.
-3. Never import a production mnemonic or use a funded wallet.
-4. Export only the account xpub/descriptor needed by the selected singlesig or
-   multisig test.
-5. After testing, return Kern to Seedless/Unloaded and remove any microSD card.
-
-Kern does not disambiguate Testnet3 from Testnet4 at the QR signing boundary.
-Sparrow's selected network, server, faucet, and UTXOs must agree.
-
-If flashing, boot, camera, or display behavior differs from this guide, stop
-and report the board, port, operating system, ESP-IDF version, exact command,
-and last successful step. That is useful cross-board evidence.
+Use [Windows](build-from-source-windows.md) or [Linux](build-from-source-linux.md)
+for the full source build and other board targets. Linux USB qualification is
+pending. Use the [live guide](end-to-end-testnet-testing.md) for funded testnet
+transactions with a fresh disposable seed.

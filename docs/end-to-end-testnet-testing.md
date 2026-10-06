@@ -3,6 +3,10 @@
 Complete the [novice quickstart](../TESTING-QUICKSTART.md), signer preparation,
 and [isolated Sparrow setup](sparrow-isolated-test-profile.md) first.
 
+This is the live funded-testnet path. For offline public fixtures, use
+[Offline public-fixture testing](offline-public-fixture-testing.md) instead.
+Never broadcast the kit's synthetic PSBTs.
+
 Use only device-generated disposable seeds and testnet coins. Keep Testnet3 and
 Testnet4 funds separate even though their addresses share test encodings.
 
@@ -29,11 +33,17 @@ and block confirmation.
    network and import the signer's account xpub through the correct SeedSigner
    or Kern air-gapped-wallet path.
 3. Confirm the signer model/profile is correct. Set protected signing to
-   **Optional** for a first test or **Required** when specifically testing
-   fail-closed behavior.
+   **Required** on the Sparrow keystore. On SeedSigner choose the test network
+   and Required anti-exfil signing; on Kern choose Testnet and enable Anti-exfil
+   signing. Use the named hardware-wallet creation steps in the
+   [offline guide](offline-public-fixture-testing.md#2-create-named-hardware-wallets-in-sparrow),
+   substituting your fresh device-generated seed/account and a distinct live
+   wallet name. Verify its fingerprint and `m/84'/1'/0'` derivation.
 4. Display a fresh receiving address in Sparrow and verify it on the signer
    when the device workflow supports address verification.
-5. Obtain a small amount of matching-network test BTC:
+5. For this live path only, turn Sparrow's server connection on and configure
+   a server for the selected network. Obtain a small amount of matching-network
+   test BTC:
    - Testnet4: <https://mempool.space/testnet4/faucet>
    - Testnet3: <https://coinfaucet.eu/en/btc-testnet/>
 6. Wait for Sparrow to see the UTXO. Confirm the explorer and Sparrow show the
@@ -41,7 +51,9 @@ and block confirmation.
 7. Create a small self-spend to a new address in the same disposable wallet.
    Do not use Mainnet and do not reuse a faucet deposit address as a permanent
    identity.
-8. Start a protected QR signing ceremony. Start a stopwatch when Sparrow first
+8. In Send, create the transaction, then choose **Finalize Transaction for
+   Signing** if shown before the signing actions. Click **Protected QR**.
+   Start a stopwatch when Sparrow first
    presents the signing QR.
 9. Follow the labeled rounds without switching to ordinary **Show QR** signing:
    scan Sparrow's request on the signer, return the signer opening/commitment,
@@ -62,8 +74,12 @@ test-only software cosigners; report exactly which is which.
 
 1. Generate each seed independently. Label them A, B, and optionally C without
    recording the mnemonic in the report.
-2. Create a new multisig wallet in the isolated Sparrow profile on the selected
-   test network. Import each cosigner with the correct model and derivation.
+2. Create a named wallet in isolated Sparrow: **File → New Wallet**, **Multi
+   Signature**, **2 of 2**, native SegWit P2WSH. On each device export the
+   multisig native SegWit account 0 at `m/48'/1'/0'/2'`. Import through each
+   matching hardware-brand route. Verify fingerprints and paths, set both
+   keystores to **Required**, and **Apply**. The offline guide walks through
+   these menus; use your fresh disposable accounts instead of its public ones.
 3. Export and verify the multisig wallet policy on every participating hardware
    signer before funding it.
 4. Record the quorum, script type, cosigner order, and which signer policies are
@@ -88,7 +104,8 @@ people or independent devices. State that limitation in the report.
 
 After one successful run, optionally test one condition at a time:
 
-- cancel and restart before the challenge;
+- follow the exact [recovery walkthrough](recovery-tests.md), using separate
+  synthetic fixtures rather than improvising with a funded PSBT;
 - scan an unrelated or stale QR;
 - try an ordinary signature against a **Required** protected policy;
 - close and reopen the isolated profile during the documented recovery stage;

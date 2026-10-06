@@ -19,6 +19,16 @@ It gives outside reviewers one place to find:
 The implementation code remains in the linked project forks. This hub binds
 those repositories and supplies common review material; it is not a monorepo.
 
+## Download and test offline
+
+Start with [Download and test](docs/download-and-test.md) for the repaired
+Windows Sparrow application and ready-made device images. The public fixture
+kit needs no server, faucet, build tools or broadcast. See
+[current qualification](docs/tester-release-status-2026-10-06.md) and the
+[frozen baseline erratum](docs/frozen-sparrow-erratum-2026-10-06.md).
+Full [Windows](docs/build-from-source-windows.md) and
+[Linux](docs/build-from-source-linux.md) source-build guides remain available.
+
 ## Try it with disposable testnet funds
 
 You do not need to be a protocol developer to contribute useful evidence. If
