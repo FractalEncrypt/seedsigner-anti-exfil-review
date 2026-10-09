@@ -1,0 +1,367 @@
+{
+  "scope": "Public unfunded fixtures for optional device, policy and recovery tests; no production change",
+  "broadcastable": false,
+  "fabricated_parent_outpoints": true,
+  "qualification": "Python/native fixture checks PASS; required r5 physical device series reported Pass. Optional reserve transactions are not individually claimed physically tested.",
+  "accounts": {
+    "A": {
+      "fingerprint": "0fb882ff",
+      "passphrase": "",
+      "singlesig_path": "m/84'/1'/0'",
+      "multisig_path": "m/48'/1'/0'/2'",
+      "singlesig_tpub": "tpubDCfk37PqcQx6nFtFVuYHvRLJHxvYj33NjHkKRyRmWyCjyJ64sYBXyVjsTHaLBp5GLhM91VBgJ8nKDWDu52J2xVRy64c7ybEjjyWQJuQGLcg",
+      "multisig_tpub": "tpubDF3QYaRazZ44jHz3jaSPRGCLVYj7D8j4mVVUTCr3CHsfuvoV2Z73eTcvHc8sP3Dj58yEfkG57iBpKTuHv3dNAUcFufCxx26SAbrWque5gts"
+    },
+    "B": {
+      "fingerprint": "05d027a5",
+      "passphrase": "",
+      "singlesig_path": "m/84'/1'/0'",
+      "multisig_path": "m/48'/1'/0'/2'",
+      "singlesig_tpub": "tpubDCfkLVrAEobJz792GR8ikDV3FtftjVNx7wMXJgvnTR3S7vHvT2f2fBx5kT9yPYgUTbzxzbMYfagUeepWTiYuSWtVWiCxWwQzdXnVhWyqmyj",
+      "multisig_tpub": "tpubDFDkaAUidyzsbPUCXrxA4LRKYHkg9kKdsosWCX6ZS3JGaNL1N5ShsmGZkPC581AaEf917J2az9cLd5cqbKqc3nRq49ZpPwuj91XmXu8YD8y"
+    }
+  },
+  "transactions": [
+    {
+      "file": "multisig-required-required.psbt",
+      "bytes": 893,
+      "sha256": "0e44244c6f68d2d1d4bdbdc0053578bf1f0a94a5ec0b7f2cbb2e0ad7f089a888",
+      "transaction_id": "62e333f86cf47249406a2788eebdaf00379f9be06f9cabd3e14e41a9bb9b4d35",
+      "recipient_sats": 30100,
+      "change_sats": 69400,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A",
+        "B"
+      ],
+      "child_index": 101,
+      "feedback": "requiredRequired"
+    },
+    {
+      "file": "multisig-required-optional.psbt",
+      "bytes": 893,
+      "sha256": "18041349129f2ff91b9e814ef03bb80978fa4e87797fcf241d4ccf7e0b2f5296",
+      "transaction_id": "f7d22e419b9b1d3d92661720885ec81a4d2ce648749eb3fc4c7c4ac9d5ea91c0",
+      "recipient_sats": 30200,
+      "change_sats": 69300,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A",
+        "B"
+      ],
+      "child_index": 102,
+      "feedback": "requiredOptional"
+    },
+    {
+      "file": "multisig-restart-proof.psbt",
+      "bytes": 893,
+      "sha256": "d005f3c3e2907b10dec5eadfc4bb6d51ffd3261a38c4729a5e452f804758d72f",
+      "transaction_id": "1a0fef7853266826315c032db981976709804cef986b008c7aeb7322c3d456f0",
+      "recipient_sats": 30300,
+      "change_sats": 69200,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A",
+        "B"
+      ],
+      "child_index": 103,
+      "feedback": "restartProof"
+    },
+    {
+      "file": "multisig-order-A-B-reserve.psbt",
+      "bytes": 893,
+      "sha256": "84dae3ff5ceae68e8c5007828f194b56706800c80f3beb27c5b0d2780e4b01c8",
+      "transaction_id": "9bdbf0918b606078fd0980bfe6d2e1584b1710bb77fec719f627f9c5ecd7e254",
+      "recipient_sats": 30400,
+      "change_sats": 69100,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A",
+        "B"
+      ],
+      "child_index": 104,
+      "feedback": "orderAB"
+    },
+    {
+      "file": "multisig-order-B-A-reserve.psbt",
+      "bytes": 893,
+      "sha256": "11d6e176533be03c363ec1ad241a481f05761d1ff967e2098a51c0b7b5374d91",
+      "transaction_id": "cb2c863cb48a2e90c7cfd1f66d9177322b112c4af236b3557d926d36082aa3b9",
+      "recipient_sats": 30500,
+      "change_sats": 69000,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A",
+        "B"
+      ],
+      "child_index": 105,
+      "feedback": "orderBA"
+    },
+    {
+      "file": "singlesig-retry-SS.psbt",
+      "bytes": 468,
+      "sha256": "ec50ebfc0be879cc515a0c53b2358b6b0e928d82e5b519c8bec7427516f0c2de",
+      "transaction_id": "e8b8b56bb85a654f61eed85a6fa072c5af91174f5190636dd510eeed10d42406",
+      "recipient_sats": 30600,
+      "change_sats": 68900,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 106,
+      "feedback": "recoverySS"
+    },
+    {
+      "file": "singlesig-stale-origin-SS.psbt",
+      "bytes": 468,
+      "sha256": "76022c48622552e3a62296f2795261b54b81add111db24da2e8dfe1dcc4eccbd",
+      "transaction_id": "d776def807c872d2ee4656a74789049bb5ff894ad5a8c3cafbd7279806131e4a",
+      "recipient_sats": 30700,
+      "change_sats": 68800,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 107,
+      "feedback": "staleSS"
+    },
+    {
+      "file": "singlesig-stale-target-SS.psbt",
+      "bytes": 468,
+      "sha256": "bb7a31c0ebe2b3fdc3f53ab689233919fd056b7627af78c8ef9697676a80776a",
+      "transaction_id": "3fdf576863a668ae156b51901c7ffd9b2baccbdf5b422f3214db0767390efc55",
+      "recipient_sats": 30800,
+      "change_sats": 68700,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 108,
+      "feedback": "staleSS"
+    },
+    {
+      "file": "singlesig-protection-ordinary-SS.psbt",
+      "bytes": 468,
+      "sha256": "b61847310a795aa824f42ebc3fe82263d32352cb5450dc03c35b0b5cd3fc39a5",
+      "transaction_id": "3527ac50e3cc7532295ffdc397b5f968f0571da3086102a75a3c8722dc8b7c8a",
+      "recipient_sats": 30900,
+      "change_sats": 68600,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 109,
+      "feedback": "protectionSS"
+    },
+    {
+      "file": "singlesig-protection-protected-SS.psbt",
+      "bytes": 468,
+      "sha256": "39cdc2d472657d54a2dc089685ec3e8f8acbee1d103b39ed11214a0b0b7d0322",
+      "transaction_id": "75142ab66b1d2ed2b8195def1dacc98a01259f915414e48fff287b6893bc5b94",
+      "recipient_sats": 31000,
+      "change_sats": 68500,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 110,
+      "feedback": "protectionSS"
+    },
+    {
+      "file": "singlesig-cancel-SS.psbt",
+      "bytes": 468,
+      "sha256": "6a350320b9699d62b365b1a0a3da6e130bc41dd9b695abf4f9cdd8e7f1c2eebd",
+      "transaction_id": "85acf5ffe45ba14b83eaa91bf0f01ea8dce89e5ec02efbb052b766badf8074d2",
+      "recipient_sats": 31100,
+      "change_sats": 68400,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 111,
+      "feedback": null
+    },
+    {
+      "file": "singlesig-abandon-SS.psbt",
+      "bytes": 468,
+      "sha256": "3c09ef24b71de6d05b088b26edd3a0d1521791c24271d74430b8c529cedbce20",
+      "transaction_id": "5ea1e5b56e88b7cedb7d1dc15c1991002b1ce25a4ebc6ab7abf87784a461a183",
+      "recipient_sats": 31200,
+      "change_sats": 68300,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 112,
+      "feedback": null
+    },
+    {
+      "file": "singlesig-retry-Kern.psbt",
+      "bytes": 468,
+      "sha256": "176a68c6d26168b60e2fb337ddd2d5faccab8005bdf393b7b8e79478ab859d5c",
+      "transaction_id": "b63768024664322ed2e8836a115e16c7c83447049047cbdb27afb6f1238b0a1b",
+      "recipient_sats": 31300,
+      "change_sats": 68200,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 113,
+      "feedback": "recoveryKern"
+    },
+    {
+      "file": "singlesig-stale-origin-Kern.psbt",
+      "bytes": 468,
+      "sha256": "d3e8156140c9af1ff4abd4fefaee9829a9d16fbb7c94dd5a343b1a5f4c827c99",
+      "transaction_id": "379f8b1bef4cc85db8c3ffa026b75764be0d56719861903e51a08ca4789fd393",
+      "recipient_sats": 31400,
+      "change_sats": 68100,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 114,
+      "feedback": "staleKern"
+    },
+    {
+      "file": "singlesig-stale-target-Kern.psbt",
+      "bytes": 468,
+      "sha256": "d15f0cca4bde2c57e7404511958dad06c54041f207a7b9d0a18e5f41d8e71049",
+      "transaction_id": "21044091bec49a132b9dc930f194e09a691c201e5d3c427cdb717acdd004a757",
+      "recipient_sats": 31500,
+      "change_sats": 68000,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 115,
+      "feedback": "staleKern"
+    },
+    {
+      "file": "singlesig-protection-ordinary-Kern.psbt",
+      "bytes": 468,
+      "sha256": "4e2c04fade684faa1491a488ecb0eb09ae3b6be2248b0bf6ac094ca1db2a30ca",
+      "transaction_id": "1e7712b4c755d4b8520677375673943a43ed5aa2e4f6343d406ca55ea8a4804d",
+      "recipient_sats": 31600,
+      "change_sats": 67900,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 116,
+      "feedback": "protectionKern"
+    },
+    {
+      "file": "singlesig-protection-protected-Kern.psbt",
+      "bytes": 468,
+      "sha256": "261e5f3a6255fcc98860344f036e7fe9c3b342f61194c36d871a0e30d14849a7",
+      "transaction_id": "169c3095e6d79b18e59412339401df9303480f5426b0e5315461ea0d74d872d8",
+      "recipient_sats": 31700,
+      "change_sats": 67800,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 117,
+      "feedback": "protectionKern"
+    },
+    {
+      "file": "singlesig-cancel-Kern.psbt",
+      "bytes": 468,
+      "sha256": "79a7e3afa9de2baa25d1af517a1e1af2a922cd460f1705297970d983d17aef27",
+      "transaction_id": "7b0e1e6af48261d3820d7e3a235e7f33c5ea898d5fc6b2de24d6ab814143d3db",
+      "recipient_sats": 31800,
+      "change_sats": 67700,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 118,
+      "feedback": null
+    },
+    {
+      "file": "singlesig-abandon-Kern.psbt",
+      "bytes": 468,
+      "sha256": "ae8dbad365a8f0d83a480635feb2f4e3ddf622ad1b391ab62c8fd4e58e5de946",
+      "transaction_id": "3b50eadd06ac7d5835c3a71644d643488e72b71ef8ffa2bbdc061ffa22b5dbd4",
+      "recipient_sats": 31900,
+      "change_sats": 67600,
+      "fee_sats": 500,
+      "kind": "unsigned",
+      "owners": [
+        "A"
+      ],
+      "child_index": 119,
+      "feedback": null
+    },
+    {
+      "file": "multisig-required-required-ordinary-A.psbt",
+      "bytes": 1000,
+      "sha256": "9c9af7162b24f08a4523a693d94e12032026bfa900fc1e061eddbf923be57503",
+      "transaction_id": "62e333f86cf47249406a2788eebdaf00379f9be06f9cabd3e14e41a9bb9b4d35",
+      "recipient_sats": 30100,
+      "change_sats": 69400,
+      "fee_sats": 500,
+      "kind": "ordinary-valid-single-signature",
+      "same_transaction_as": "multisig-required-required.psbt",
+      "owner": "A"
+    },
+    {
+      "file": "multisig-required-required-ordinary-B.psbt",
+      "bytes": 1000,
+      "sha256": "5d2af96272e25ef3fafe45588f8fdc268113412fd5ed1c22b83d9ffbfd90ed9a",
+      "transaction_id": "62e333f86cf47249406a2788eebdaf00379f9be06f9cabd3e14e41a9bb9b4d35",
+      "recipient_sats": 30100,
+      "change_sats": 69400,
+      "fee_sats": 500,
+      "kind": "ordinary-valid-single-signature",
+      "same_transaction_as": "multisig-required-required.psbt",
+      "owner": "B"
+    },
+    {
+      "file": "multisig-required-optional-ordinary-A.psbt",
+      "bytes": 1000,
+      "sha256": "096e2e928fa06a397eccf7134e7a8b068c074c8b596150355984dfc9e96d7275",
+      "transaction_id": "f7d22e419b9b1d3d92661720885ec81a4d2ce648749eb3fc4c7c4ac9d5ea91c0",
+      "recipient_sats": 30200,
+      "change_sats": 69300,
+      "fee_sats": 500,
+      "kind": "ordinary-valid-single-signature",
+      "same_transaction_as": "multisig-required-optional.psbt",
+      "owner": "A"
+    },
+    {
+      "file": "multisig-required-optional-ordinary-B.psbt",
+      "bytes": 1000,
+      "sha256": "758d365b44d0499ae1dda6619af1620f355990d812b9aad9d6e77a6fcf0305d7",
+      "transaction_id": "f7d22e419b9b1d3d92661720885ec81a4d2ce648749eb3fc4c7c4ac9d5ea91c0",
+      "recipient_sats": 30200,
+      "change_sats": 69300,
+      "fee_sats": 500,
+      "kind": "ordinary-valid-single-signature",
+      "same_transaction_as": "multisig-required-optional.psbt",
+      "owner": "B"
+    }
+  ],
+  "unsigned_transaction_count": 19,
+  "old_transaction_ids_excluded": 28,
+  "packaged_runtime_check": "../../validation/PACKAGED-FIXTURE-CHECKS.json"
+}
