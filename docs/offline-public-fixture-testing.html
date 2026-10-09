@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Offline signing tests</title><style>body{font:18px/1.6 system-ui,sans-serif;color:#182330;max-width:960px;margin:0 auto;padding:24px}
+h1{font-size:2rem;line-height:1.2}h2{margin-top:2.4rem;line-height:1.3}h3{margin-top:1.8rem}
+a{color:#0759a8}p,li{max-width:80ch}li{margin:.5rem 0}code{background:#eef2f6;padding:.1em .2em;overflow-wrap:anywhere}
+pre{background:#eef2f6;padding:18px;overflow:auto;font-size:.87rem;line-height:1.5}pre code{padding:0;overflow-wrap:normal}
+table{border-collapse:collapse;font-size:.95rem;margin:1rem 0;display:block;overflow:auto}td,th{border:1px solid #c5cfdb;padding:10px;text-align:left}
+th{background:#eef2f6}nav{padding:16px 22px;background:#f0f5fa;border-radius:8px}nav ul{columns:2;column-gap:24px}
+.notice{padding:10px 22px;background:#fff8df;border-left:5px solid #e0ad00;margin:22px 0}
+details{border:1px solid #c5cfdb;border-radius:8px;margin:18px 0;padding:12px 18px}summary{cursor:pointer;font-weight:700}
+details h2{margin-top:1.4rem}.review-note{font-size:.9rem;color:#42556b}@media(max-width:650px){nav ul{columns:1}body{padding:16px}}
+</style></head><body><h1 id="offline-signing-tests">Offline signing tests</h1><p class="notice">Use the <a href="../FEEDBACK-OFFLINE.html">offline signing feedback form</a> for this guide. Save an editable HTML copy after testing. The <a href="../FEEDBACK.html">full form</a> includes optional additional checks.</p>
+<p>Use this guide after <a href="download-and-test.html">Start Here</a> setup, with Sparrow on <strong>Testnet4</strong> and its
+server connection off. Open <strong>Test-cases/Open-Test-Cases.html</strong> in a browser
+and keep it beside Sparrow. It supplies seeds, the multisig descriptor, the
+malicious-coordinator rejection QRs (the signer side), and Sparrow's ordinary
+signed-return QR. Every PSBT named below
+is in the extracted kit's <strong>Test-cases</strong> folder.</p>
+<p>Choose <a href="#i-have-seedsigner"><strong>I have SeedSigner</strong></a>, <a href="#i-have-kern"><strong>I have Kern</strong></a>,
+or <a href="#i-have-both"><strong>I have both</strong></a> below. In the
+HTML guide, the hardware selector shows just that route. In Markdown, jump to
+your matching heading. Both devices use <strong>public seed A</strong> for singlesig;
+<strong>seed B is introduced only for optional multisig</strong>.</p>
+<p>Open <a href="../FEEDBACK-OFFLINE.html">FEEDBACK-OFFLINE.html</a> and record the tests you tried. Click Save feedback HTML to keep an editable copy; reopen the downloaded HTML to keep editing. Leave other tests Not run. Keep screenshots as separate files. No GitHub submission is needed.</p>
+<p><strong>Returning testers:</strong> Sparrow retains completed fixtures and session history.
+A restored result is not a fresh ceremony on another device. Keep the history
+intact and report what you actually performed. Changing the hardware selector
+only changes the instructions; it does not reset Sparrow or its profile.</p>
+<p>Device rejection QRs are scanned by the signing device's camera. Sparrow's
+computer camera scans the QR shown by the signing device. The separate
+<strong>ordinary signed-return</strong> check needs a second screen or movable webcam.
+The optional <strong>Dark Skippy-style test</strong> needs a movable webcam or DroidCam
+that can read both Sparrow's QRs and this page's response QRs on your screen.</p>
+<label for="hardware-choice">Choose your hardware: <select id="hardware-choice"><option value="seedsigner">I have SeedSigner</option><option value="kern">I have Kern</option><option value="both">I have both</option></select></label><section data-hardware="seedsigner"><h2 id="i-have-seedsigner">I have SeedSigner</h2>
+<h3 id="load-seed-a-on-seedsigner">Load seed A on SeedSigner</h3>
+<p>On SeedSigner choose <strong>Scan</strong> and scan <strong>seed A</strong> from <strong>Open-Test-Cases.html</strong>'s
+seed dropdown. Load it without a passphrase and confirm fingerprint <strong>0fb882ff</strong>.
+<a href="download-and-test.html">Start Here</a> already configured Testnet and Required signing.</p>
+<h3 id="create-offline-seedsigner-a-in-sparrow">Create Offline SeedSigner A in Sparrow</h3>
+<ol>
+<li>On SeedSigner, choose <strong>Export xpub → Single Sig → Native Segwit</strong>, then <strong>Animated</strong> or <strong>Static</strong>
+   (either works), then <strong>I understand → Export xpub</strong> to show the QR.</li>
+<li>In Sparrow choose <strong>File → New Wallet</strong>, name it <strong>Offline SeedSigner A</strong>, and select
+   <strong>Single Signature / Native Segwit (P2WPKH)</strong>.</li>
+<li>Choose <strong>Airgapped Hardware Wallet → SeedSigner → Scan</strong> and scan the
+   device's account QR.</li>
+<li>Confirm fingerprint <strong>0fb882ff</strong> and derivation <strong>m/84'/1'/0'</strong>.</li>
+<li>Set <strong>Protected signing → Required</strong>, then click <strong>Apply</strong>. With Settings
+   still visible, confirm Required remains selected. Keep this wallet open.</li>
+</ol>
+<p>If this named wallet already exists with those keys, use it and confirm Required.</p>
+<h3 id="sign-with-seedsigner">Sign with SeedSigner</h3>
+<ol>
+<li>In Sparrow choose <strong>File → Open Transaction → File</strong>. Browse to the extracted
+   kit's <strong>Test-cases</strong> folder and open <strong>singlesig-A-first.psbt</strong>.</li>
+<li>Click <strong>Finalize Transaction for Signing</strong>.
+   Click <strong>Protected QR</strong> to show <strong>Step 1 of 2</strong>.</li>
+<li>On SeedSigner choose <strong>Scan</strong> and scan Step 1. Review payment <strong>20,000 sats</strong>,
+   change <strong>79,500 sats</strong>, and fee <strong>500 sats</strong>, then approve.</li>
+<li>Scan the device's first response into Sparrow's protected signing window.
+   Wait for Sparrow to display <strong>Step 2 of 2</strong>.</li>
+<li>On SeedSigner choose <strong>Done → Scan host reveal</strong>. Scan Step 2, follow the
+   review/approval screens, and scan its final response into Sparrow.</li>
+<li>Confirm <strong>Protected signatures verified</strong>. Keep the final device QR visible
+   until Sparrow accepts it, then exit the QR viewer and return to the main menu.</li>
+</ol>
+<p>A separate <strong>PSBT not finalized</strong> notice can appear; the result to record is
+verification of protected signing. Mark <strong>Singlesig — SeedSigner</strong> in your feedback.
+This is enough for a first report. The following tests are optional.</p>
+<h3 id="optional-2-of-2-multisig">Optional: 2-of-2 multisig</h3>
+<p>Keep A and B loaded together on your SeedSigner; choose the matching
+seed for each signature.</p>
+<p>These single-device steps are newly documented and have not yet received
+end-to-end physical qualification. Two seeds on one device test the workflow;
+they do not represent two independent physical signers.</p>
+<h3 id="create-accounts-a-and-b-and-the-wallet">Create accounts A and B and the wallet</h3>
+<ol>
+<li>Get A ready on <strong>SeedSigner</strong>. Keep public seed <strong>A</strong> loaded and confirm <strong>0fb882ff</strong>.</li>
+<li>Export A's multisig account: choose <strong>Export xpub → Multisig → Native Segwit</strong>, then <strong>Animated</strong> or <strong>Static</strong>
+   (either works), then <strong>I understand → Export xpub</strong> to show the QR.</li>
+<li>In Sparrow choose <strong>File → New Wallet</strong>, name it <strong>Offline 2of2 A-B</strong>, select
+   <strong>Multi Signature / 2 of 2 / Native Segwit (P2WSH)</strong>. Import the first key
+   through <strong>Airgapped Hardware Wallet → SeedSigner → Scan</strong>. Label it <strong>A</strong>
+   and set <strong>Protected signing → Required</strong>.</li>
+<li>Get B ready on <strong>SeedSigner</strong>. On SeedSigner choose <strong>Scan</strong> and scan <strong>seed B</strong> from <strong>Open-Test-Cases.html</strong>'s
+   seed dropdown. Load it without a passphrase and confirm fingerprint <strong>05d027a5</strong>.
+   <a href="download-and-test.html">Start Here</a> already configured Testnet and Required signing.
+   Export its multisig account: choose <strong>Export xpub → Multisig → Native Segwit</strong>, then <strong>Animated</strong> or <strong>Static</strong>
+   (either works), then <strong>I understand → Export xpub</strong> to show the QR.</li>
+<li>Import B into the second keystore through <strong>Airgapped Hardware Wallet →
+   SeedSigner → Scan</strong>. Label it <strong>B</strong>, set <strong>Protected signing → Required</strong>,
+   and click <strong>Apply</strong>.</li>
+<li>With Settings still visible, confirm <strong>2 of 2</strong>, the two fingerprints, and
+   <strong>m/48'/1'/0'/2'</strong> on both keystores.
+   A is <strong>0fb882ff</strong> and B is <strong>05d027a5</strong>. Under <strong>Descriptor → Edit</strong>,
+   compare the public keys/origins and <code>wsh(sortedmulti(2,...))</code> policy with
+   the full descriptor text below its QR in <strong>Open-Test-Cases.html</strong>.</li>
+</ol>
+<h3 id="prepare-the-transaction-and-descriptor">Prepare the transaction and descriptor</h3>
+<ol>
+<li>In <strong>Open-Test-Cases.html</strong>, find <strong>Multisig wallet descriptor</strong>. Its QR is on the
+   same page as the seed/rejection QRs; leave it available for signing.</li>
+<li>Open <strong>Test-cases/multisig-A-B.psbt</strong> in Sparrow, click <strong>Finalize Transaction
+   for Signing</strong>. Payment is <strong>25,000</strong>, change
+   <strong>74,500</strong>, and fee <strong>500 sats</strong>.</li>
+</ol>
+<h3 id="get-the-signers-ready">Get the signers ready</h3>
+<p>Keep <strong>A selected on SeedSigner</strong>.</p>
+<p>SeedSigner loads the descriptor during transaction review when requested:
+choose <strong>Scan descriptor</strong>, scan the policy QR, check its fingerprints/threshold,
+then choose <strong>Return to transaction</strong>. Keep the QR available for later ceremonies.</p>
+<h3 id="sign-a-then-b">Sign A, then B</h3>
+<ol>
+<li>In the prepared transaction tab click <strong>Protected QR</strong>, select <strong>A</strong>, and
+   scan Step 1 on <strong>SeedSigner</strong> with seed A selected. Review/approve the payment,
+   change, and fee; load the descriptor during review if requested.</li>
+<li>Scan the first device response into Sparrow. When it displays Step 2,
+   choose <strong>Done → Scan host reveal</strong> on the device, scan Step 2, approve,
+   and return the final QR to Sparrow. Wait for A's signature to be accepted.</li>
+<li>Keep this transaction tab open; it holds A's signature. Select the loaded seed <strong>B</strong> on SeedSigner.</li>
+<li>In the same transaction click <strong>Protected QR</strong>, select <strong>B</strong>, and complete
+   both rounds on <strong>SeedSigner</strong>, including <strong>Done → Scan host reveal</strong> between
+   rounds. Check the same payment, change, and fee.</li>
+<li>Wait for Sparrow to accept B's protected signature before leaving its final
+   QR viewer.</li>
+<li>Confirm both signatures are accepted and Sparrow can finalize the transaction.
+   Mark <strong>Multisig</strong> and your hardware arrangement in the feedback.</li>
+</ol>
+<h3 id="optional-try-the-rejection-qrs">Optional: Try the rejection QRs</h3>
+<p>These cases use <strong>seed A</strong>. After multisig, restore A without a passphrase,
+confirm <strong>0fb882ff</strong>, and keep protection on. Select the loaded A seed on SeedSigner.</p>
+<ol>
+<li>In <strong>Open-Test-Cases.html</strong>, find <strong>Signer rejects a malicious coordinator request</strong>. Choose the
+   wrong-mainnet case from <strong>Case</strong>. Leave <strong>Density</strong> at <strong>medium</strong> initially.</li>
+<li>On the device choose <strong>Scan</strong> and scan the animated QR through a full loop.</li>
+<li>Follow any transaction-review screens until the device refuses the request.
+   The test passes if there is a refusal and no signature response.</li>
+<li>Try <strong>wrong stage</strong> and <strong>duplicate slot</strong> next. You may also try the other
+   dropdown cases. Record case numbers and Pass/Fail; a photo supplies wording.</li>
+</ol>
+<p>SeedSigner can enter review for cases <strong>05–09 and 11</strong> before showing refusal.
+For <strong>12/13</strong>, continue through <strong>Approve Protected Signature</strong> to see it.
+Messages differ between devices; an
+earlier generic rejection does not demonstrate that every deeper check ran.</p>
+<p>If scanning stalls, adjust distance/glare or lower the animation speed.
+<strong>High</strong> density uses fewer frames but smaller QR modules; <strong>low</strong> makes the
+modules easier to see. Use whichever your camera reads reliably.</p>
+<p><strong>Open-Test-Cases.html</strong> also explains two configuration mistakes: an ordinary request with
+device protection on, and a protected request with device protection off.
+If you try the second check, use the matching <strong>pre-reveal</strong> PSBT, stop before
+Sparrow displays Step 2, and restore protection before continuing.</p>
+<h3 id="optional-sparrow-rejects-a-signed-return-without-proof">Optional: Sparrow rejects a signed return without proof</h3>
+<p>Use your <strong>Offline SeedSigner A</strong> wallet with Required
+signing. This checks Sparrow and uses its computer camera. Display <strong>Open-Test-Cases.html</strong>'s
+<strong>ordinary signed return</strong> on a second screen/device, or aim a movable USB webcam
+at your screen. A fixed laptop webcam cannot face its own screen: open the
+extracted kit's viewer on a second computer, or copy <strong>ordinary-signed-return-A-qr.png</strong>
+to a phone/tablet and display it there. This QR contains public test data only.</p>
+<ol>
+<li>Open <strong>singlesig-A-first.psbt</strong> and click <strong>Finalize Transaction for Signing</strong>,
+   with the existing seed-A wallet open.</li>
+<li>Use the transaction's separate <strong>Scan QR</strong> button to scan the <strong>ordinary
+   signed return</strong> displayed in <strong>Open-Test-Cases.html</strong>. Do not click Protected QR for this check.</li>
+<li>Expect <strong>Protected signature rejected</strong> / <strong>REQUIRED_PROOF_MISSING</strong> and
+   no accepted ordinary signature. Mark <strong>Missing-proof rejection</strong>.</li>
+</ol>
+<h3 id="optional-cancel-before-the-second-round-then-restart">Optional: Cancel before the second round, then restart</h3>
+<p>Use <strong>Test-cases/singlesig-A-pre-reveal.psbt</strong> and your wallet for seed A.</p>
+<ol>
+<li>Open the file, click <strong>Finalize Transaction for Signing</strong>,
+   and click <strong>Protected QR</strong>.</li>
+<li>At <strong>Step 1 of 2</strong>, close the QR window using <strong>X</strong> before scanning it on
+   the device. No signature should have been accepted.</li>
+<li>Click <strong>Protected QR</strong> again on the same transaction. Complete both rounds
+   as in the first signing test.</li>
+<li>Confirm <strong>Protected signatures verified</strong>. Mark <strong>Cancel and restart</strong>.</li>
+</ol>
+<h3 id="optional-interrupt-the-second-round-and-retry">Optional: Interrupt the second round and retry</h3>
+<p>Use <strong>Test-cases/singlesig-A-post-reveal.psbt</strong>, seed A, and its singlesig wallet. Keep the device ready for Step 2.</p>
+<ol>
+<li>Open and prepare the file. Click <strong>Protected QR</strong>, scan Step 1 on the device,
+   approve, and scan its opening response into Sparrow.</li>
+<li>Choose <strong>Done → Scan host reveal</strong> on the device so it is ready for the
+   second round. Sparrow now displays <strong>Step 2 of 2</strong>. <strong>Do not scan it yet.</strong>
+   Close that QR window with <strong>X</strong>.</li>
+<li>In <strong>Protected signing is incomplete</strong>, choose <strong>Retry exact session</strong>.</li>
+<li>Confirm Sparrow returns directly to <strong>Step 2 of 2</strong>. Scan it on the waiting
+   device, approve, and scan its final response into Sparrow.</li>
+<li>Confirm <strong>Protected signatures verified</strong>. Mark <strong>Retry second round</strong>.</li>
+</ol>
+<h3 id="optional-abandon-and-reopen-final-device-recovery-check">Optional: Abandon and reopen — final device recovery check</h3>
+<p>Finish the device recovery checks here; this leaves a durable history entry.
+The optional Sparrow-only demo follows.
+Use <strong>Test-cases/singlesig-A-abandon.psbt</strong>, seed A, and its singlesig wallet. Leave the device waiting for the second round.</p>
+<ol>
+<li>Open and prepare the file. Scan Step 1 on the device, approve, and return
+   its opening response to Sparrow.</li>
+<li>Choose <strong>Done → Scan host reveal</strong> on the device and leave it waiting.
+   When Sparrow displays <strong>Step 2 of 2</strong>, leave it unscanned and close the QR
+   window with <strong>X</strong>. Choose <strong>Abandon session</strong>.</li>
+<li>Confirm no signature was accepted. Close the transaction tab.</li>
+<li>Reopen the <strong>same abandonment PSBT</strong>, prepare it with the <strong>same wallet</strong>,
+   and click <strong>Protected QR</strong>.</li>
+<li>Expect the retained <strong>Step 2 of 2</strong>, not a new first round. Scan it on the
+   waiting device and scan the final response back into Sparrow.</li>
+<li>Confirm verification and mark <strong>Abandon and reopen</strong>.</li>
+</ol>
+<p>Outside the deliberate public demo below, if a different transaction shows <strong>Selective-abort history exists</strong>,
+choose <strong>No</strong> and record that warning. Leave Sparrow's history intact. These
+files are separate transactions so each recovery check gets its own session;
+reopening a completed file does not count as a new signing ceremony.</p>
+<h3 id="optional-see-sparrow-reject-a-dark-skippy-style-signer-run-last">Optional: See Sparrow reject a Dark Skippy-style signer — run last</h3>
+<p>This test uses <strong>Open-Test-Cases.html</strong> as a simulated malicious signer for up
+to three fabricated Dark Skippy transactions using public test Seed A
+(<strong>0fb882ff</strong>). You will use your computer camera to scan QRs from both Sparrow
+and the page. SeedSigner and Kern are not used: the signing device is the
+attacker here, and Sparrow must detect the malicious signature and reject it. A
+malformed request sent to an honest device checks a different condition (the
+device rejection cases above).</p>
+<p>A fixed malicious response would not match Sparrow's fresh session and host
+randomness. The page reads Sparrow's real two-round QRs and returns a valid
+ECDSA signature for that exact session, using eight bytes of public seed A's
+entropy as its nonce. The rejection must appear in <strong>Sparrow itself</strong>.</p>
+<p>Run this <strong>Dark Skippy test last</strong>, after your other signing/recovery tests; the
+deliberate rejection adds a durable history entry. Keep Sparrow offline on
+Testnet4 and use your wallet for <strong>seed A</strong>, with <strong>Protected signing →
+Required</strong>. You will need a computer-connected camera that can read this screen:
+a movable USB webcam or DroidCam (a fixed laptop webcam cannot read its own
+screen).</p>
+<p>Open <strong>Open-Test-Cases.html</strong> in a desktop browser. The maintainer completed these tests in <strong>Brave and Firefox</strong>. Some browsers block
+camera access for pages opened directly from disk; if the camera will not start,
+try another desktop browser and report which one and version you used.</p>
+<ol>
+<li>In <strong>Open-Test-Cases.html</strong>, choose <strong>Sparrow — Dark Skippy-style malicious
+   signer</strong> in the <strong>Case</strong> dropdown.</li>
+<li>In Sparrow choose <strong>File → Open Transaction → File</strong>, browse to the kit's
+   <strong>Test-cases</strong> folder, and open <strong>dark-skippy-attack-A.psbt</strong>. Click
+   <strong>Finalize Transaction for Signing</strong> and click <strong>Protected QR</strong>. Payment is
+   <strong>27,000 sats</strong>, change <strong>72,500</strong>, and fee <strong>500</strong>. Leave <strong>Step 1 of 2</strong>
+   visible. If <strong>Selective-abort history exists</strong> appears from an earlier
+   recovery test, read it and choose <strong>Yes</strong> for this last deliberate public
+   test; keep the history intact.</li>
+<li>On <strong>Open-Test-Cases.html</strong>, click <strong>Grant camera access</strong> and allow the
+   browser permission. <strong>Read Sparrow Step 1</strong> stays disabled until access is
+   granted. Choose your movable camera in <strong>Camera to use for reading
+   Sparrow</strong>, then click <strong>Read Sparrow Step 1</strong> and aim it at Sparrow's open
+   animated Step 1 QR. Wait for a response QR; the page releases the camera
+   automatically.</li>
+<li>In Sparrow's open <strong>Step 1 of 2</strong> QR window click <strong>Scan QR</strong> and aim the
+   camera at the page's animated response QR. Once Sparrow accepts it, Sparrow
+   shows a new animated QR, <strong>Step 2 of 2</strong>.</li>
+<li>On <strong>Open-Test-Cases.html</strong>, click <strong>Read Sparrow Step 2</strong> and aim the camera
+   at Sparrow's Step 2 QR. The final response QR appears on the page; the page
+   releases the camera again.</li>
+<li>In Sparrow's Step 2 window click <strong>Scan QR</strong> and aim the camera at the page's
+   final animated response QR. Expect Sparrow's <strong>Protected signing stopped</strong>
+   dialog with <strong>SIGNATURE_INVALID: Anti-exfil signature verification failed</strong>.
+   No signature from this attempt should be accepted.</li>
+<li>In <strong>FEEDBACK.txt</strong>, mark the <strong>Dark Skippy-style Sparrow QR test</strong> Pass or
+   Fail. A screenshot of <strong>Sparrow's</strong> dialog is optional supporting evidence.</li>
+</ol>
+<p><strong>Congrats!</strong> You've just defeated a (simulated) Dark Skippy attack trying to
+steal your private key and all your bitcoin!</p>
+<p>An invalid-QR, wrong-stage, session-mismatch, or camera error does not count as
+the nonce-defense result. Report it if it occurs. The page's response-ready
+message cannot see Sparrow's outcome and is not a pass result.</p>
+<p><strong>Repeating the test:</strong> Sparrow retains the session for each transaction;
+reopening a used PSBT may resume Step 2. Click <strong>Start over</strong> on the page, then
+open the next unused transaction: <strong>dark-skippy-attack-A2.psbt</strong>, followed by
+<strong>dark-skippy-attack-A3.psbt</strong>. Each has a different transaction ID. Start over
+clears only this page, and Sparrow keeps its history. After using all three,
+stop here and report your results.</p>
+<p>This demonstrates rejection of an <strong>ECDSA adaptation of the <a href="https://darkskippy.com/">Dark Skippy nonce
+technique</a></strong> through the live coordinator exchange.
+It uses a public browser simulator rather than malicious device firmware and
+does not perform seed recovery. Its source and transaction identities are
+included. The automated checks cover the shipped signing flow, transport,
+ordinary signature validity, proof rejection, and durable non-completion; the
+expected rejection has been observed in Sparrow.</p>
+</section><section data-hardware="kern"><h2 id="i-have-kern">I have Kern</h2>
+<h3 id="load-seed-a-on-kern">Load seed A on Kern</h3>
+<p>From Kern's unloaded screen choose <strong>Load Mnemonic → From QR Code</strong>,
+scan <strong>seed A</strong> from <strong>Open-Test-Cases.html</strong>, and finish loading without a passphrase.
+Confirm fingerprint <strong>0fb882ff</strong>. Tap the orange circled <strong>i</strong> at the upper-left
+of Home; in <strong>Wallet Settings</strong>, confirm <strong>Network → Testnet</strong> and <strong>Anti-exfil
+signing</strong> on, then return Home. For a longer session, you can set the
+seed-unload timer to <strong>30 minutes</strong>.</p>
+<h3 id="create-offline-kern-a-in-sparrow">Create Offline Kern A in Sparrow</h3>
+<ol>
+<li>On Kern, choose <strong>Extended Public Key</strong>. Confirm the default <strong>Singlesig → Native
+   SegWit</strong>, account <strong>0</strong>. The account QR is ready to scan. After importing,
+   <strong>Show xpub</strong> lets you compare the text with Sparrow; <strong>OK</strong> exits.</li>
+<li>In Sparrow choose <strong>File → New Wallet</strong>, name it <strong>Offline Kern A</strong>, and select
+   <strong>Single Signature / Native Segwit (P2WPKH)</strong>.</li>
+<li>Choose <strong>Airgapped Hardware Wallet → Kern → Scan</strong> and scan the
+   device's account QR.</li>
+<li>Confirm fingerprint <strong>0fb882ff</strong> and derivation <strong>m/84'/1'/0'</strong>.</li>
+<li>Set <strong>Protected signing → Required</strong>, then click <strong>Apply</strong>. With Settings
+   still visible, confirm Required remains selected. Keep this wallet open.</li>
+</ol>
+<p>If this named wallet already exists with those keys, use it and confirm Required.</p>
+<h3 id="sign-with-kern">Sign with Kern</h3>
+<ol>
+<li>In Sparrow choose <strong>File → Open Transaction → File</strong>. Browse to the extracted
+   kit's <strong>Test-cases</strong> folder and open <strong>singlesig-A-first.psbt</strong>.</li>
+<li>Click <strong>Finalize Transaction for Signing</strong>.
+   Click <strong>Protected QR</strong> to show <strong>Step 1 of 2</strong>.</li>
+<li>On Kern choose <strong>Scan</strong> and scan Step 1. Review payment <strong>20,000 sats</strong>,
+   change <strong>79,500 sats</strong>, and fee <strong>500 sats</strong>, then approve.</li>
+<li>Scan the device's first response into Sparrow's protected signing window.
+   Wait for Sparrow to display <strong>Step 2 of 2</strong>.</li>
+<li>On Kern choose <strong>Done → Scan host reveal</strong>. Scan Step 2, follow the
+   review/approval screens, and scan its final response into Sparrow.</li>
+<li>Confirm <strong>Protected signatures verified</strong>. Keep the final device QR visible
+   until Sparrow accepts it, then exit the QR viewer and return to the main menu.</li>
+</ol>
+<p>A separate <strong>PSBT not finalized</strong> notice can appear; the result to record is
+verification of protected signing. Mark <strong>Singlesig — Kern</strong> in your feedback.
+This is enough for a first report. The following tests are optional.</p>
+<h3 id="optional-2-of-2-multisig_1">Optional: 2-of-2 multisig</h3>
+<p>Kern holds one seed at a time. After exporting A, unload/restart Kern
+and load B to export it; reload A for signing, then B for its signature.</p>
+<p>These single-device steps are newly documented and have not yet received
+end-to-end physical qualification. Two seeds on one device test the workflow;
+they do not represent two independent physical signers.</p>
+<h3 id="create-accounts-a-and-b-and-the-wallet_1">Create accounts A and B and the wallet</h3>
+<ol>
+<li>Get A ready on <strong>Kern</strong>. Keep public seed <strong>A</strong> loaded and confirm <strong>0fb882ff</strong>.</li>
+<li>Export A's multisig account: choose <strong>Extended Public Key → Multisig</strong>. Confirm the default <strong>Native
+   SegWit</strong> and <strong>m/48'/1'/0'/2'</strong>, account <strong>0</strong>, and show the account QR.</li>
+<li>In Sparrow choose <strong>File → New Wallet</strong>, name it <strong>Offline 2of2 A-B</strong>, select
+   <strong>Multi Signature / 2 of 2 / Native Segwit (P2WSH)</strong>. Import the first key
+   through <strong>Airgapped Hardware Wallet → Kern → Scan</strong>. Label it <strong>A</strong>
+   and set <strong>Protected signing → Required</strong>.</li>
+<li>Get B ready on <strong>Kern</strong>. Unload/restart Kern before loading B. From Kern's unloaded screen choose <strong>Load Mnemonic → From QR Code</strong>,
+   scan <strong>seed B</strong> from <strong>Open-Test-Cases.html</strong>, and finish loading without a passphrase.
+   Confirm fingerprint <strong>05d027a5</strong>. Tap the orange circled <strong>i</strong> at the upper-left
+   of Home; in <strong>Wallet Settings</strong>, confirm <strong>Network → Testnet</strong> and <strong>Anti-exfil
+   signing</strong> on, then return Home. For a longer session, you can set the
+   seed-unload timer to <strong>30 minutes</strong>.
+   Export its multisig account: choose <strong>Extended Public Key → Multisig</strong>. Confirm the default <strong>Native
+   SegWit</strong> and <strong>m/48'/1'/0'/2'</strong>, account <strong>0</strong>, and show the account QR.</li>
+<li>Import B into the second keystore through <strong>Airgapped Hardware Wallet →
+   Kern → Scan</strong>. Label it <strong>B</strong>, set <strong>Protected signing → Required</strong>,
+   and click <strong>Apply</strong>.</li>
+<li>With Settings still visible, confirm <strong>2 of 2</strong>, the two fingerprints, and
+   <strong>m/48'/1'/0'/2'</strong> on both keystores.
+   A is <strong>0fb882ff</strong> and B is <strong>05d027a5</strong>. Under <strong>Descriptor → Edit</strong>,
+   compare the public keys/origins and <code>wsh(sortedmulti(2,...))</code> policy with
+   the full descriptor text below its QR in <strong>Open-Test-Cases.html</strong>.</li>
+</ol>
+<h3 id="prepare-the-transaction-and-descriptor_1">Prepare the transaction and descriptor</h3>
+<ol>
+<li>In <strong>Open-Test-Cases.html</strong>, find <strong>Multisig wallet descriptor</strong>. Its QR is on the
+   same page as the seed/rejection QRs; leave it available for signing.</li>
+<li>Open <strong>Test-cases/multisig-A-B.psbt</strong> in Sparrow, click <strong>Finalize Transaction
+   for Signing</strong>. Payment is <strong>25,000</strong>, change
+   <strong>74,500</strong>, and fee <strong>500 sats</strong>.</li>
+</ol>
+<h3 id="get-the-signers-ready_1">Get the signers ready</h3>
+<p>Reload <strong>A on Kern</strong> from its seed QR in <strong>Open-Test-Cases.html</strong>.</p>
+<p>On Kern, tap the orange <strong>i</strong>, confirm Testnet and anti-exfil on, then open
+<strong>Wallet Settings → Descriptors → Load Descriptor</strong> (or <strong>Load Other Descriptor</strong>)
+<strong>→ From QR Code</strong>. Scan the policy QR, check both fingerprints and <strong>2 of 2</strong>,
+and choose <strong>Keep for this session only</strong>. Repeat this after any seed change
+or timer unload.</p>
+<h3 id="sign-a-then-b_1">Sign A, then B</h3>
+<ol>
+<li>In the prepared transaction tab click <strong>Protected QR</strong>, select <strong>A</strong>, and
+   scan Step 1 on <strong>Kern</strong> with seed A selected. Review/approve the payment,
+   change, and fee; load the descriptor during review if requested.</li>
+<li>Scan the first device response into Sparrow. When it displays Step 2,
+   choose <strong>Done → Scan host reveal</strong> on the device, scan Step 2, approve,
+   and return the final QR to Sparrow. Wait for A's signature to be accepted.</li>
+<li>Keep this transaction tab open; it holds A's signature. Unload/restart Kern, load <strong>B</strong>, confirm Testnet/anti-exfil on, and
+   load the same descriptor again using the policy-loading steps above.</li>
+<li>In the same transaction click <strong>Protected QR</strong>, select <strong>B</strong>, and complete
+   both rounds on <strong>Kern</strong>, including <strong>Done → Scan host reveal</strong> between
+   rounds. Check the same payment, change, and fee.</li>
+<li>Wait for Sparrow to accept B's protected signature before leaving its final
+   QR viewer.</li>
+<li>Confirm both signatures are accepted and Sparrow can finalize the transaction.
+   Mark <strong>Multisig</strong> and your hardware arrangement in the feedback.</li>
+</ol>
+<h3 id="optional-try-the-rejection-qrs_1">Optional: Try the rejection QRs</h3>
+<p>These cases use <strong>seed A</strong>. After multisig, restore A without a passphrase,
+confirm <strong>0fb882ff</strong>, and keep protection on. Unload/restart Kern and load A from <strong>Open-Test-Cases.html</strong>.</p>
+<ol>
+<li>In <strong>Open-Test-Cases.html</strong>, find <strong>Signer rejects a malicious coordinator request</strong>. Choose the
+   wrong-mainnet case from <strong>Case</strong>. Leave <strong>Density</strong> at <strong>medium</strong> initially.</li>
+<li>On the device choose <strong>Scan</strong> and scan the animated QR through a full loop.</li>
+<li>Follow any transaction-review screens until the device refuses the request.
+   The test passes if there is a refusal and no signature response.</li>
+<li>Try <strong>wrong stage</strong> and <strong>duplicate slot</strong> next. You may also try the other
+   dropdown cases. Record case numbers and Pass/Fail; a photo supplies wording.</li>
+</ol>
+<p>Kern may refuse immediately on scan; an
+earlier generic rejection does not demonstrate that every deeper check ran.</p>
+<p>If scanning stalls, adjust distance/glare or lower the animation speed.
+<strong>High</strong> density uses fewer frames but smaller QR modules; <strong>low</strong> makes the
+modules easier to see. Use whichever your camera reads reliably.</p>
+<p><strong>Open-Test-Cases.html</strong> also explains two configuration mistakes: an ordinary request with
+device protection on, and a protected request with device protection off.
+If you try the second check, use the matching <strong>pre-reveal</strong> PSBT, stop before
+Sparrow displays Step 2, and restore protection before continuing.</p>
+<h3 id="optional-sparrow-rejects-a-signed-return-without-proof_1">Optional: Sparrow rejects a signed return without proof</h3>
+<p>Use your <strong>Offline Kern A</strong> wallet with Required
+signing. This checks Sparrow and uses its computer camera. Display <strong>Open-Test-Cases.html</strong>'s
+<strong>ordinary signed return</strong> on a second screen/device, or aim a movable USB webcam
+at your screen. A fixed laptop webcam cannot face its own screen: open the
+extracted kit's viewer on a second computer, or copy <strong>ordinary-signed-return-A-qr.png</strong>
+to a phone/tablet and display it there. This QR contains public test data only.</p>
+<ol>
+<li>Open <strong>singlesig-A-first.psbt</strong> and click <strong>Finalize Transaction for Signing</strong>,
+   with the existing seed-A wallet open.</li>
+<li>Use the transaction's separate <strong>Scan QR</strong> button to scan the <strong>ordinary
+   signed return</strong> displayed in <strong>Open-Test-Cases.html</strong>. Do not click Protected QR for this check.</li>
+<li>Expect <strong>Protected signature rejected</strong> / <strong>REQUIRED_PROOF_MISSING</strong> and
+   no accepted ordinary signature. Mark <strong>Missing-proof rejection</strong>.</li>
+</ol>
+<h3 id="optional-cancel-before-the-second-round-then-restart_1">Optional: Cancel before the second round, then restart</h3>
+<p>Use <strong>Test-cases/singlesig-A-pre-reveal.psbt</strong> and your wallet for seed A.</p>
+<ol>
+<li>Open the file, click <strong>Finalize Transaction for Signing</strong>,
+   and click <strong>Protected QR</strong>.</li>
+<li>At <strong>Step 1 of 2</strong>, close the QR window using <strong>X</strong> before scanning it on
+   the device. No signature should have been accepted.</li>
+<li>Click <strong>Protected QR</strong> again on the same transaction. Complete both rounds
+   as in the first signing test.</li>
+<li>Confirm <strong>Protected signatures verified</strong>. Mark <strong>Cancel and restart</strong>.</li>
+</ol>
+<h3 id="optional-interrupt-the-second-round-and-retry_1">Optional: Interrupt the second round and retry</h3>
+<p>Use <strong>Test-cases/singlesig-A-post-reveal.psbt</strong>, seed A, and its singlesig wallet. Keep the device ready for Step 2.</p>
+<ol>
+<li>Open and prepare the file. Click <strong>Protected QR</strong>, scan Step 1 on the device,
+   approve, and scan its opening response into Sparrow.</li>
+<li>Choose <strong>Done → Scan host reveal</strong> on the device so it is ready for the
+   second round. Sparrow now displays <strong>Step 2 of 2</strong>. <strong>Do not scan it yet.</strong>
+   Close that QR window with <strong>X</strong>.</li>
+<li>In <strong>Protected signing is incomplete</strong>, choose <strong>Retry exact session</strong>.</li>
+<li>Confirm Sparrow returns directly to <strong>Step 2 of 2</strong>. Scan it on the waiting
+   device, approve, and scan its final response into Sparrow.</li>
+<li>Confirm <strong>Protected signatures verified</strong>. Mark <strong>Retry second round</strong>.</li>
+</ol>
+<p>Kern may explain that the coordinator maintains first-round session continuity.
+Keep the same transaction and session for this check.</p>
+<h3 id="optional-abandon-and-reopen-final-device-recovery-check_1">Optional: Abandon and reopen — final device recovery check</h3>
+<p>Finish the device recovery checks here; this leaves a durable history entry.
+The optional Sparrow-only demo follows.
+Use <strong>Test-cases/singlesig-A-abandon.psbt</strong>, seed A, and its singlesig wallet. Leave the device waiting for the second round.</p>
+<ol>
+<li>Open and prepare the file. Scan Step 1 on the device, approve, and return
+   its opening response to Sparrow.</li>
+<li>Choose <strong>Done → Scan host reveal</strong> on the device and leave it waiting.
+   When Sparrow displays <strong>Step 2 of 2</strong>, leave it unscanned and close the QR
+   window with <strong>X</strong>. Choose <strong>Abandon session</strong>.</li>
+<li>Confirm no signature was accepted. Close the transaction tab.</li>
+<li>Reopen the <strong>same abandonment PSBT</strong>, prepare it with the <strong>same wallet</strong>,
+   and click <strong>Protected QR</strong>.</li>
+<li>Expect the retained <strong>Step 2 of 2</strong>, not a new first round. Scan it on the
+   waiting device and scan the final response back into Sparrow.</li>
+<li>Confirm verification and mark <strong>Abandon and reopen</strong>.</li>
+</ol>
+<p>Outside the deliberate public demo below, if a different transaction shows <strong>Selective-abort history exists</strong>,
+choose <strong>No</strong> and record that warning. Leave Sparrow's history intact. These
+files are separate transactions so each recovery check gets its own session;
+reopening a completed file does not count as a new signing ceremony.</p>
+<h3 id="optional-see-sparrow-reject-a-dark-skippy-style-signer-run-last_1">Optional: See Sparrow reject a Dark Skippy-style signer — run last</h3>
+<p>This test uses <strong>Open-Test-Cases.html</strong> as a simulated malicious signer for up
+to three fabricated Dark Skippy transactions using public test Seed A
+(<strong>0fb882ff</strong>). You will use your computer camera to scan QRs from both Sparrow
+and the page. SeedSigner and Kern are not used: the signing device is the
+attacker here, and Sparrow must detect the malicious signature and reject it. A
+malformed request sent to an honest device checks a different condition (the
+device rejection cases above).</p>
+<p>A fixed malicious response would not match Sparrow's fresh session and host
+randomness. The page reads Sparrow's real two-round QRs and returns a valid
+ECDSA signature for that exact session, using eight bytes of public seed A's
+entropy as its nonce. The rejection must appear in <strong>Sparrow itself</strong>.</p>
+<p>Run this <strong>Dark Skippy test last</strong>, after your other signing/recovery tests; the
+deliberate rejection adds a durable history entry. Keep Sparrow offline on
+Testnet4 and use your wallet for <strong>seed A</strong>, with <strong>Protected signing →
+Required</strong>. You will need a computer-connected camera that can read this screen:
+a movable USB webcam or DroidCam (a fixed laptop webcam cannot read its own
+screen).</p>
+<p>Open <strong>Open-Test-Cases.html</strong> in a desktop browser. The maintainer completed these tests in <strong>Brave and Firefox</strong>. Some browsers block
+camera access for pages opened directly from disk; if the camera will not start,
+try another desktop browser and report which one and version you used.</p>
+<ol>
+<li>In <strong>Open-Test-Cases.html</strong>, choose <strong>Sparrow — Dark Skippy-style malicious
+   signer</strong> in the <strong>Case</strong> dropdown.</li>
+<li>In Sparrow choose <strong>File → Open Transaction → File</strong>, browse to the kit's
+   <strong>Test-cases</strong> folder, and open <strong>dark-skippy-attack-A.psbt</strong>. Click
+   <strong>Finalize Transaction for Signing</strong> and click <strong>Protected QR</strong>. Payment is
+   <strong>27,000 sats</strong>, change <strong>72,500</strong>, and fee <strong>500</strong>. Leave <strong>Step 1 of 2</strong>
+   visible. If <strong>Selective-abort history exists</strong> appears from an earlier
+   recovery test, read it and choose <strong>Yes</strong> for this last deliberate public
+   test; keep the history intact.</li>
+<li>On <strong>Open-Test-Cases.html</strong>, click <strong>Grant camera access</strong> and allow the
+   browser permission. <strong>Read Sparrow Step 1</strong> stays disabled until access is
+   granted. Choose your movable camera in <strong>Camera to use for reading
+   Sparrow</strong>, then click <strong>Read Sparrow Step 1</strong> and aim it at Sparrow's open
+   animated Step 1 QR. Wait for a response QR; the page releases the camera
+   automatically.</li>
+<li>In Sparrow's open <strong>Step 1 of 2</strong> QR window click <strong>Scan QR</strong> and aim the
+   camera at the page's animated response QR. Once Sparrow accepts it, Sparrow
+   shows a new animated QR, <strong>Step 2 of 2</strong>.</li>
+<li>On <strong>Open-Test-Cases.html</strong>, click <strong>Read Sparrow Step 2</strong> and aim the camera
+   at Sparrow's Step 2 QR. The final response QR appears on the page; the page
+   releases the camera again.</li>
+<li>In Sparrow's Step 2 window click <strong>Scan QR</strong> and aim the camera at the page's
+   final animated response QR. Expect Sparrow's <strong>Protected signing stopped</strong>
+   dialog with <strong>SIGNATURE_INVALID: Anti-exfil signature verification failed</strong>.
+   No signature from this attempt should be accepted.</li>
+<li>In <strong>FEEDBACK.txt</strong>, mark the <strong>Dark Skippy-style Sparrow QR test</strong> Pass or
+   Fail. A screenshot of <strong>Sparrow's</strong> dialog is optional supporting evidence.</li>
+</ol>
+<p><strong>Congrats!</strong> You've just defeated a (simulated) Dark Skippy attack trying to
+steal your private key and all your bitcoin!</p>
+<p>An invalid-QR, wrong-stage, session-mismatch, or camera error does not count as
+the nonce-defense result. Report it if it occurs. The page's response-ready
+message cannot see Sparrow's outcome and is not a pass result.</p>
+<p><strong>Repeating the test:</strong> Sparrow retains the session for each transaction;
+reopening a used PSBT may resume Step 2. Click <strong>Start over</strong> on the page, then
+open the next unused transaction: <strong>dark-skippy-attack-A2.psbt</strong>, followed by
+<strong>dark-skippy-attack-A3.psbt</strong>. Each has a different transaction ID. Start over
+clears only this page, and Sparrow keeps its history. After using all three,
+stop here and report your results.</p>
+<p>This demonstrates rejection of an <strong>ECDSA adaptation of the <a href="https://darkskippy.com/">Dark Skippy nonce
+technique</a></strong> through the live coordinator exchange.
+It uses a public browser simulator rather than malicious device firmware and
+does not perform seed recovery. Its source and transaction identities are
+included. The automated checks cover the shipped signing flow, transport,
+ordinary signature validity, proof rejection, and durable non-completion; the
+expected rejection has been observed in Sparrow.</p>
+</section><section data-hardware="both"><h2 id="i-have-both">I have both</h2>
+<p>Use <strong>seed A on both devices</strong>. Complete SeedSigner with <strong>singlesig-A-first.psbt</strong>,
+then Kern with <strong>singlesig-A-next.psbt</strong>. These distinct transactions let Sparrow
+perform a fresh ceremony for each device instead of restoring the first result.</p>
+<h3 id="load-seed-a-on-seedsigner_1">Load seed A on SeedSigner</h3>
+<p>On SeedSigner choose <strong>Scan</strong> and scan <strong>seed A</strong> from <strong>Open-Test-Cases.html</strong>'s
+seed dropdown. Load it without a passphrase and confirm fingerprint <strong>0fb882ff</strong>.
+<a href="download-and-test.html">Start Here</a> already configured Testnet and Required signing.</p>
+<h3 id="create-offline-seedsigner-a-in-sparrow_1">Create Offline SeedSigner A in Sparrow</h3>
+<ol>
+<li>On SeedSigner, choose <strong>Export xpub → Single Sig → Native Segwit</strong>, then <strong>Animated</strong> or <strong>Static</strong>
+   (either works), then <strong>I understand → Export xpub</strong> to show the QR.</li>
+<li>In Sparrow choose <strong>File → New Wallet</strong>, name it <strong>Offline SeedSigner A</strong>, and select
+   <strong>Single Signature / Native Segwit (P2WPKH)</strong>.</li>
+<li>Choose <strong>Airgapped Hardware Wallet → SeedSigner → Scan</strong> and scan the
+   device's account QR.</li>
+<li>Confirm fingerprint <strong>0fb882ff</strong> and derivation <strong>m/84'/1'/0'</strong>.</li>
+<li>Set <strong>Protected signing → Required</strong>, then click <strong>Apply</strong>. With Settings
+   still visible, confirm Required remains selected. Keep this wallet open.</li>
+</ol>
+<p>If this named wallet already exists with those keys, use it and confirm Required.</p>
+<h3 id="sign-with-seedsigner_1">Sign with SeedSigner</h3>
+<ol>
+<li>In Sparrow choose <strong>File → Open Transaction → File</strong>. Browse to the extracted
+   kit's <strong>Test-cases</strong> folder and open <strong>singlesig-A-first.psbt</strong>.</li>
+<li>Click <strong>Finalize Transaction for Signing</strong>.
+   Click <strong>Protected QR</strong> to show <strong>Step 1 of 2</strong>.</li>
+<li>On SeedSigner choose <strong>Scan</strong> and scan Step 1. Review payment <strong>20,000 sats</strong>,
+   change <strong>79,500 sats</strong>, and fee <strong>500 sats</strong>, then approve.</li>
+<li>Scan the device's first response into Sparrow's protected signing window.
+   Wait for Sparrow to display <strong>Step 2 of 2</strong>.</li>
+<li>On SeedSigner choose <strong>Done → Scan host reveal</strong>. Scan Step 2, follow the
+   review/approval screens, and scan its final response into Sparrow.</li>
+<li>Confirm <strong>Protected signatures verified</strong>. Keep the final device QR visible
+   until Sparrow accepts it, then exit the QR viewer and return to the main menu.</li>
+</ol>
+<p>A separate <strong>PSBT not finalized</strong> notice can appear; the result to record is
+verification of protected signing. Mark <strong>Singlesig — SeedSigner</strong> in your feedback.
+This is enough for a first report. The following tests are optional.</p>
+<h3 id="load-seed-a-on-kern_1">Load seed A on Kern</h3>
+<p>From Kern's unloaded screen choose <strong>Load Mnemonic → From QR Code</strong>,
+scan <strong>seed A</strong> from <strong>Open-Test-Cases.html</strong>, and finish loading without a passphrase.
+Confirm fingerprint <strong>0fb882ff</strong>. Tap the orange circled <strong>i</strong> at the upper-left
+of Home; in <strong>Wallet Settings</strong>, confirm <strong>Network → Testnet</strong> and <strong>Anti-exfil
+signing</strong> on, then return Home. For a longer session, you can set the
+seed-unload timer to <strong>30 minutes</strong>.</p>
+<h3 id="create-offline-kern-a-in-sparrow_1">Create Offline Kern A in Sparrow</h3>
+<ol>
+<li>On Kern, choose <strong>Extended Public Key</strong>. Confirm the default <strong>Singlesig → Native
+   SegWit</strong>, account <strong>0</strong>. The account QR is ready to scan. After importing,
+   <strong>Show xpub</strong> lets you compare the text with Sparrow; <strong>OK</strong> exits.</li>
+<li>In Sparrow choose <strong>File → New Wallet</strong>, name it <strong>Offline Kern A</strong>, and select
+   <strong>Single Signature / Native Segwit (P2WPKH)</strong>.</li>
+<li>Choose <strong>Airgapped Hardware Wallet → Kern → Scan</strong> and scan the
+   device's account QR.</li>
+<li>Confirm fingerprint <strong>0fb882ff</strong> and derivation <strong>m/84'/1'/0'</strong>.</li>
+<li>Set <strong>Protected signing → Required</strong>, then click <strong>Apply</strong>. With Settings
+   still visible, confirm Required remains selected. Keep this wallet open.</li>
+</ol>
+<p>If this named wallet already exists with those keys, use it and confirm Required.</p>
+<h3 id="sign-with-kern_1">Sign with Kern</h3>
+<ol>
+<li>In Sparrow choose <strong>File → Open Transaction → File</strong>. Browse to the extracted
+   kit's <strong>Test-cases</strong> folder and open <strong>singlesig-A-next.psbt</strong>.</li>
+<li>Click <strong>Finalize Transaction for Signing</strong>.
+   Click <strong>Protected QR</strong> to show <strong>Step 1 of 2</strong>.</li>
+<li>On Kern choose <strong>Scan</strong> and scan Step 1. Review payment <strong>24,000 sats</strong>,
+   change <strong>75,500 sats</strong>, and fee <strong>500 sats</strong>, then approve.</li>
+<li>Scan the device's first response into Sparrow's protected signing window.
+   Wait for Sparrow to display <strong>Step 2 of 2</strong>.</li>
+<li>On Kern choose <strong>Done → Scan host reveal</strong>. Scan Step 2, follow the
+   review/approval screens, and scan its final response into Sparrow.</li>
+<li>Confirm <strong>Protected signatures verified</strong>. Keep the final device QR visible
+   until Sparrow accepts it, then exit the QR viewer and return to the main menu.</li>
+</ol>
+<p>A separate <strong>PSBT not finalized</strong> notice can appear; the result to record is
+verification of protected signing. Mark <strong>Singlesig — Kern</strong> in your feedback.
+This is enough for a first report. The following tests are optional.</p>
+<h3 id="optional-2-of-2-multisig_2">Optional: 2-of-2 multisig</h3>
+<p>Keep <strong>A on SeedSigner</strong> and <strong>B on Kern</strong> for this multisig test.</p>
+<h3 id="create-accounts-a-and-b-and-the-wallet_2">Create accounts A and B and the wallet</h3>
+<ol>
+<li>Get A ready on <strong>SeedSigner</strong>. Keep public seed <strong>A</strong> loaded and confirm <strong>0fb882ff</strong>.</li>
+<li>Export A's multisig account: choose <strong>Export xpub → Multisig → Native Segwit</strong>, then <strong>Animated</strong> or <strong>Static</strong>
+   (either works), then <strong>I understand → Export xpub</strong> to show the QR.</li>
+<li>In Sparrow choose <strong>File → New Wallet</strong>, name it <strong>Offline 2of2 A-B</strong>, select
+   <strong>Multi Signature / 2 of 2 / Native Segwit (P2WSH)</strong>. Import the first key
+   through <strong>Airgapped Hardware Wallet → SeedSigner → Scan</strong>. Label it <strong>A</strong>
+   and set <strong>Protected signing → Required</strong>.</li>
+<li>Get B ready on <strong>Kern</strong>. Unload/restart Kern and replace its singlesig seed A with seed B:
+   From Kern's unloaded screen choose <strong>Load Mnemonic → From QR Code</strong>,
+   scan <strong>seed B</strong> from <strong>Open-Test-Cases.html</strong>, and finish loading without a passphrase.
+   Confirm fingerprint <strong>05d027a5</strong>. Tap the orange circled <strong>i</strong> at the upper-left
+   of Home; in <strong>Wallet Settings</strong>, confirm <strong>Network → Testnet</strong> and <strong>Anti-exfil
+   signing</strong> on, then return Home. For a longer session, you can set the
+   seed-unload timer to <strong>30 minutes</strong>.
+   Export its multisig account: choose <strong>Extended Public Key → Multisig</strong>. Confirm the default <strong>Native
+   SegWit</strong> and <strong>m/48'/1'/0'/2'</strong>, account <strong>0</strong>, and show the account QR.</li>
+<li>Import B into the second keystore through <strong>Airgapped Hardware Wallet →
+   Kern → Scan</strong>. Label it <strong>B</strong>, set <strong>Protected signing → Required</strong>,
+   and click <strong>Apply</strong>.</li>
+<li>With Settings still visible, confirm <strong>2 of 2</strong>, the two fingerprints, and
+   <strong>m/48'/1'/0'/2'</strong> on both keystores.
+   A is <strong>0fb882ff</strong> and B is <strong>05d027a5</strong>. Under <strong>Descriptor → Edit</strong>,
+   compare the public keys/origins and <code>wsh(sortedmulti(2,...))</code> policy with
+   the full descriptor text below its QR in <strong>Open-Test-Cases.html</strong>.</li>
+</ol>
+<h3 id="prepare-the-transaction-and-descriptor_2">Prepare the transaction and descriptor</h3>
+<ol>
+<li>In <strong>Open-Test-Cases.html</strong>, find <strong>Multisig wallet descriptor</strong>. Its QR is on the
+   same page as the seed/rejection QRs; leave it available for signing.</li>
+<li>Open <strong>Test-cases/multisig-A-B.psbt</strong> in Sparrow, click <strong>Finalize Transaction
+   for Signing</strong>. Payment is <strong>25,000</strong>, change
+   <strong>74,500</strong>, and fee <strong>500 sats</strong>.</li>
+</ol>
+<h3 id="get-the-signers-ready_2">Get the signers ready</h3>
+<p>Keep <strong>A selected on SeedSigner</strong>.</p>
+<p>On Kern, tap the orange <strong>i</strong>, confirm Testnet and anti-exfil on, then open
+<strong>Wallet Settings → Descriptors → Load Descriptor</strong> (or <strong>Load Other Descriptor</strong>)
+<strong>→ From QR Code</strong>. Scan the policy QR, check both fingerprints and <strong>2 of 2</strong>,
+and choose <strong>Keep for this session only</strong>. Repeat this after any seed change
+or timer unload.</p>
+<p>SeedSigner loads the descriptor during transaction review when requested:
+choose <strong>Scan descriptor</strong>, scan the policy QR, check its fingerprints/threshold,
+then choose <strong>Return to transaction</strong>. Keep the QR available for later ceremonies.</p>
+<h3 id="sign-a-then-b_2">Sign A, then B</h3>
+<ol>
+<li>In the prepared transaction tab click <strong>Protected QR</strong>, select <strong>A</strong>, and
+   scan Step 1 on <strong>SeedSigner</strong> with seed A selected. Review/approve the payment,
+   change, and fee; load the descriptor during review if requested.</li>
+<li>Scan the first device response into Sparrow. When it displays Step 2,
+   choose <strong>Done → Scan host reveal</strong> on the device, scan Step 2, approve,
+   and return the final QR to Sparrow. Wait for A's signature to be accepted.</li>
+<li>Keep this transaction tab open; it holds A's signature. Use Kern with <strong>B</strong> loaded and the wallet policy loaded.</li>
+<li>In the same transaction click <strong>Protected QR</strong>, select <strong>B</strong>, and complete
+   both rounds on <strong>Kern</strong>, including <strong>Done → Scan host reveal</strong> between
+   rounds. Check the same payment, change, and fee.</li>
+<li>Wait for Sparrow to accept B's protected signature before leaving its final
+   QR viewer.</li>
+<li>Confirm both signatures are accepted and Sparrow can finalize the transaction.
+   Mark <strong>Multisig</strong> and your hardware arrangement in the feedback.</li>
+</ol>
+<p>For the recovery PSBTs below, choose <strong>one</strong> device with seed A and its
+matching singlesig wallet. Each recovery file is used once; replaying it on
+the other device would reuse the retained session rather than start a fresh test.
+You can scan the device rejection cases on both devices.</p>
+<h3 id="optional-try-the-rejection-qrs_2">Optional: Try the rejection QRs</h3>
+<p>These cases use <strong>seed A</strong>. After multisig, restore A without a passphrase,
+confirm <strong>0fb882ff</strong>, and keep protection on. On Kern unload/restart and load
+A from <strong>Open-Test-Cases.html</strong>; on SeedSigner select its loaded A seed.</p>
+<ol>
+<li>In <strong>Open-Test-Cases.html</strong>, find <strong>Signer rejects a malicious coordinator request</strong>. Choose the
+   wrong-mainnet case from <strong>Case</strong>. Leave <strong>Density</strong> at <strong>medium</strong> initially.</li>
+<li>On the device choose <strong>Scan</strong> and scan the animated QR through a full loop.</li>
+<li>Follow any transaction-review screens until the device refuses the request.
+   The test passes if there is a refusal and no signature response.</li>
+<li>Try <strong>wrong stage</strong> and <strong>duplicate slot</strong> next. You may also try the other
+   dropdown cases. Record case numbers and Pass/Fail; a photo supplies wording.</li>
+</ol>
+<p>SeedSigner can enter review for cases <strong>05–09 and 11</strong> before showing refusal.
+For <strong>12/13</strong>, continue through <strong>Approve Protected Signature</strong> to see it.
+Kern may refuse immediately on scan. Messages differ between devices; an
+earlier generic rejection does not demonstrate that every deeper check ran.</p>
+<p>If scanning stalls, adjust distance/glare or lower the animation speed.
+<strong>High</strong> density uses fewer frames but smaller QR modules; <strong>low</strong> makes the
+modules easier to see. Use whichever your camera reads reliably.</p>
+<p><strong>Open-Test-Cases.html</strong> also explains two configuration mistakes: an ordinary request with
+device protection on, and a protected request with device protection off.
+If you try the second check, use the matching <strong>pre-reveal</strong> PSBT, stop before
+Sparrow displays Step 2, and restore protection before continuing.</p>
+<h3 id="optional-sparrow-rejects-a-signed-return-without-proof_2">Optional: Sparrow rejects a signed return without proof</h3>
+<p>Use your <strong>Offline SeedSigner A</strong> or <strong>Offline Kern A</strong> wallet with Required
+signing. This checks Sparrow and uses its computer camera. Display <strong>Open-Test-Cases.html</strong>'s
+<strong>ordinary signed return</strong> on a second screen/device, or aim a movable USB webcam
+at your screen. A fixed laptop webcam cannot face its own screen: open the
+extracted kit's viewer on a second computer, or copy <strong>ordinary-signed-return-A-qr.png</strong>
+to a phone/tablet and display it there. This QR contains public test data only.</p>
+<ol>
+<li>Open <strong>singlesig-A-first.psbt</strong> and click <strong>Finalize Transaction for Signing</strong>,
+   with the existing seed-A wallet open.</li>
+<li>Use the transaction's separate <strong>Scan QR</strong> button to scan the <strong>ordinary
+   signed return</strong> displayed in <strong>Open-Test-Cases.html</strong>. Do not click Protected QR for this check.</li>
+<li>Expect <strong>Protected signature rejected</strong> / <strong>REQUIRED_PROOF_MISSING</strong> and
+   no accepted ordinary signature. Mark <strong>Missing-proof rejection</strong>.</li>
+</ol>
+<h3 id="optional-cancel-before-the-second-round-then-restart_2">Optional: Cancel before the second round, then restart</h3>
+<p>Use <strong>Test-cases/singlesig-A-pre-reveal.psbt</strong> and your wallet for seed A.</p>
+<ol>
+<li>Open the file, click <strong>Finalize Transaction for Signing</strong>,
+   and click <strong>Protected QR</strong>.</li>
+<li>At <strong>Step 1 of 2</strong>, close the QR window using <strong>X</strong> before scanning it on
+   the device. No signature should have been accepted.</li>
+<li>Click <strong>Protected QR</strong> again on the same transaction. Complete both rounds
+   as in the first signing test.</li>
+<li>Confirm <strong>Protected signatures verified</strong>. Mark <strong>Cancel and restart</strong>.</li>
+</ol>
+<h3 id="optional-interrupt-the-second-round-and-retry_2">Optional: Interrupt the second round and retry</h3>
+<p>Use <strong>Test-cases/singlesig-A-post-reveal.psbt</strong>, seed A, and its singlesig wallet. Keep the device ready for Step 2.</p>
+<ol>
+<li>Open and prepare the file. Click <strong>Protected QR</strong>, scan Step 1 on the device,
+   approve, and scan its opening response into Sparrow.</li>
+<li>Choose <strong>Done → Scan host reveal</strong> on the device so it is ready for the
+   second round. Sparrow now displays <strong>Step 2 of 2</strong>. <strong>Do not scan it yet.</strong>
+   Close that QR window with <strong>X</strong>.</li>
+<li>In <strong>Protected signing is incomplete</strong>, choose <strong>Retry exact session</strong>.</li>
+<li>Confirm Sparrow returns directly to <strong>Step 2 of 2</strong>. Scan it on the waiting
+   device, approve, and scan its final response into Sparrow.</li>
+<li>Confirm <strong>Protected signatures verified</strong>. Mark <strong>Retry second round</strong>.</li>
+</ol>
+<p>Kern may explain that the coordinator maintains first-round session continuity.
+Keep the same transaction and session for this check.</p>
+<h3 id="optional-abandon-and-reopen-final-device-recovery-check_2">Optional: Abandon and reopen — final device recovery check</h3>
+<p>Finish the device recovery checks here; this leaves a durable history entry.
+The optional Sparrow-only demo follows.
+Use <strong>Test-cases/singlesig-A-abandon.psbt</strong>, seed A, and its singlesig wallet. Leave the device waiting for the second round.</p>
+<ol>
+<li>Open and prepare the file. Scan Step 1 on the device, approve, and return
+   its opening response to Sparrow.</li>
+<li>Choose <strong>Done → Scan host reveal</strong> on the device and leave it waiting.
+   When Sparrow displays <strong>Step 2 of 2</strong>, leave it unscanned and close the QR
+   window with <strong>X</strong>. Choose <strong>Abandon session</strong>.</li>
+<li>Confirm no signature was accepted. Close the transaction tab.</li>
+<li>Reopen the <strong>same abandonment PSBT</strong>, prepare it with the <strong>same wallet</strong>,
+   and click <strong>Protected QR</strong>.</li>
+<li>Expect the retained <strong>Step 2 of 2</strong>, not a new first round. Scan it on the
+   waiting device and scan the final response back into Sparrow.</li>
+<li>Confirm verification and mark <strong>Abandon and reopen</strong>.</li>
+</ol>
+<p>Outside the deliberate public demo below, if a different transaction shows <strong>Selective-abort history exists</strong>,
+choose <strong>No</strong> and record that warning. Leave Sparrow's history intact. These
+files are separate transactions so each recovery check gets its own session;
+reopening a completed file does not count as a new signing ceremony.</p>
+<h3 id="optional-see-sparrow-reject-a-dark-skippy-style-signer-run-last_2">Optional: See Sparrow reject a Dark Skippy-style signer — run last</h3>
+<p>This test uses <strong>Open-Test-Cases.html</strong> as a simulated malicious signer for up
+to three fabricated Dark Skippy transactions using public test Seed A
+(<strong>0fb882ff</strong>). You will use your computer camera to scan QRs from both Sparrow
+and the page. SeedSigner and Kern are not used: the signing device is the
+attacker here, and Sparrow must detect the malicious signature and reject it. A
+malformed request sent to an honest device checks a different condition (the
+device rejection cases above).</p>
+<p>A fixed malicious response would not match Sparrow's fresh session and host
+randomness. The page reads Sparrow's real two-round QRs and returns a valid
+ECDSA signature for that exact session, using eight bytes of public seed A's
+entropy as its nonce. The rejection must appear in <strong>Sparrow itself</strong>.</p>
+<p>Run this <strong>Dark Skippy test last</strong>, after your other signing/recovery tests; the
+deliberate rejection adds a durable history entry. Keep Sparrow offline on
+Testnet4 and use your wallet for <strong>seed A</strong>, with <strong>Protected signing →
+Required</strong>. You will need a computer-connected camera that can read this screen:
+a movable USB webcam or DroidCam (a fixed laptop webcam cannot read its own
+screen).</p>
+<p>Open <strong>Open-Test-Cases.html</strong> in a desktop browser. The maintainer completed these tests in <strong>Brave and Firefox</strong>. Some browsers block
+camera access for pages opened directly from disk; if the camera will not start,
+try another desktop browser and report which one and version you used.</p>
+<ol>
+<li>In <strong>Open-Test-Cases.html</strong>, choose <strong>Sparrow — Dark Skippy-style malicious
+   signer</strong> in the <strong>Case</strong> dropdown.</li>
+<li>In Sparrow choose <strong>File → Open Transaction → File</strong>, browse to the kit's
+   <strong>Test-cases</strong> folder, and open <strong>dark-skippy-attack-A.psbt</strong>. Click
+   <strong>Finalize Transaction for Signing</strong> and click <strong>Protected QR</strong>. Payment is
+   <strong>27,000 sats</strong>, change <strong>72,500</strong>, and fee <strong>500</strong>. Leave <strong>Step 1 of 2</strong>
+   visible. If <strong>Selective-abort history exists</strong> appears from an earlier
+   recovery test, read it and choose <strong>Yes</strong> for this last deliberate public
+   test; keep the history intact.</li>
+<li>On <strong>Open-Test-Cases.html</strong>, click <strong>Grant camera access</strong> and allow the
+   browser permission. <strong>Read Sparrow Step 1</strong> stays disabled until access is
+   granted. Choose your movable camera in <strong>Camera to use for reading
+   Sparrow</strong>, then click <strong>Read Sparrow Step 1</strong> and aim it at Sparrow's open
+   animated Step 1 QR. Wait for a response QR; the page releases the camera
+   automatically.</li>
+<li>In Sparrow's open <strong>Step 1 of 2</strong> QR window click <strong>Scan QR</strong> and aim the
+   camera at the page's animated response QR. Once Sparrow accepts it, Sparrow
+   shows a new animated QR, <strong>Step 2 of 2</strong>.</li>
+<li>On <strong>Open-Test-Cases.html</strong>, click <strong>Read Sparrow Step 2</strong> and aim the camera
+   at Sparrow's Step 2 QR. The final response QR appears on the page; the page
+   releases the camera again.</li>
+<li>In Sparrow's Step 2 window click <strong>Scan QR</strong> and aim the camera at the page's
+   final animated response QR. Expect Sparrow's <strong>Protected signing stopped</strong>
+   dialog with <strong>SIGNATURE_INVALID: Anti-exfil signature verification failed</strong>.
+   No signature from this attempt should be accepted.</li>
+<li>In <strong>FEEDBACK.txt</strong>, mark the <strong>Dark Skippy-style Sparrow QR test</strong> Pass or
+   Fail. A screenshot of <strong>Sparrow's</strong> dialog is optional supporting evidence.</li>
+</ol>
+<p><strong>Congrats!</strong> You've just defeated a (simulated) Dark Skippy attack trying to
+steal your private key and all your bitcoin!</p>
+<p>An invalid-QR, wrong-stage, session-mismatch, or camera error does not count as
+the nonce-defense result. Report it if it occurs. The page's response-ready
+message cannot see Sparrow's outcome and is not a pass result.</p>
+<p><strong>Repeating the test:</strong> Sparrow retains the session for each transaction;
+reopening a used PSBT may resume Step 2. Click <strong>Start over</strong> on the page, then
+open the next unused transaction: <strong>dark-skippy-attack-A2.psbt</strong>, followed by
+<strong>dark-skippy-attack-A3.psbt</strong>. Each has a different transaction ID. Start over
+clears only this page, and Sparrow keeps its history. After using all three,
+stop here and report your results.</p>
+<p>This demonstrates rejection of an <strong>ECDSA adaptation of the <a href="https://darkskippy.com/">Dark Skippy nonce
+technique</a></strong> through the live coordinator exchange.
+It uses a public browser simulator rather than malicious device firmware and
+does not perform seed recovery. Its source and transaction identities are
+included. The automated checks cover the shipped signing flow, transport,
+ordinary signature validity, proof rejection, and durable non-completion; the
+expected rejection has been observed in Sparrow.</p>
+</section><h2 id="send-a-short-report">Send a short report</h2>
+<p>Open <a href="../FEEDBACK-OFFLINE.html">FEEDBACK-OFFLINE.html</a> and record the tests you tried. Click Save feedback HTML to keep an editable copy; reopen the downloaded HTML to keep editing. Leave other tests Not run. Keep screenshots as separate files. No GitHub submission is needed.</p>
+<p>You can paste the report into a <a href="https://github.com/FractalEncrypt/seedsigner-anti-exfil-review/issues">GitHub issue</a>
+or send it to the maintainer who supplied the kit. For a potentially exploitable
+failure, use the private reporting route in <strong>SECURITY.md</strong>. Share test screens
+and this report; keep personal seeds and wallet/profile files private.</p><script>const hardwareChoice=document.getElementById('hardware-choice');
+function chooseHardware(){document.querySelectorAll('[data-hardware]').forEach(p=>p.hidden=p.dataset.hardware!==hardwareChoice.value);}
+function hardwareFromLink(){const target=document.getElementById(decodeURIComponent(location.hash.slice(1)));const panel=target?.closest('[data-hardware]');if(panel){hardwareChoice.value=panel.dataset.hardware;chooseHardware();target.scrollIntoView();}}
+hardwareChoice.addEventListener('change',chooseHardware);chooseHardware();hardwareFromLink();addEventListener('hashchange',hardwareFromLink);</script><script>
+function openAnchor(){const id=decodeURIComponent(location.hash.slice(1));const target=document.getElementById(id);if(target){const panel=target.closest('details');if(panel)panel.open=true;target.scrollIntoView();}}
+addEventListener('hashchange',openAnchor);openAnchor();
+</script></body></html>

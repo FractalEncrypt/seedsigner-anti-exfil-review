@@ -1,0 +1,311 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Build from source on Linux</title><style>body{font:18px/1.6 system-ui,sans-serif;color:#182330;max-width:960px;margin:0 auto;padding:24px}
+h1{font-size:2rem;line-height:1.2}h2{margin-top:2.4rem;line-height:1.3}h3{margin-top:1.8rem}
+a{color:#0759a8}p,li{max-width:80ch}li{margin:.5rem 0}code{background:#eef2f6;padding:.1em .2em;overflow-wrap:anywhere}
+pre{background:#eef2f6;padding:18px;overflow:auto;font-size:.87rem;line-height:1.5}pre code{padding:0;overflow-wrap:normal}
+table{border-collapse:collapse;font-size:.95rem;margin:1rem 0;display:block;overflow:auto}td,th{border:1px solid #c5cfdb;padding:10px;text-align:left}
+th{background:#eef2f6}nav{padding:16px 22px;background:#f0f5fa;border-radius:8px}nav ul{columns:2;column-gap:24px}
+.notice{padding:10px 22px;background:#fff8df;border-left:5px solid #e0ad00;margin:22px 0}
+details{border:1px solid #c5cfdb;border-radius:8px;margin:18px 0;padding:12px 18px}summary{cursor:pointer;font-weight:700}
+details h2{margin-top:1.4rem}.review-note{font-size:.9rem;color:#42556b}@media(max-width:650px){nav ul{columns:1}body{padding:16px}}
+</style></head><body><h1 id="build-from-source-on-linux">Build from source on Linux</h1>
+<h2 id="current-october-9-windows-source">Current October 9 Windows source</h2>
+<p>The Windows tester uses rebuilt native components and the reviewed restart
+repair. For its exact source, use <strong>AexSource-20261009.zip</strong>, then extract
+<strong>current/sparrow-final-source.zip</strong>. It contains the full Sparrow, Drongo and
+Lark sources at the identities recorded in SOURCE-IDENTITIES.json, with no Git
+history required. Sparrow commit <strong>78ebc9a2aca4998267c0647944f49c51f265037f</strong> has tree
+2823ac1b19b8840c0905319b60197bbc5d8d70ec;
+Drongo is 1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36. The clone steps below select this exact committed source. These commits must
+be reachable on the public remotes before this guide is published.</p>
+<p>Use the pinned JDK 25.0.2+10 and the included Gradle wrapper to check/build the
+exported source. Native corresponding sources, Cargo vendor inputs, patches,
+relinking inputs and build records are in the bundled baseline archive's
+previous-native-reviewer/sources/windows-native-corresponding-source-2026-10-08.zip.
+The baseline's original historical device and Java dependency sources remain
+applicable to unchanged components; the bundle README maps each source packet.
+CRT deployment and exact packaged identities are in the baseline crt-candidate
+records plus the accepted notice-closure delta and current restart records.
+Follow those packaging records when comparing a Windows image; a Gradle source
+build alone does not establish byte-for-byte reproduction of the tester image.
+No exact bit-reproducibility or separately built Linux image qualification is
+claimed by this source delivery.</p>
+<h2 id="build-the-current-source">Build the current source</h2>
+<p>This guide targets a native <strong>Ubuntu 24.04 x64 desktop</strong> and the 2026-10-09 tester source versions: Sparrow <code>78ebc9a2aca4998267c0647944f49c51f265037f</code>, Drongo <code>1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36</code>, SeedSigner <code>821a5102cbb87061b44a018d2fb95b05b410cc5f</code>, SeedSignerOS <code>d841a5e5a6d74b66b8bf1ba1b2e78d4e7db9fa74</code>, and Kern <code>0c2446a6e9ecee2914122cd858bdebd86da0894e</code>. It is a source-build procedure; native Linux end-to-end qualification is still pending. For prebuilt packages use <a href="download-and-test.html">Download and test</a>.</p>
+<p>Keep sources on a Linux filesystem, allow at least 30 GB free plus downloads,
+and stop on a failed command. These clone steps need new directories; inspect
+existing checkouts before repeating them.</p>
+<h2 id="choose-the-device-build-target">Choose the device build target</h2>
+<p>The downloadable kit covers Pi Zero revision 1.3 and Kern Wave7B ESP32-P4
+revision v1.3. Source builds can select the targets available in these pinned
+repositories. Those target options do not imply physical anti-exfil qualification
+on every board; record the board and your own results.</p>
+<table>
+<thead>
+<tr>
+<th>SeedSigner board family</th>
+<th><code>ss_board</code> value</th>
+<th>Image suffix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pi Zero / Pi Zero W</td>
+<td><code>pi0</code></td>
+<td><code>pi0.img</code></td>
+</tr>
+<tr>
+<td>Pi Zero 2 W / Pi 3</td>
+<td><code>pi02w</code></td>
+<td><code>pi02w.img</code></td>
+</tr>
+<tr>
+<td>Pi 2</td>
+<td><code>pi2</code></td>
+<td><code>pi2.img</code></td>
+</tr>
+<tr>
+<td>Pi 4 / Pi 4 Compute Module IO</td>
+<td><code>pi4</code></td>
+<td><code>pi4.img</code></td>
+</tr>
+</tbody>
+</table>
+<p>These are the pinned OS builder's targets. Use the camera, display, and controls
+supported by your SeedSigner configuration. The OS also accepts <code>--all</code> for
+building all listed images; the steps below select one target at a time.</p>
+<table>
+<thead>
+<tr>
+<th>Kern board</th>
+<th><code>kern_board</code> value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Waveshare ESP32-P4 Touch LCD 4B</td>
+<td><code>wave_4b</code></td>
+</tr>
+<tr>
+<td>Waveshare ESP32-P4 Touch LCD 3.5</td>
+<td><code>wave_35</code></td>
+</tr>
+<tr>
+<td>Waveshare ESP32-P4 Touch LCD 5</td>
+<td><code>wave_5</code></td>
+</tr>
+<tr>
+<td>Waveshare ESP32-P4 Touch LCD 4.3</td>
+<td><code>wave_43</code></td>
+</tr>
+<tr>
+<td>Waveshare ESP32-P4 Touch LCD 7B</td>
+<td><code>wave_7b</code></td>
+</tr>
+<tr>
+<td>Elecrow CrowPanel Advanced ESP32-P4 7 / 10.1</td>
+<td><code>crowpanel</code></td>
+</tr>
+</tbody>
+</table>
+<p>All listed Kern targets use ESP32-P4. Use <code>kern_revision='v1'</code> for the normal
+v0.x/v1.x target, or <code>kern_revision='v3'</code> for v3.x silicon. The build block adds
+the pinned <code>sdkconfig.rev3</code> overlay and a separate <code>_v3</code> output directory when
+selected. Identify your chip before selecting that revision and before flashing.
+Keep the board's supported camera attached for QR tests.</p>
+<h2 id="check-and-prepare-the-computer">Check and prepare the computer</h2>
+<p>Run these read-only checks in a terminal first:</p>
+<pre><code class="language-bash">cat /etc/os-release
+uname -m
+git --version
+java --version
+javac --version
+docker version
+docker compose version
+python3 --version
+</code></pre>
+<p>Continue with this guide only on Ubuntu 24.04 x86_64. Missing commands are handled below. If Git, Python, and desktop libraries are already present, skip their installation. Otherwise install them:</p>
+<pre><code class="language-bash">sudo apt update
+sudo apt install git curl ca-certificates python3 python3-venv libgtk-3-0t64 libasound2t64
+</code></pre>
+<h3 id="java">Java</h3>
+<p>The package builds used JDK 25.0.2+10. If you already have this JDK, set <code>JAVA_HOME</code> to its actual directory and skip the download. Otherwise download it from the official <a href="https://github.com/adoptium/temurin25-binaries/releases/tag/jdk-25.0.2%2B10">Temurin release</a>, verify its upstream checksum, and extract into a new tools directory. The commands stop if that destination already exists.</p>
+<pre><code class="language-bash">mkdir -p ~/anti-exfil-tools
+cd ~/anti-exfil-tools
+test ! -e jdk-25.0.2+10 || { echo 'JDK directory already exists; inspect it first'; exit 1; }
+base='https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.2%2B10'
+archive='OpenJDK25U-jdk_x64_linux_hotspot_25.0.2_10.tar.gz'
+curl -fL "$base/$archive" -o "$archive"
+curl -fL "$base/$archive.sha256.txt" -o "$archive.sha256.txt"
+expected=$(awk '{print $1}' "$archive.sha256.txt")
+printf '%s  %s\n' "$expected" "$archive" | sha256sum -c - || exit 1
+tar -xzf "$archive"
+export JAVA_HOME="$HOME/anti-exfil-tools/jdk-25.0.2+10"
+export PATH="$JAVA_HOME/bin:$PATH"
+java --version
+javac --version
+</code></pre>
+<p>Repeat the two export lines when opening a new terminal for Sparrow. The repository wrapper downloads Gradle and Java dependencies; no separate Gradle installation is required.</p>
+<h3 id="docker">Docker</h3>
+<p>If <code>docker version</code> shows Client and Server without a connection error and <code>docker compose version</code> shows v2, skip installation. If installed but unavailable, start the existing Docker service or resolve its permissions before installing another Docker distribution.</p>
+<p>For a computer without Docker, use Docker's <a href="https://docs.docker.com/engine/install/ubuntu/">Ubuntu installation procedure</a>. Check its conflicting-package list before changing an existing container installation. For a fresh computer, the repository setup and install commands are:</p>
+<pre><code class="language-bash">sudo apt update
+sudo apt install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+sudo tee /etc/apt/sources.list.d/docker.sources &gt;/dev/null &lt;&lt;EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: noble
+Components: stable
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl start docker
+sudo docker run --rm hello-world
+sudo docker compose version
+</code></pre>
+<p>The firmware commands below use <code>sudo docker</code>; Docker Desktop and WSL are not required on native Linux. First builds download container images and firmware dependencies.</p>
+<h3 id="etcher-and-usb-access">Etcher and USB access</h3>
+<p>If balenaEtcher is installed and opens, skip installation. Otherwise use <a href="https://etcher.balena.io/">balena's Linux download</a> and its distribution-specific installation instructions. Test that it opens before starting a firmware build.</p>
+<p>For USB serial flashing, list your groups with <code>id</code>. If <code>dialout</code> is present, skip the following command. Otherwise add your user, then <strong>log out and back in</strong> before continuing:</p>
+<pre><code class="language-bash">sudo usermod -aG dialout "$USER"
+</code></pre>
+<h2 id="clone-and-launch-sparrow">Clone and launch Sparrow</h2>
+<p>Clone into a new folder, select the exact source commit, then initialize its pinned dependencies. Stop if the printed Sparrow or Drongo SHA differs from the opening paragraph.</p>
+<pre><code class="language-bash">mkdir -p ~/anti-exfil-test
+cd ~/anti-exfil-test
+git -c core.autocrlf=false clone https://github.com/FractalEncrypt/sparrow.git sparrow
+git -C sparrow checkout --detach 78ebc9a2aca4998267c0647944f49c51f265037f
+git -C sparrow submodule update --init --recursive
+git -C sparrow rev-parse HEAD
+git -C sparrow/drongo rev-parse HEAD
+git -C sparrow submodule status --recursive
+</code></pre>
+<p>Once the identities match, build and run checks. Wait for <strong>BUILD SUCCESSFUL</strong>; do not launch after a failure.</p>
+<pre><code class="language-bash">cd ~/anti-exfil-test/sparrow
+export JAVA_HOME="$HOME/anti-exfil-tools/jdk-25.0.2+10"
+export PATH="$JAVA_HOME/bin:$PATH"
+bash ./gradlew --no-daemon check jpackageImage -PskipInstallers=true
+</code></pre>
+<p>Launch with a short dedicated profile and the shared pointer disabled. Keep this terminal open. Do not change to an ordinary wallet home or import production wallets.</p>
+<pre><code class="language-bash">export SPARROW_NO_LOCK_FILE_LINK=true
+build/jpackage/Sparrow/bin/Sparrow --dir "$HOME/.aex-test/source-post" --network testnet4
+</code></pre>
+<p>Confirm Testnet4 and select the desktop camera. For each matching hardware keystore, apply <strong>Protected signing → Required</strong>.</p>
+<h2 id="build-and-flash-seedsigner">Build and flash SeedSigner</h2>
+<p>Clone both repositories and select their exact commits. Initialize submodules after checkout. Stop if either printed source SHA differs from the opening paragraph, or the Buildroot pin is not <code>bf2a2858aa675a14b60f1f9142c65b32652609c1</code>.</p>
+<pre><code class="language-bash">cd ~/anti-exfil-test
+git -c core.autocrlf=false clone https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git seedsigner
+git -C seedsigner checkout --detach 821a5102cbb87061b44a018d2fb95b05b410cc5f
+git -C seedsigner submodule update --init --recursive
+git -c core.autocrlf=false clone https://github.com/FractalEncrypt/seedsigner-os.git seedsigner-os
+git -C seedsigner-os checkout --detach d841a5e5a6d74b66b8bf1ba1b2e78d4e7db9fa74
+git -C seedsigner-os submodule update --init --recursive
+git -C seedsigner rev-parse HEAD
+git -C seedsigner-os rev-parse HEAD
+git -C seedsigner-os/opt/buildroot rev-parse HEAD
+</code></pre>
+<p>The OS source includes CRLF text files. Before building, normalize its UTF-8 text files to LF and record the resulting diff. This changes line endings only, skips symlinks/binary files and Buildroot, and matches the candidate builder's recorded OS normalization.</p>
+<pre><code class="language-bash">cd ~/anti-exfil-test/seedsigner-os
+python3 - &lt;&lt;'PY'
+from pathlib import Path
+for path in Path('opt').rglob('*'):
+    if 'buildroot' in path.parts or path.is_symlink() or not path.is_file():
+        continue
+    data = path.read_bytes()
+    if b'\r\n' not in data or b'\0' in data:
+        continue
+    try:
+        data.decode('utf-8')
+    except UnicodeDecodeError:
+        continue
+    path.write_bytes(data.replace(b'\r\n', b'\n'))
+    print(path)
+PY
+git diff --stat
+ss_board='pi0'  # Choose pi0, pi02w, pi2, or pi4 from the table above.
+case "$ss_board" in pi0|pi02w|pi2|pi4) ;; *) echo 'Unknown SeedSigner target'; exit 1 ;; esac
+export SS_ARGS="--$ss_board --app-repo=https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git --app-commit-id=821a5102cbb87061b44a018d2fb95b05b410cc5f"
+sudo env SS_ARGS="$SS_ARGS" DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose up --force-recreate --build --abort-on-container-exit --exit-code-from build-images
+</code></pre>
+<p>Only after a successful build, record the image identity:</p>
+<pre><code class="language-bash">sha256sum "images/seedsigner_os.821a5102cbb87061b44a018d2fb95b05b410cc5f.$ss_board.img"
+</code></pre>
+<p>Flashing overwrites the selected microSD card. Disconnect SeedSigner power,
+remove its card, and insert it in the reader. In Etcher select the image for your
+chosen board, select the test card, and flash. Wait for validation, safely eject,
+return the card to SeedSigner, and reconnect power. Check camera/buttons.</p>
+<p>After boot, enable <strong>Settings → Persistent Settings</strong>. In <strong>Settings →
+Advanced</strong>, configure the display if needed (Plus: <strong>Hardware → Display type →
+st7789 320x240</strong>), then <strong>Bitcoin Network → Testnet</strong> and <strong>Anti-exfil signing →
+Required</strong>. These settings do not require a loaded seed.</p>
+<h2 id="build-kern">Build Kern</h2>
+<p>Clone and verify the exact revision and decoder submodule. Stop if the decoder pin differs from <code>85cd38c2e10714f262ce16a33239469684e5aa45</code>.</p>
+<pre><code class="language-bash">cd ~/anti-exfil-test
+git -c core.autocrlf=false clone https://github.com/FractalEncrypt/Kern.git kern
+git -C kern checkout --detach 0c2446a6e9ecee2914122cd858bdebd86da0894e
+git -C kern submodule update --init --recursive
+git -C kern rev-parse HEAD
+git -C kern submodule status --recursive
+</code></pre>
+<p>This build generates an ignored development signing key. Keep it local; its signed firmware bytes can differ from the distributed binary. Wait for build success, then check the dependency lockfile and record the hash. Stop on a lockfile diff.</p>
+<pre><code class="language-bash">cd ~/anti-exfil-test/kern
+# Choose from the target table above; defaults match the downloadable kit.
+kern_board='wave_7b'
+kern_revision='v1'
+kern_target="$kern_board"
+kern_defaults="sdkconfig.defaults;sdkconfig.defaults.$kern_board"
+case "$kern_board" in
+  wave_4b|wave_35|wave_5|wave_43|wave_7b|crowpanel) ;;
+  *) echo 'Unknown Kern board target'; exit 1 ;;
+esac
+case "$kern_revision" in
+  v1) ;;
+  v3) kern_target="${kern_board}_v3"; kern_defaults="$kern_defaults;sdkconfig.rev3" ;;
+  *) echo 'Use v1 or v3 for kern_revision'; exit 1 ;;
+esac
+sudo docker run --rm -v "$PWD:/project" -w /project \
+  espressif/idf@sha256:81893c71bb5e570088901f21def8684c25cd2a9020281bd01b843a7655edb18c \
+  idf.py -B "build_$kern_target" \
+    -D "SDKCONFIG=build_$kern_target/sdkconfig" \
+    -D "SDKCONFIG_DEFAULTS=$kern_defaults" build
+git diff --exit-code -- dependencies.lock
+sha256sum "build_$kern_target/kern.bin"
+cat "build_$kern_target/flash_args"
+</code></pre>
+<h2 id="flash-kern">Flash Kern</h2>
+<p>Create an isolated Python environment only if it does not already exist.</p>
+<pre><code class="language-bash">python3 -m venv ~/anti-exfil-tools/kern-flash
+flash_python="$HOME/anti-exfil-tools/kern-flash/bin/python"
+"$flash_python" -m pip install esptool==5.3.1
+"$flash_python" -m serial.tools.list_ports
+</code></pre>
+<p>Connect the device with a USB data cable and identify its newly appearing port. Replace <code>/dev/ttyACM_REPLACE</code> with that port. Identify the chip before writing:</p>
+<pre><code class="language-bash">kern_port='/dev/ttyACM_REPLACE'
+"$flash_python" -m esptool --chip esp32p4 --port "$kern_port" chip-id
+</code></pre>
+<p>Continue only when the identified <strong>v0.x/v1.x</strong> or <strong>v3.x</strong> silicon matches
+the revision chosen for your build. Flashing replaces firmware. Enter its output
+directory and use its generated options/offsets:</p>
+<pre><code class="language-bash">cd "build_$kern_target"
+"$flash_python" - "$kern_port" &lt;&lt;'PY'
+from pathlib import Path
+import shlex, subprocess, sys
+args = shlex.split(Path('flash_args').read_text())
+subprocess.run([sys.executable, '-m', 'esptool', '--chip', 'esp32p4',
+                '--port', sys.argv[1], 'write-flash', *args], check=True)
+PY
+</code></pre>
+<p>Confirm each write reports hash verification and Kern boots to Home. After
+loading your disposable seed, use the orange <strong>i</strong> to confirm Testnet and
+anti-exfil on.</p>
+<h2 id="test-your-source-build">Test your source build</h2>
+<p>Use <a href="offline-public-fixture-testing.html">offline signing tests</a> with the kit's
+public fixtures or <a href="end-to-end-testnet-testing.html">live Testnet4 signing</a> with
+your own disposable seeds. Keep the source-built Sparrow launch command above
+instead of <strong>Start-Sparrow.cmd</strong>. Configure your board's display/camera, and
+record actual source/build hashes, board/chip revision, and Linux version with
+your results. Native Linux end-to-end qualification remains pending.</p></body></html>

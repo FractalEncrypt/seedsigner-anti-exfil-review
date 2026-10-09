@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Optional computer and camera checks</title><style>body{font:18px/1.6 system-ui,sans-serif;color:#182330;max-width:960px;margin:0 auto;padding:24px}
+h1{font-size:2rem;line-height:1.2}h2{margin-top:2.4rem;line-height:1.3}h3{margin-top:1.8rem}
+a{color:#0759a8}p,li{max-width:80ch}li{margin:.5rem 0}code{background:#eef2f6;padding:.1em .2em;overflow-wrap:anywhere}
+pre{background:#eef2f6;padding:18px;overflow:auto;font-size:.87rem;line-height:1.5}pre code{padding:0;overflow-wrap:normal}
+table{border-collapse:collapse;font-size:.95rem;margin:1rem 0;display:block;overflow:auto}td,th{border:1px solid #c5cfdb;padding:10px;text-align:left}
+th{background:#eef2f6}nav{padding:16px 22px;background:#f0f5fa;border-radius:8px}nav ul{columns:2;column-gap:24px}
+.notice{padding:10px 22px;background:#fff8df;border-left:5px solid #e0ad00;margin:22px 0}
+details{border:1px solid #c5cfdb;border-radius:8px;margin:18px 0;padding:12px 18px}summary{cursor:pointer;font-weight:700}
+details h2{margin-top:1.4rem}.review-note{font-size:.9rem;color:#42556b}@media(max-width:650px){nav ul{columns:1}body{padding:16px}}
+</style></head><body><h1 id="optional-computer-and-camera-checks">Optional computer and camera checks</h1>
+<p>These checks use Sparrow and a computer-connected camera. Device signing is not
+needed for the malicious-signer simulation or the supplied ordinary return. Set up
+public seed A's singlesig wallet using the <a href="offline-public-fixture-testing.html">offline guide</a>
+first; use the hardware route matching your device. Keep personal seeds out of this test.
+Save results in <a href="../FEEDBACK.html">FEEDBACK.html</a>. All checks on this page are optional
+for public testers; a single protected signing result is already useful.</p>
+<h2 id="launcher">Launcher</h2>
+<p>Double-click the top-level <strong>Start-Sparrow.cmd</strong>. Confirm Sparrow opens with
+<strong>Testnet4</strong> shown at the top right. On first launch the dedicated test profile
+has no wallets. On later launches it retains its own wallets. The nested command
+file is the helper called by Start-Sparrow.cmd, not a second tester entry point.</p>
+<h2 id="camera-scans-and-cancelreopen">Camera scans and cancel/reopen</h2>
+<p>Open <a href="../Test-cases/Camera-Check.html">Camera-Check.html</a>. Keep Sparrow offline and
+public wallet A's <strong>Protected signing Required</strong>. Open <strong>singlesig-A-first.psbt</strong>,
+click <strong>Finalize Transaction for Signing</strong>, and use the ordinary <strong>Scan QR</strong>.
+Follow the instructions beside the QR. Record static, animated low, medium and
+high separately. A successful decode gives <strong>REQUIRED_PROOF_MISSING</strong>: the
+ordinary signature was read and rejected because Required demands protected proof.
+High density is optional. A camera/decode error is not a policy-rejection pass.
+For cancel/reopen, face the scanner away, cancel it, reopen it, then scan the low
+QR and confirm the expected rejection and that camera access resumes.</p>
+<h2 id="required-policy-and-restart">Required policy and restart</h2>
+<p>In public seed A's wallet <strong>Settings</strong>, set its keystore <strong>Protected signing
+Required → Apply</strong>. Use the ordinary-return scan above and confirm
+<strong>Protected signature rejected / REQUIRED_PROOF_MISSING</strong>, with no signature accepted.
+Close Sparrow, relaunch with <strong>Start-Sparrow.cmd</strong>, reopen the same wallet, and
+confirm Required remains selected. Repeat the ordinary scan and expect the same
+refusal. Record the ordinary-refusal and policy-after-restart results separately.
+Keep the signing history; no policy downgrade or history reset is needed.</p>
+<h2 id="dark-skippy-style-malicious-signer">Dark Skippy-style malicious signer</h2>
+<p>Open <a href="../Test-cases/Open-Test-Cases.html">Open-Test-Cases.html</a>, choose
+<strong>Sparrow — Dark Skippy-style malicious signer</strong>, and follow its <strong>Run the test</strong>
+steps beside the controls. The maintainer tested the browser exchange in Brave
+and Firefox. If your browser blocks camera access for local files, try another
+desktop browser and report its name/version and the exact error.</p>
+<p>Run this demo last, after all signing, recovery and live tests. It deliberately replaces the public Seed A transaction session. Run this demo last, after all signing, recovery and live tests. It deliberately replaces the public Seed A transaction session. There is one attack mode. <strong>A, A2 and A3</strong> are distinct fabricated transactions
+for that same attack. Start with an unused transaction and use its matching PSBT
+in Sparrow. Each two-round QR exchange must end with Sparrow refusing the valid
+ordinary ECDSA signature as <strong>SIGNATURE_INVALID: Anti-exfil signature verification
+failed</strong>. Camera, decoding and session-mismatch errors do not demonstrate attack
+rejection. One successful rejection is enough; A2/A3 are reserves if needed.
+Do not repeat an already used transaction just to fill every feedback field.
+SeedSigner and Kern are not used; this page plays the malicious signing device.</p>
+<h2 id="public-server-and-utxos">Public server and UTXOs</h2>
+<p>For live connectivity, follow <a href="end-to-end-testnet-testing.html#1-connect-sparrow-to-testnet4">Connect Sparrow to Testnet4</a>.
+Use its public-server settings; a local Core/Knots node is not required. Connect
+and confirm the status indicates a connection. In a funded disposable test wallet,
+confirm expected UTXOs. If the wallet is unfunded, record connection status and
+leave the UTXO part Partial or Not run rather than claiming a funded-wallet pass.</p>
+<h2 id="network-toggle-and-views">Network toggle and views</h2>
+<p>After configuring the server in <strong>Settings</strong>, switch the bottom-right connection
+toggle off and on. Confirm disconnection and reconnection. In the disposable wallet,
+open <strong>Receive</strong> and confirm an address appears; open <strong>Send</strong> and confirm the
+transaction controls load. No additional spend is required for this view check.</p></body></html>

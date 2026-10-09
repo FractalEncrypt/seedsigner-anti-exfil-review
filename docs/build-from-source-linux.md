@@ -1,8 +1,69 @@
 # Build from source on Linux
 
-This guide targets a native **Ubuntu 24.04 x64 desktop** and the post-sync forks: Sparrow `bdca675348dc701eff4d5c29eb1f2fcf1780a934`, Drongo `bdc8029fd970dec938630e5d9406261b791bf8d8`, SeedSigner `821a5102cbb87061b44a018d2fb95b05b410cc5f`, SeedSignerOS `d841a5e5a6d74b66b8bf1ba1b2e78d4e7db9fa74`, and Kern `0c2446a6e9ecee2914122cd858bdebd86da0894e`. It is a source-build procedure; native Linux end-to-end qualification is still pending. For prebuilt packages use [Download and test](download-and-test.md).
+## Current October 9 Windows source
 
-The devices are SeedSigner Pi Zero and Kern `wave_7b`, ESP32-P4 revision **v1.3**. Keep builds on a Linux filesystem, allow at least 30 GB free plus downloads, keep power connected, and stop on any failed command. These cloning steps need new directories. Inspect existing checkouts before repeating them.
+The Windows tester uses rebuilt native components and the reviewed restart
+repair. For its exact source, use **AexSource-20261009.zip**, then extract
+**current/sparrow-final-source.zip**. It contains the full Sparrow, Drongo and
+Lark sources at the identities recorded in SOURCE-IDENTITIES.json, with no Git
+history required. Sparrow commit **78ebc9a2aca4998267c0647944f49c51f265037f** has tree
+2823ac1b19b8840c0905319b60197bbc5d8d70ec;
+Drongo is 1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36. The clone steps below select this exact committed source. These commits must
+be reachable on the public remotes before this guide is published.
+
+Use the pinned JDK 25.0.2+10 and the included Gradle wrapper to check/build the
+exported source. Native corresponding sources, Cargo vendor inputs, patches,
+relinking inputs and build records are in the bundled baseline archive's
+previous-native-reviewer/sources/windows-native-corresponding-source-2026-10-08.zip.
+The baseline's original historical device and Java dependency sources remain
+applicable to unchanged components; the bundle README maps each source packet.
+CRT deployment and exact packaged identities are in the baseline crt-candidate
+records plus the accepted notice-closure delta and current restart records.
+Follow those packaging records when comparing a Windows image; a Gradle source
+build alone does not establish byte-for-byte reproduction of the tester image.
+No exact bit-reproducibility or separately built Linux image qualification is
+claimed by this source delivery.
+
+## Build the current source
+
+This guide targets a native **Ubuntu 24.04 x64 desktop** and the 2026-10-09 tester source versions: Sparrow `78ebc9a2aca4998267c0647944f49c51f265037f`, Drongo `1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36`, SeedSigner `821a5102cbb87061b44a018d2fb95b05b410cc5f`, SeedSignerOS `d841a5e5a6d74b66b8bf1ba1b2e78d4e7db9fa74`, and Kern `0c2446a6e9ecee2914122cd858bdebd86da0894e`. It is a source-build procedure; native Linux end-to-end qualification is still pending. For prebuilt packages use [Download and test](download-and-test.md).
+
+Keep sources on a Linux filesystem, allow at least 30 GB free plus downloads,
+and stop on a failed command. These clone steps need new directories; inspect
+existing checkouts before repeating them.
+
+## Choose the device build target
+
+The downloadable kit covers Pi Zero revision 1.3 and Kern Wave7B ESP32-P4
+revision v1.3. Source builds can select the targets available in these pinned
+repositories. Those target options do not imply physical anti-exfil qualification
+on every board; record the board and your own results.
+
+| SeedSigner board family | `ss_board` value | Image suffix |
+| --- | --- | --- |
+| Pi Zero / Pi Zero W | `pi0` | `pi0.img` |
+| Pi Zero 2 W / Pi 3 | `pi02w` | `pi02w.img` |
+| Pi 2 | `pi2` | `pi2.img` |
+| Pi 4 / Pi 4 Compute Module IO | `pi4` | `pi4.img` |
+
+These are the pinned OS builder's targets. Use the camera, display, and controls
+supported by your SeedSigner configuration. The OS also accepts `--all` for
+building all listed images; the steps below select one target at a time.
+
+| Kern board | `kern_board` value |
+| --- | --- |
+| Waveshare ESP32-P4 Touch LCD 4B | `wave_4b` |
+| Waveshare ESP32-P4 Touch LCD 3.5 | `wave_35` |
+| Waveshare ESP32-P4 Touch LCD 5 | `wave_5` |
+| Waveshare ESP32-P4 Touch LCD 4.3 | `wave_43` |
+| Waveshare ESP32-P4 Touch LCD 7B | `wave_7b` |
+| Elecrow CrowPanel Advanced ESP32-P4 7 / 10.1 | `crowpanel` |
+
+All listed Kern targets use ESP32-P4. Use `kern_revision='v1'` for the normal
+v0.x/v1.x target, or `kern_revision='v3'` for v3.x silicon. The build block adds
+the pinned `sdkconfig.rev3` overlay and a separate `_v3` output directory when
+selected. Identify your chip before selecting that revision and before flashing.
+Keep the board's supported camera attached for QR tests.
 
 ## Check and prepare the computer
 
@@ -96,7 +157,7 @@ Clone into a new folder, select the exact source commit, then initialize its pin
 mkdir -p ~/anti-exfil-test
 cd ~/anti-exfil-test
 git -c core.autocrlf=false clone https://github.com/FractalEncrypt/sparrow.git sparrow
-git -C sparrow checkout --detach bdca675348dc701eff4d5c29eb1f2fcf1780a934
+git -C sparrow checkout --detach 78ebc9a2aca4998267c0647944f49c51f265037f
 git -C sparrow submodule update --init --recursive
 git -C sparrow rev-parse HEAD
 git -C sparrow/drongo rev-parse HEAD
@@ -158,17 +219,28 @@ for path in Path('opt').rglob('*'):
     print(path)
 PY
 git diff --stat
-export SS_ARGS='--pi0 --app-repo=https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git --app-commit-id=821a5102cbb87061b44a018d2fb95b05b410cc5f'
+ss_board='pi0'  # Choose pi0, pi02w, pi2, or pi4 from the table above.
+case "$ss_board" in pi0|pi02w|pi2|pi4) ;; *) echo 'Unknown SeedSigner target'; exit 1 ;; esac
+export SS_ARGS="--$ss_board --app-repo=https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git --app-commit-id=821a5102cbb87061b44a018d2fb95b05b410cc5f"
 sudo env SS_ARGS="$SS_ARGS" DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose up --force-recreate --build --abort-on-container-exit --exit-code-from build-images
 ```
 
 Only after a successful build, record the image identity:
 
 ```bash
-sha256sum images/seedsigner_os.821a5102cbb87061b44a018d2fb95b05b410cc5f.pi0.img
+sha256sum "images/seedsigner_os.821a5102cbb87061b44a018d2fb95b05b410cc5f.$ss_board.img"
 ```
 
-Flashing overwrites the selected microSD card. Power off SeedSigner, insert its card into the computer, use Etcher to select this `.img`, identify the card by capacity/device, and flash. Wait for validation, eject safely, return it to the powered-off Pi Zero, and boot. Confirm camera/buttons and **Advanced → Anti-exfil signing → Required**. This is the normal QR image; no instrumented overlay is requested.
+Flashing overwrites the selected microSD card. Disconnect SeedSigner power,
+remove its card, and insert it in the reader. In Etcher select the image for your
+chosen board, select the test card, and flash. Wait for validation, safely eject,
+return the card to SeedSigner, and reconnect power. Check camera/buttons.
+
+After boot, enable **Settings → Persistent Settings**. In **Settings →
+Advanced**, configure the display if needed (Plus: **Hardware → Display type →
+st7789 320x240**), then **Bitcoin Network → Testnet** and **Anti-exfil signing →
+Required**. These settings do not require a loaded seed.
+
 
 ## Build Kern
 
@@ -187,18 +259,33 @@ This build generates an ignored development signing key. Keep it local; its sign
 
 ```bash
 cd ~/anti-exfil-test/kern
+# Choose from the target table above; defaults match the downloadable kit.
+kern_board='wave_7b'
+kern_revision='v1'
+kern_target="$kern_board"
+kern_defaults="sdkconfig.defaults;sdkconfig.defaults.$kern_board"
+case "$kern_board" in
+  wave_4b|wave_35|wave_5|wave_43|wave_7b|crowpanel) ;;
+  *) echo 'Unknown Kern board target'; exit 1 ;;
+esac
+case "$kern_revision" in
+  v1) ;;
+  v3) kern_target="${kern_board}_v3"; kern_defaults="$kern_defaults;sdkconfig.rev3" ;;
+  *) echo 'Use v1 or v3 for kern_revision'; exit 1 ;;
+esac
 sudo docker run --rm -v "$PWD:/project" -w /project \
   espressif/idf@sha256:81893c71bb5e570088901f21def8684c25cd2a9020281bd01b843a7655edb18c \
-  idf.py -B build_wave_7b -D SDKCONFIG=build_wave_7b/sdkconfig \
-  -D 'SDKCONFIG_DEFAULTS=sdkconfig.defaults;sdkconfig.defaults.wave_7b' build
+  idf.py -B "build_$kern_target" \
+    -D "SDKCONFIG=build_$kern_target/sdkconfig" \
+    -D "SDKCONFIG_DEFAULTS=$kern_defaults" build
 git diff --exit-code -- dependencies.lock
-sha256sum build_wave_7b/kern.bin
-cat build_wave_7b/flash_args
+sha256sum "build_$kern_target/kern.bin"
+cat "build_$kern_target/flash_args"
 ```
 
 ## Flash Kern
 
-Create an isolated Python environment only if it does not already exist. For downloaded firmware, use the four files in the extracted Kern package and skip source-build commands.
+Create an isolated Python environment only if it does not already exist.
 
 ```bash
 python3 -m venv ~/anti-exfil-tools/kern-flash
@@ -214,17 +301,30 @@ kern_port='/dev/ttyACM_REPLACE'
 "$flash_python" -m esptool --chip esp32p4 --port "$kern_port" chip-id
 ```
 
-Continue only when it reports **ESP32-P4 revision v1.3**. Flashing replaces firmware. For your source build, compare options/offsets with `build_wave_7b/flash_args`, then run from the Kern source directory:
+Continue only when the identified **v0.x/v1.x** or **v3.x** silicon matches
+the revision chosen for your build. Flashing replaces firmware. Enter its output
+directory and use its generated options/offsets:
 
 ```bash
-"$flash_python" -m esptool --chip esp32p4 --port "$kern_port" write-flash \
-  --flash-mode dio --flash-freq 80m --flash-size keep \
-  0x2000 build_wave_7b/bootloader/bootloader.bin \
-  0x10000 build_wave_7b/partition_table/partition-table.bin \
-  0x1e000 build_wave_7b/ota_data_initial.bin \
-  0x20000 build_wave_7b/kern.bin
+cd "build_$kern_target"
+"$flash_python" - "$kern_port" <<'PY'
+from pathlib import Path
+import shlex, subprocess, sys
+args = shlex.split(Path('flash_args').read_text())
+subprocess.run([sys.executable, '-m', 'esptool', '--chip', 'esp32p4',
+                '--port', sys.argv[1], 'write-flash', *args], check=True)
+PY
 ```
 
-For a downloaded package, change into its extracted directory and use `bootloader.bin`, `partition-table.bin`, `ota_data_initial.bin`, and `kern.bin` at the same offsets. Verify package checksums before this step. Confirm each write reports hash verification and Kern boots to Home. Do not erase the whole device or provision eFuses.
+Confirm each write reports hash verification and Kern boots to Home. After
+loading your disposable seed, use the orange **i** to confirm Testnet and
+anti-exfil on.
 
-Complete the offline signing, rejection, and restart tests in [Download and test](download-and-test.md#7-perform-the-offline-signing-and-rejection-tests), recording your actual source-build hashes separately from release-package results.
+## Test your source build
+
+Use [offline signing tests](offline-public-fixture-testing.md) with the kit's
+public fixtures or [live Testnet4 signing](end-to-end-testnet-testing.md) with
+your own disposable seeds. Keep the source-built Sparrow launch command above
+instead of **Start-Sparrow.cmd**. Configure your board's display/camera, and
+record actual source/build hashes, board/chip revision, and Linux version with
+your results. Native Linux end-to-end qualification remains pending.

@@ -1,51 +1,47 @@
-# SeedSigner test image and initial setup
+# SeedSigner Pi Zero image reference
 
-Use the **normal** Pi Zero image from your chosen frozen or post-sync set.
-Verify the ZIP first using [Download and verify](download-and-test.md#2-verify-before-opening-applications-or-flashing).
-No source build or Docker is needed for this route.
+For a first test, [Download and test](download-and-test.md) covers flashing
+and setup, then links to the offline or live Testnet4 signing guide. This page
+is a device reference; you do not need to visit it during that guide.
 
-## Flash the dedicated microSD card
+## Flash with balenaEtcher
 
-Flashing overwrites the selected card. Remove unrelated removable drives and
-confirm the target's identity/capacity before clicking Flash. If balenaEtcher
-already opens, skip installation. Otherwise install it from
-[balena](https://etcher.balena.io/); Windows with WinGet can use:
+Use the `.img` in the Windows kit's **SeedSigner** folder. Flashing replaces
+everything on the target microSD card. Select the test card carefully.
+If you already have balenaEtcher installed, open it now. Otherwise install
+[balenaEtcher](https://etcher.balena.io/).
 
-```powershell
-winget install --exact --id Balena.Etcher --source winget
-```
+1. Disconnect SeedSigner power, **remove its microSD card**, and insert the card
+   into the computer's reader.
+2. In Etcher choose **Flash from file**, select the kit's `.img`, then choose
+   the test microSD card with **Select target**.
+3. Click **Flash** and wait for successful validation.
+4. Safely eject the card, remove it from the reader, insert it in SeedSigner,
+   and reconnect power. Check menu/buttons/camera operation.
+5. Open **Settings → Persistent Settings** and enable persistent settings.
+6. Open **Settings → Advanced**. For a **Plus**, select **Hardware → Display
+   type → st7789 320x240**, then return to **Advanced**.
+7. Select **Advanced → Bitcoin Network → Testnet**, then **Advanced →
+   Anti-exfil signing → Required**. Return to the main menu.
 
-1. Extract `seedsigner-pi0-SET-normal.zip` completely.
-2. Power off SeedSigner and insert its dedicated card into the computer.
-3. In Etcher choose **Flash from file** and the extracted `.img`.
-4. Choose the dedicated microSD card, flash, and wait for successful validation.
-5. Eject safely, insert the card into the powered-off Pi Zero, then power on.
-6. Confirm Home, camera, and buttons work.
+For public offline tests, load seed A without a passphrase and confirm
+**0fb882ff**. Export its account with **Export xpub → Single Sig → Native
+Segwit**, account 0, then **Animated** or **Static → I understand → Export xpub**.
+The [offline guide](offline-public-fixture-testing.md) includes Sparrow import
+and optional multisig; the [live guide](end-to-end-testnet-testing.md) uses your
+own disposable Testnet4 seed.
 
-## Prepare the offline test wallet
+## Image identities for reviewers
 
-1. Extract the v2 public kit and open **Open-Test-Cases.html**.
-2. Select seed **A**, use SeedSigner's **Scan** to load its seed QR, and confirm
-   fingerprint **0fb882ff**. Use no BIP39 passphrase.
-3. In Settings select the test network; under **Advanced → Anti-exfil signing**
-   select **Required**. Recheck the setting after a restart.
-4. With seed A loaded, choose **Export xpub**, **Single Sig**, **Native Segwit**,
-   and the Sparrow QR format. Use account 0; verify `m/84'/1'/0'` and fingerprint.
-5. Follow [Offline public-fixture testing](offline-public-fixture-testing.md)
-   to import it into the named Sparrow hardware wallet and complete signing.
+The current interactive image uses SeedSigner `821a5102` and SeedSignerOS
+`d841a5e5`. The image SHA-256 is
+`73e4085c5a674cf5b05a22001cad5aa71e8ea87489aef27dc5c4817c1a9fd67a`.
 
-For 2-of-2, export again with **Multisig**, native SegWit P2WSH, account 0,
-`m/48'/1'/0'/2'`, following the multisig section of that guide.
-
-## Frozen artifact distinction
-
-The normal frozen image is a new build from the frozen source versions.
-`seedsigner-pi0-frozen-campaign-instrumented.zip` contains the unchanged
-historical instrumented image with SHA-256
+The frozen normal image is a separate build from frozen source. The historical
+campaign instrumented image is another distinct artifact, SHA-256
 `adc2b58ae9dd57e884ec33b0e39ebf608ee8cc468d3fa7c563a1f1f808550fb3`.
-It is for campaign review, not this novice interactive workflow. The normal
-image needs its own physical qualification and cannot inherit that old result.
+These identities and their results must not be interchanged. The novice tester
+kit uses the current normal image; it does not ask users to qualify two sets.
 
-For the complete source-build route, use [Windows](build-from-source-windows.md)
-or [Linux](build-from-source-linux.md). For funded testnet transactions, use the
-[live guide](end-to-end-testnet-testing.md) with a fresh disposable seed.
+Source-build instructions remain available for [Windows](build-from-source-windows.md)
+and [Linux](build-from-source-linux.md).

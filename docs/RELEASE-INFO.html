@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Experimental Windows tester kit</title><style>body{font:18px/1.6 system-ui,sans-serif;color:#182330;max-width:960px;margin:0 auto;padding:24px}
+h1{font-size:2rem;line-height:1.2}h2{margin-top:2.4rem;line-height:1.3}h3{margin-top:1.8rem}
+a{color:#0759a8}p,li{max-width:80ch}li{margin:.5rem 0}code{background:#eef2f6;padding:.1em .2em;overflow-wrap:anywhere}
+pre{background:#eef2f6;padding:18px;overflow:auto;font-size:.87rem;line-height:1.5}pre code{padding:0;overflow-wrap:normal}
+table{border-collapse:collapse;font-size:.95rem;margin:1rem 0;display:block;overflow:auto}td,th{border:1px solid #c5cfdb;padding:10px;text-align:left}
+th{background:#eef2f6}nav{padding:16px 22px;background:#f0f5fa;border-radius:8px}nav ul{columns:2;column-gap:24px}
+.notice{padding:10px 22px;background:#fff8df;border-left:5px solid #e0ad00;margin:22px 0}
+details{border:1px solid #c5cfdb;border-radius:8px;margin:18px 0;padding:12px 18px}summary{cursor:pointer;font-weight:700}
+details h2{margin-top:1.4rem}.review-note{font-size:.9rem;color:#42556b}@media(max-width:650px){nav ul{columns:1}body{padding:16px}}
+</style></head><body><h1 id="experimental-windows-tester-kit">Experimental Windows tester kit</h1>
+<p>This Windows tester kit uses exactly the Sparrow engine, native DLLs,
+launchers, SeedSigner image and Kern firmware that completed the r5 physical series.
+The public presentation and package layout were updated after that series.</p>
+<p>Reported coverage includes protected singlesig on both devices, multisig in both
+signer orders, Required/Required and Required/Optional policy enforcement, proof
+persistence across restart, exact-session retry, stale responses, protection
+settings, all 13 device rejection cases on both devices, network/profile restart,
+and Testnet3 singlesig and multisig. Saved signatures and completed Testnet3
+protected transcripts were revalidated using the packaged runtime. These results
+are maintainer observations and local verification; they are not an independent
+human security audit or evidence of Jade compatibility. Jade integration remains
+separate from this release.</p>
+<p>Public seed fixtures are fabricated offline transactions; do not broadcast them.
+Use public seeds only with disposable testnet coins and never with real funds.
+For live tests follow the live guide.</p>
+<p>The source, build inputs and detailed review records belong in the separate
+reviewer/source delivery. This tester ZIP is not a corresponding-source archive.
+Its manifest binds that source delivery to the tester assets.</p>
+<p>Microsoft and Tor notice closure was independently accepted on October 8, 2026.
+The complete accepted licenses directory is retained byte for byte, including
+Microsoft terms and the Tor historical-toolchain caveat. No IDE installation or
+additional license dialog is needed to run this package. See the Microsoft and Tor directories under licenses/.</p>
+<p>The launcher stores its test profile outside the extracted ZIP at
+%LOCALAPPDATA%/AexTest/native-crt-20261008. Preserve that entire directory when
+cleaning old Downloads packages: it contains wallets, history and signing state.</p></body></html>

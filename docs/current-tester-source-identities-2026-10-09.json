@@ -1,0 +1,22 @@
+{
+  "source_member": "AexSource/current/sparrow-final-source.zip",
+  "bytes": 19224075,
+  "sha256": "4c1f4138a7510627876cfb2bf154413288959ceaa179b34390f9bf799c8675ba",
+  "tracked_git_blobs_verified": {
+    "sparrow": 1088,
+    "drongo": 301,
+    "lark": 214
+  },
+  "identities": {
+    "sparrow_baseline_commit": "74e438d7c46dbfdb4796db04432fa66380c1ffb7",
+    "sparrow_tree": "2823ac1b19b8840c0905319b60197bbc5d8d70ec",
+    "sparrow_commit": "78ebc9a2aca4998267c0647944f49c51f265037f",
+    "sparrow_commit_state": "Committed source; exact tree verified",
+    "drongo": {
+      "commit": "1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36",
+      "tree": "a79a758edbedcbfda6fc884a06fc1ef55c13818c"
+    },
+    "lark_commit": "b15a676e592f82914c1bc662481ea8d8f0c90cd0",
+    "runtime_modules_sha256": "acd2f03aacd8f4ac393277b06ca9fc15820f46dd8060ee362024a9cf81a802eb"
+  }
+}

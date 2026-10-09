@@ -1,0 +1,541 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Build from source on Windows</title><style>body{font:18px/1.6 system-ui,sans-serif;color:#182330;max-width:960px;margin:0 auto;padding:24px}
+h1{font-size:2rem;line-height:1.2}h2{margin-top:2.4rem;line-height:1.3}h3{margin-top:1.8rem}
+a{color:#0759a8}p,li{max-width:80ch}li{margin:.5rem 0}code{background:#eef2f6;padding:.1em .2em;overflow-wrap:anywhere}
+pre{background:#eef2f6;padding:18px;overflow:auto;font-size:.87rem;line-height:1.5}pre code{padding:0;overflow-wrap:normal}
+table{border-collapse:collapse;font-size:.95rem;margin:1rem 0;display:block;overflow:auto}td,th{border:1px solid #c5cfdb;padding:10px;text-align:left}
+th{background:#eef2f6}nav{padding:16px 22px;background:#f0f5fa;border-radius:8px}nav ul{columns:2;column-gap:24px}
+.notice{padding:10px 22px;background:#fff8df;border-left:5px solid #e0ad00;margin:22px 0}
+details{border:1px solid #c5cfdb;border-radius:8px;margin:18px 0;padding:12px 18px}summary{cursor:pointer;font-weight:700}
+details h2{margin-top:1.4rem}.review-note{font-size:.9rem;color:#42556b}@media(max-width:650px){nav ul{columns:1}body{padding:16px}}
+</style></head><body><h1 id="build-from-source-on-windows">Build from source on Windows</h1>
+<h2 id="current-october-9-windows-source">Current October 9 Windows source</h2>
+<p>The Windows tester uses rebuilt native components and the reviewed restart
+repair. For its exact source, use <strong>AexSource-20261009.zip</strong>, then extract
+<strong>current/sparrow-final-source.zip</strong>. It contains the full Sparrow, Drongo and
+Lark sources at the identities recorded in SOURCE-IDENTITIES.json, with no Git
+history required. Sparrow commit <strong>78ebc9a2aca4998267c0647944f49c51f265037f</strong> has tree
+2823ac1b19b8840c0905319b60197bbc5d8d70ec;
+Drongo is 1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36. The clone steps below select this exact committed source. These commits must
+be reachable on the public remotes before this guide is published.</p>
+<p>Use the pinned JDK 25.0.2+10 and the included Gradle wrapper to check/build the
+exported source. Native corresponding sources, Cargo vendor inputs, patches,
+relinking inputs and build records are in the bundled baseline archive's
+previous-native-reviewer/sources/windows-native-corresponding-source-2026-10-08.zip.
+The baseline's original historical device and Java dependency sources remain
+applicable to unchanged components; the bundle README maps each source packet.
+CRT deployment and exact packaged identities are in the baseline crt-candidate
+records plus the accepted notice-closure delta and current restart records.
+Follow those packaging records when comparing a Windows image; a Gradle source
+build alone does not establish byte-for-byte reproduction of the tester image.
+No exact bit-reproducibility or separately built Linux image qualification is
+claimed by this source delivery.</p>
+<h2 id="build-the-current-source">Build the current source</h2>
+<p>For ready-made packages, use <a href="download-and-test.html">Download and test</a>. This source-build route needs development tools and substantially more time.</p>
+<p>Use this guide to build the pinned Sparrow fork and your SeedSigner/Kern
+device images. Firmware builds run in Ubuntu under WSL; Sparrow runs in Windows.
+Choose your hardware target below before building.</p>
+<h2 id="source-versions">Source versions</h2>
+<p>These are the current tester kit's source identities. Sparrow is pinned to
+<strong>78ebc9a2aca4998267c0647944f49c51f265037f</strong>, including the tested proof-handling
+changes, with Drongo <strong>1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36</strong>. This guide checks
+out the exact commits; moving branch tips are not the build identity.</p>
+<table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>Branch</th>
+<th>Commit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Drongo</td>
+<td><code>codex/final-release-20261009</code></td>
+<td><code>1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36</code></td>
+</tr>
+<tr>
+<td>Sparrow</td>
+<td><code>codex/final-release-20261009</code></td>
+<td><code>78ebc9a2aca4998267c0647944f49c51f265037f</code></td>
+</tr>
+<tr>
+<td>SeedSigner</td>
+<td><code>codex/sync-2026-09-seedsigner-anti-exfil</code></td>
+<td><code>821a5102cbb87061b44a018d2fb95b05b410cc5f</code></td>
+</tr>
+<tr>
+<td>SeedSignerOS</td>
+<td><code>codex/sync-2026-09-seedsigner-os</code></td>
+<td><code>d841a5e5a6d74b66b8bf1ba1b2e78d4e7db9fa74</code></td>
+</tr>
+<tr>
+<td>Kern</td>
+<td><code>codex/kern-continuous-ceremony</code></td>
+<td><code>0c2446a6e9ecee2914122cd858bdebd86da0894e</code></td>
+</tr>
+</tbody>
+</table>
+<p>The source commits are published with this release; no Git bundle is needed.
+Sparrow commit 78ebc9a2aca4998267c0647944f49c51f265037f binds the reviewed source tree used by the
+Windows tester. Your source build creates a new artifact;
+record its own hash and test results rather than inheriting release-binary credit.</p>
+<h2 id="choose-the-device-build-target">Choose the device build target</h2>
+<p>The downloadable kit covers Pi Zero revision 1.3 and Kern Wave7B ESP32-P4
+revision v1.3. Source builds can select the targets available in these pinned
+repositories. Those target options do not imply physical anti-exfil qualification
+on every board; record the board and your own results.</p>
+<table>
+<thead>
+<tr>
+<th>SeedSigner board family</th>
+<th><code>ss_board</code> value</th>
+<th>Image suffix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pi Zero / Pi Zero W</td>
+<td><code>pi0</code></td>
+<td><code>pi0.img</code></td>
+</tr>
+<tr>
+<td>Pi Zero 2 W / Pi 3</td>
+<td><code>pi02w</code></td>
+<td><code>pi02w.img</code></td>
+</tr>
+<tr>
+<td>Pi 2</td>
+<td><code>pi2</code></td>
+<td><code>pi2.img</code></td>
+</tr>
+<tr>
+<td>Pi 4 / Pi 4 Compute Module IO</td>
+<td><code>pi4</code></td>
+<td><code>pi4.img</code></td>
+</tr>
+</tbody>
+</table>
+<p>These are the pinned OS builder's targets. Use the camera, display, and controls
+supported by your SeedSigner configuration. The OS also accepts <code>--all</code> for
+building all listed images; the steps below select one target at a time.</p>
+<table>
+<thead>
+<tr>
+<th>Kern board</th>
+<th><code>kern_board</code> value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Waveshare ESP32-P4 Touch LCD 4B</td>
+<td><code>wave_4b</code></td>
+</tr>
+<tr>
+<td>Waveshare ESP32-P4 Touch LCD 3.5</td>
+<td><code>wave_35</code></td>
+</tr>
+<tr>
+<td>Waveshare ESP32-P4 Touch LCD 5</td>
+<td><code>wave_5</code></td>
+</tr>
+<tr>
+<td>Waveshare ESP32-P4 Touch LCD 4.3</td>
+<td><code>wave_43</code></td>
+</tr>
+<tr>
+<td>Waveshare ESP32-P4 Touch LCD 7B</td>
+<td><code>wave_7b</code></td>
+</tr>
+<tr>
+<td>Elecrow CrowPanel Advanced ESP32-P4 7 / 10.1</td>
+<td><code>crowpanel</code></td>
+</tr>
+</tbody>
+</table>
+<p>All listed Kern targets use ESP32-P4. Use <code>kern_revision='v1'</code> for the normal
+v0.x/v1.x target, or <code>kern_revision='v3'</code> for v3.x silicon. The build block adds
+the pinned <code>sdkconfig.rev3</code> overlay and a separate <code>_v3</code> output directory when
+selected. Identify your chip before selecting that revision and before flashing.
+Keep the board's supported camera attached for QR tests.</p>
+<h2 id="prepare-the-computer">Prepare the computer</h2>
+<p>Commands marked <strong>PowerShell</strong> run in Windows; commands marked <strong>Ubuntu</strong> run in Ubuntu. Work through the checks first, then run only the installation or update commands that apply to your results. A diagnostic check may report that something is missing; the instructions immediately below explain what to do. Stop if an installation or build fails.</p>
+<p>Keep the computer connected to power and prevent sleep during builds. Allow space for sources, containers, and outputs: SeedSignerOS alone estimates 20–30 GB for its build. Keep Linux firmware sources in Ubuntu's home directory to preserve executable bits and symlinks.</p>
+<h3 id="1-check-windows-tools-and-install-what-is-missing">1. Check Windows tools and install what is missing</h3>
+<p>Open normal <strong>PowerShell</strong> from Start. First check whether WinGet is available:</p>
+<pre><code class="language-powershell">Get-Command winget -ErrorAction SilentlyContinue
+</code></pre>
+<ul>
+<li><strong>A command is listed:</strong> run <code>winget --version</code>, then continue to the inventory below.</li>
+<li><strong>Nothing is listed:</strong> install or update Microsoft's <a href="https://apps.microsoft.com/detail/9NBLGGH4NNS1">App Installer</a>, close PowerShell, open it again, and repeat the check.</li>
+</ul>
+<p>Now check the installed packages. These commands only list software; they do not install anything. If WinGet requests source agreements, accept them to perform the checks. “No installed package found” means that package was not detected; follow the individual checks below if you installed it another way.</p>
+<pre><code class="language-powershell">winget list --exact --id Git.Git --source winget
+winget list --exact --id EclipseAdoptium.Temurin.25.JDK --source winget
+winget list --exact --id Python.Python.3.11 --source winget
+winget list --exact --id Balena.Etcher --source winget
+winget list --exact --id Docker.DockerDesktop --source winget
+</code></pre>
+<p>Use the results to work through <strong>Git → Java → Python → Etcher</strong> below. Docker is handled after WSL in section 3. The <strong>Version</strong> column shows what is installed; an <strong>Available</strong> column indicates a catalog update. See Microsoft's <a href="https://learn.microsoft.com/en-us/windows/package-manager/winget/list">WinGet list reference</a> and <a href="https://learn.microsoft.com/en-us/windows/package-manager/winget/upgrade">update command reference</a>.</p>
+<h4 id="git-for-windows">Git for Windows</h4>
+<p>If Git is already installed, confirm it works by running <code>git --version</code>. If it prints a version and the inventory shows no available update, skip to Java. If Git was just installed but is not recognized, reopen PowerShell before deciding it is missing.</p>
+<p><strong>Git is missing:</strong> run this installation command and allow any administrator prompt:</p>
+<pre><code class="language-powershell">winget install --exact --id Git.Git --source winget
+</code></pre>
+<p><strong>Git is installed and the inventory shows an available update:</strong> run this update command instead:</p>
+<pre><code class="language-powershell">winget upgrade --exact --id Git.Git --source winget
+</code></pre>
+<p>After installing or updating, reopen PowerShell and verify <code>git --version</code> before proceeding.</p>
+<h4 id="java-jdk-25">Java JDK 25</h4>
+<p>The current Windows native/restart build records use Temurin <strong>25.0.2+10</strong>.
+Use that exact JDK to compare with the recorded builds. If it is already installed,
+set <strong>$jdkPath</strong> below to its actual directory and verify both version commands.
+Otherwise get the Windows x64 HotSpot JDK ZIP from the official
+<a href="https://github.com/adoptium/temurin25-binaries/releases/tag/jdk-25.0.2%2B10">Temurin 25.0.2+10 release</a>,
+check its SHA-256 against the release's matching checksum file, and extract it
+into a new tools directory. It does not require replacing another installed JDK.</p>
+<p>For example, after extracting <code>OpenJDK25U-jdk_x64_windows_hotspot_25.0.2_10.zip</code>
+under <code>C:\AntiExfilTools</code>, use:</p>
+<pre><code class="language-powershell">$jdkPath = 'C:\AntiExfilTools\jdk-25.0.2+10'
+if (-not (Test-Path -LiteralPath "$jdkPath\bin\javac.exe")) { throw 'Set jdkPath to the extracted JDK directory' }
+&amp; "$jdkPath\bin\java.exe" --version
+&amp; "$jdkPath\bin\javac.exe" -version
+</code></pre>
+<p>Expect Java and javac <strong>25.0.2</strong> and the Java build <strong>25.0.2+10</strong>. Keep the actual
+JDK path for the build and launch commands below. This is the JDK, not only a JRE.</p>
+<h4 id="python-for-flashing-kern">Python for flashing Kern</h4>
+<p>Check whether the Windows Python launcher exists:</p>
+<pre><code class="language-powershell">Get-Command py -ErrorAction SilentlyContinue
+</code></pre>
+<p>If a command is listed, check the required Python series:</p>
+<pre><code class="language-powershell">py -3.11 --version
+</code></pre>
+<p><strong>Python 3.11.9 or a later 3.11 patch version is reported:</strong> skip Python installation. If only another Python series is installed, install 3.11 alongside it so the later <code>py -3.11</code> commands work.</p>
+<p><strong>The launcher or Python 3.11 is missing:</strong> run:</p>
+<pre><code class="language-powershell">winget install --exact --id Python.Python.3.11 --version 3.11.9 --architecture x64 --source winget
+</code></pre>
+<p><strong>Python 3.11 is present but older than 3.11.9:</strong> run this update command instead:</p>
+<pre><code class="language-powershell">winget upgrade --exact --id Python.Python.3.11 --version 3.11.9 --architecture x64 --source winget
+</code></pre>
+<p>After installing or updating, reopen PowerShell and verify <code>py -3.11 --version</code> before continuing.</p>
+<h4 id="balenaetcher">balenaEtcher</h4>
+<p>Check the inventory and search Start for <strong>balenaEtcher</strong>. If it is installed and opens, skip installation, even if it was not detected by WinGet. This guide does not require a particular Etcher version.</p>
+<p><strong>Etcher is missing:</strong> install it:</p>
+<pre><code class="language-powershell">winget install --exact --id Balena.Etcher --source winget
+</code></pre>
+<p>If Etcher is installed but fails to open and the inventory offers an update, close Etcher and update it:</p>
+<pre><code class="language-powershell">winget upgrade --exact --id Balena.Etcher --source winget
+</code></pre>
+<p>Verify Etcher opens before moving on.</p>
+<h3 id="2-check-wsl-and-ubuntu-before-installing-or-updating">2. Check WSL and Ubuntu before installing or updating</h3>
+<p>The image builds use <strong>WSL 2 with Ubuntu 24.04</strong>. Before changing the computer, check its Windows version using <code>winver</code> and check <strong>Task Manager → Performance → CPU → Virtualization</strong>. Docker's Windows requirements include Windows 10 22H2 build 19045, WSL 2.1.5 or later, and 8 GB RAM; check the <a href="https://docs.docker.com/desktop/setup/install/windows-install/">Docker Windows requirements</a> for your Windows edition and servicing status. If virtualization is disabled, enable it in the computer's BIOS/UEFI before continuing.</p>
+<p>In normal <strong>PowerShell</strong>, first check whether the WSL command is available:</p>
+<pre><code class="language-powershell">Get-Command wsl -ErrorAction SilentlyContinue
+</code></pre>
+<p>If a command is listed, run these diagnostic checks. A <code>wsl</code> command can exist even when WSL has not been enabled, so read its output rather than treating the command's presence as proof of a working installation.</p>
+<pre><code class="language-powershell">wsl --version
+wsl --status
+wsl --list --verbose
+</code></pre>
+<p>Choose the matching case <strong>before</strong> running any installation command:</p>
+<table>
+<thead>
+<tr>
+<th>What the checks show</th>
+<th>Next action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WSL version is at least 2.1.5 and <code>Ubuntu-24.04</code> is listed with VERSION 2</td>
+<td>Skip installation and conversion; continue to the Ubuntu check below.</td>
+</tr>
+<tr>
+<td>WSL works, but its version is older than 2.1.5 or <code>--version</code> is unsupported</td>
+<td>Update WSL using the update command below, then repeat the checks.</td>
+</tr>
+<tr>
+<td>WSL works, but <code>Ubuntu-24.04</code> is absent</td>
+<td>Install Ubuntu 24.04 using the installation command below. An existing other distribution can remain installed.</td>
+</tr>
+<tr>
+<td><code>Ubuntu-24.04</code> is listed with VERSION 1</td>
+<td>Convert that distribution using the conversion command below.</td>
+</tr>
+<tr>
+<td>No <code>wsl</code> command, or the output says WSL is not installed/enabled</td>
+<td>Install WSL and Ubuntu using the installation command below.</td>
+</tr>
+<tr>
+<td>Another error appears</td>
+<td>Stop and resolve it using the <a href="https://learn.microsoft.com/en-us/windows/wsl/install">Microsoft WSL installation instructions</a> before building.</td>
+</tr>
+</tbody>
+</table>
+<p>More than one action may apply: for example, update WSL, then install the missing Ubuntu distribution. The version from <code>wsl --version</code> is the WSL software version; the VERSION column in the distribution list identifies whether that distribution uses WSL 1 or 2. See the <a href="https://learn.microsoft.com/en-us/windows/wsl/basic-commands">Microsoft WSL command reference</a>.</p>
+<p>For the applicable action below, open <strong>PowerShell as administrator</strong> from Start.</p>
+<p><strong>WSL needs updating:</strong> run:</p>
+<pre><code class="language-powershell">wsl --update
+</code></pre>
+<p><strong>WSL or Ubuntu 24.04 needs installing:</strong> run:</p>
+<pre><code class="language-powershell">wsl --install -d Ubuntu-24.04
+</code></pre>
+<p>Restart Windows if requested. On a newly installed Ubuntu distribution, open <strong>Ubuntu 24.04</strong> from Start and finish its first-run setup by choosing a Linux username and password. Password characters are invisible while typing. This account is separate from your Windows account. Existing configured installations do not need this setup again.</p>
+<p><strong>An existing Ubuntu-24.04 uses WSL 1:</strong> back up any important files in that distribution before conversion, then run:</p>
+<pre><code class="language-powershell">wsl --set-version Ubuntu-24.04 2
+</code></pre>
+<p>After the applicable changes, repeat <code>wsl --version</code> and <code>wsl --list --verbose</code>. Continue once WSL is at least 2.1.5 and Ubuntu-24.04 shows VERSION 2.</p>
+<h4 id="check-the-ubuntu-release-and-linux-tools">Check the Ubuntu release and Linux tools</h4>
+<p>To open the exact distribution used here, run this command in normal <strong>PowerShell</strong>. The terminal will switch to Ubuntu; subsequent Linux commands run there.</p>
+<pre><code class="language-powershell">wsl -d Ubuntu-24.04
+</code></pre>
+<p>In <strong>Ubuntu</strong>, check the release and whether Linux Git and certificate support are installed:</p>
+<pre><code class="language-bash">cat /etc/os-release
+dpkg-query -W -f='${Package}: ${Status}\n' git ca-certificates
+</code></pre>
+<p>Expect <code>VERSION_ID="24.04"</code> and <code>install ok installed</code> for both packages. Windows Git is separate from Ubuntu Git. If the release differs, stop before building and use an Ubuntu 24.04 distribution.</p>
+<ul>
+<li><strong>Both packages are installed:</strong> run <code>git --version</code>; if it works, skip installation and continue to Docker.</li>
+<li><strong>Either package is absent or not fully installed:</strong> run the following commands in Ubuntu to install the missing prerequisites. The package manager keeps already installed dependencies.</li>
+</ul>
+<pre><code class="language-bash">sudo apt-get update
+sudo apt-get install -y git ca-certificates
+git --version
+</code></pre>
+<h3 id="3-check-docker-desktop-and-start-the-linux-engine">3. Check Docker Desktop and start the Linux engine</h3>
+<p>Docker Desktop supplies the containers used for both image builds. Use the Docker inventory result from section 1 and search Start for <strong>Docker Desktop</strong> before running an installer.</p>
+<ul>
+<li><strong>Installed:</strong> open Docker Desktop, wait for its engine to start, and perform the checks below.</li>
+<li><strong>Missing:</strong> run the following command in <strong>PowerShell</strong>, allow any administrator prompt, restart if requested, and open Docker Desktop from Start.</li>
+</ul>
+<p>Only if Docker Desktop is missing, run:</p>
+<pre><code class="language-powershell">winget install --exact --id Docker.DockerDesktop --source winget
+</code></pre>
+<p>Complete any first-run prompts. Before checking the engine, open Docker Desktop settings and confirm <strong>Use the WSL 2 based engine</strong>. Under <strong>Resources → WSL Integration</strong>, enable <strong>Ubuntu-24.04</strong> and apply/restart if you changed anything. Use Linux containers; if the tray menu offers “Switch to Linux containers,” select it.</p>
+<p>In a new normal <strong>PowerShell</strong> window, check:</p>
+<pre><code class="language-powershell">docker version
+docker compose version
+docker info --format '{{.OSType}}'
+</code></pre>
+<p><strong>Ready:</strong> both Client and Server information appear without a connection error, Compose reports a v2 version, and the last command prints <code>linux</code>. Skip the troubleshooting and update instructions; go directly to <strong>Verify Docker access from Ubuntu</strong> below.</p>
+<p><strong>Not ready:</strong> choose the matching correction before trying a build:</p>
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th>Correction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docker command is not recognized</td>
+<td>If Desktop is installed, reopen PowerShell after starting it; otherwise use the missing-installation step above.</td>
+</tr>
+<tr>
+<td>Client appears but Server has a connection error</td>
+<td>Start Docker Desktop and wait for its engine; resolve any startup error in Desktop.</td>
+</tr>
+<tr>
+<td>The engine type is <code>windows</code></td>
+<td>Switch Docker Desktop to Linux containers and repeat the checks.</td>
+</tr>
+<tr>
+<td>Compose is absent or older than v2</td>
+<td>If WinGet lists an available Docker Desktop update, use the update command below, then repeat the checks. If already current, resolve its installation before continuing.</td>
+</tr>
+</tbody>
+</table>
+<p>A working installation with Compose v2 and a Linux engine can be used as-is. <strong>Only if an update is needed</strong>, close builds and containers first, then run in PowerShell:</p>
+<pre><code class="language-powershell">winget upgrade --exact --id Docker.DockerDesktop --source winget
+</code></pre>
+<p>If you updated Docker Desktop, restart it and repeat the Windows checks before continuing.</p>
+<h4 id="verify-docker-access-from-ubuntu">Verify Docker access from Ubuntu</h4>
+<p>Perform this check even if Docker already worked in PowerShell. In <strong>PowerShell</strong>, open the Ubuntu distribution:</p>
+<pre><code class="language-powershell">wsl -d Ubuntu-24.04
+</code></pre>
+<p>The terminal is now running <strong>Ubuntu</strong>. Run:</p>
+<pre><code class="language-bash">docker version
+docker compose version
+docker info --format '{{.OSType}}'
+</code></pre>
+<p>Expect Client and Server information without a connection error, Compose v2, and <code>linux</code> again. If Ubuntu cannot access Docker, recheck <strong>Resources → WSL Integration → Ubuntu-24.04</strong> and reopen Ubuntu. Once all three checks pass, preparation is complete; continue to <strong>Clone and launch Sparrow</strong> in a normal Windows PowerShell window. Keep Docker Desktop running during both builds.</p>
+<h3 id="what-gets-downloaded-during-builds">What gets downloaded during builds</h3>
+<p>The setup steps above install the tools. Sparrow's first <code>gradlew.bat</code> command downloads the repository's Gradle version and Java libraries; it does not install Java, Git, or Docker. You do not need a separate Gradle installation. The Docker builds download container images and firmware/OS dependencies. Keep internet access available for the first builds. You do not need a separate Windows ESP-IDF installation.</p>
+<h2 id="clone-and-launch-sparrow">Clone and launch Sparrow</h2>
+<p>Use a fresh test profile and public, unfunded test fixtures. These clone commands are for new folders. If an earlier attempt already created <code>drongo</code> or <code>sparrow</code> under <code>Documents\AntiExfilTest</code>, inspect those checkouts before repeating the clone commands.</p>
+<p>In normal <strong>PowerShell</strong>, clone the sources and print their versions. Before building, compare the two HEAD values with the source table. Stop if they differ from the pinned commits. The Sparrow Drongo submodule must be <code>1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36</code>; the separate Drongo clone is useful for inspection, but Sparrow builds its own submodule.</p>
+<pre><code class="language-powershell">$repos = Join-Path $env:USERPROFILE 'Documents\AntiExfilTest'
+New-Item -ItemType Directory -Path $repos -Force | Out-Null
+Set-Location -LiteralPath $repos
+git clone https://github.com/FractalEncrypt/drongo.git drongo
+git clone --recurse-submodules https://github.com/FractalEncrypt/sparrow.git sparrow
+git -C drongo checkout --detach 1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36
+git -C drongo rev-parse HEAD
+git -C sparrow checkout --detach 78ebc9a2aca4998267c0647944f49c51f265037f
+git -C sparrow submodule update --init --recursive
+git -C sparrow rev-parse HEAD
+git -C sparrow submodule status --recursive
+</code></pre>
+<p>Once the source versions match, select the JDK checked during preparation and build. The first build downloads dependencies and can take time. Wait for <code>BUILD SUCCESSFUL</code> before proceeding to the separate launch command below.</p>
+<pre><code class="language-powershell">Set-Location -LiteralPath (Join-Path $repos 'sparrow')
+$env:JAVA_HOME = 'C:\AntiExfilTools\jdk-25.0.2+10' # Use your actual verified JDK path
+if (-not (Test-Path "$env:JAVA_HOME\bin\javac.exe")) { throw 'Expected JDK is missing; check the installation' }
+$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
+java -version
+.\gradlew.bat --no-daemon check installDist
+if ($LASTEXITCODE -ne 0) { throw 'Sparrow checks or build failed' }
+</code></pre>
+<p>After the build succeeds, launch using the following command. It uses a short dedicated profile under <code>%LOCALAPPDATA%\AexTest\source-post</code> and disables the shared ordinary-Sparrow instance pointer. Keep the launching terminal open while Sparrow runs. Do not choose an ordinary wallet home or import production wallets. This Gradle launch avoids a Windows command-length failure observed with the generated distribution batch launcher in long directory paths.</p>
+<pre><code class="language-powershell">$env:SPARROW_NO_LOCK_FILE_LINK = 'true'
+$testProfile = Join-Path $env:LOCALAPPDATA 'AexTest\source-post'
+.\gradlew.bat --no-daemon run --args="--dir=`"$testProfile`" --network=testnet4"
+</code></pre>
+<p>To launch again, open normal PowerShell, repeat the directory/JAVA_HOME/PATH lines above, and run the same <code>run</code> command. After downloads are cached, you can add <code>--offline</code> to the Gradle commands.</p>
+<p>Close the welcome dialog with its top-right <strong>X</strong> and confirm <strong>Testnet4</strong>.
+If the camera will not open during scanning, check Windows Privacy → Camera
+and desktop-app access; a permission prompt is not necessarily shown. For each test wallet's SeedSigner or Kern keystore, open <strong>Settings</strong>, select that signer, set <strong>Protected signing → Required</strong>, and apply the change. Check the hardware model is SeedSigner or Kern so this setting is available.</p>
+<h2 id="build-and-flash-seedsigner">Build and flash SeedSigner</h2>
+<p>Open <strong>Ubuntu</strong>. Clone both application and OS sources with LF endings. These commands need new <code>seedsigner</code> and <code>seedsigner-os</code> folders. Before proceeding to the build block, compare both printed HEAD values with the source table; stop if either differs.</p>
+<pre><code class="language-bash">mkdir -p ~/anti-exfil-test
+cd ~/anti-exfil-test
+git -c core.autocrlf=false clone --branch codex/sync-2026-09-seedsigner-anti-exfil --recurse-submodules https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git seedsigner
+git -c core.autocrlf=false clone --branch codex/sync-2026-09-seedsigner-os --recurse-submodules https://github.com/FractalEncrypt/seedsigner-os.git seedsigner-os
+git -C seedsigner checkout --detach 821a5102cbb87061b44a018d2fb95b05b410cc5f
+git -C seedsigner submodule update --init --recursive
+git -C seedsigner rev-parse HEAD
+git -C seedsigner-os checkout --detach d841a5e5a6d74b66b8bf1ba1b2e78d4e7db9fa74
+git -C seedsigner-os submodule update --init --recursive
+git -C seedsigner-os rev-parse HEAD
+</code></pre>
+<p>Once both versions match, build the normal image for your chosen SeedSigner target. The explicit <code>--app-repo</code> selects this fork, and <code>--app-commit-id</code> selects the intended application version. Keep Docker Desktop running. The OS source includes CRLF text files; the following preparation normalizes UTF-8 OS text to LF, skipping symlinks, binaries, and Buildroot. Record the resulting diff. If Docker reports a build error, stop and save its output; do not flash a leftover image. Wait for the build to finish successfully before running the following image-hash and Explorer commands.</p>
+<pre><code class="language-bash">cd ~/anti-exfil-test/seedsigner-os
+python3 - &lt;&lt;'PY'
+from pathlib import Path
+for path in Path('opt').rglob('*'):
+    if 'buildroot' in path.parts or path.is_symlink() or not path.is_file():
+        continue
+    data = path.read_bytes()
+    if b'\r\n' not in data or b'\0' in data:
+        continue
+    try:
+        data.decode('utf-8')
+    except UnicodeDecodeError:
+        continue
+    path.write_bytes(data.replace(b'\r\n', b'\n'))
+    print(path)
+PY
+git diff --stat
+export DOCKER_DEFAULT_PLATFORM=linux/amd64
+ss_board='pi0'  # Choose pi0, pi02w, pi2, or pi4 from the table above.
+case "$ss_board" in pi0|pi02w|pi2|pi4) ;; *) echo 'Unknown SeedSigner target'; exit 1 ;; esac
+export SS_ARGS="--$ss_board --app-repo=https://github.com/FractalEncrypt/FractalEncrypt_seedsigner.git --app-commit-id=821a5102cbb87061b44a018d2fb95b05b410cc5f"
+docker compose up --force-recreate --build --abort-on-container-exit --exit-code-from build-images
+</code></pre>
+<p>Only after the build finishes successfully, record the image hash and open the output directory:</p>
+<pre><code class="language-bash">sha256sum images/*.img
+explorer.exe .
+</code></pre>
+<p><code>explorer.exe .</code> opens the Linux source directory in Windows Explorer. Open its <code>images</code> folder and find <code>seedsigner_os.821a5102cbb87061b44a018d2fb95b05b410cc5f.&lt;your ss_board&gt;.img</code>. Copy that image into your Windows <strong>Downloads</strong> folder so Etcher can open it easily.</p>
+<p>The following flash step overwrites the selected microSD card. Identify the SeedSigner card by capacity and drive identity before choosing the target.</p>
+<ol>
+<li>Power off SeedSigner and put its microSD card in the computer's card reader.</li>
+<li>Open <strong>balenaEtcher</strong>, choose <strong>Flash from file</strong>, and select the copied <code>.img</code>.</li>
+<li>Choose <strong>Select target</strong> and select the identified SeedSigner microSD card.</li>
+<li>Choose <strong>Flash</strong>, allow any administrator prompt, and wait for flashing and validation to finish successfully.</li>
+<li>Eject the card through Windows, return it to the powered-off SeedSigner, and power on.</li>
+</ol>
+<p>After boot, enable <strong>Settings → Persistent Settings</strong>. In <strong>Settings →
+Advanced</strong>, configure the display if needed (Plus: <strong>Hardware → Display type →
+st7789 320x240</strong>), then <strong>Bitcoin Network → Testnet</strong> and <strong>Anti-exfil signing →
+Required</strong>. These settings do not require a loaded seed.</p>
+<h2 id="build-kern-for-your-board">Build Kern for your board</h2>
+<p>In <strong>Ubuntu</strong>, clone into a new <code>kern</code> folder and print the source version. Before proceeding to the build block, compare Kern's HEAD with the table and confirm the decoder submodule pin is <code>85cd38c2e10714f262ce16a33239469684e5aa45</code>. Stop if they differ.</p>
+<pre><code class="language-bash">cd ~/anti-exfil-test
+git -c core.autocrlf=false clone --branch codex/kern-continuous-ceremony --recurse-submodules https://github.com/FractalEncrypt/Kern.git kern
+git -C kern checkout --detach 0c2446a6e9ecee2914122cd858bdebd86da0894e
+git -C kern submodule update --init --recursive
+git -C kern rev-parse HEAD
+git -C kern submodule status --recursive
+</code></pre>
+<p>Once the source versions match, build using the same ESP-IDF image used for this sync. Keep Docker Desktop running. The initial build retrieves locked managed components; preserve <code>dependencies.lock</code>. Wait for a successful build before running the hash and lockfile checks below. If the lockfile check reports changes, stop before flashing and save the output.</p>
+<p>The clone generates its own ignored development signing key. Its signed image hash will differ from the desktop build; record your computer image hash and keep the key local for compatible future SD updates.</p>
+<pre><code class="language-bash">cd ~/anti-exfil-test/kern
+# Choose from the target table above; defaults match the downloadable kit.
+kern_board='wave_7b'
+kern_revision='v1'
+kern_target="$kern_board"
+kern_defaults="sdkconfig.defaults;sdkconfig.defaults.$kern_board"
+case "$kern_board" in
+  wave_4b|wave_35|wave_5|wave_43|wave_7b|crowpanel) ;;
+  *) echo 'Unknown Kern board target'; exit 1 ;;
+esac
+case "$kern_revision" in
+  v1) ;;
+  v3) kern_target="${kern_board}_v3"; kern_defaults="$kern_defaults;sdkconfig.rev3" ;;
+  *) echo 'Use v1 or v3 for kern_revision'; exit 1 ;;
+esac
+docker run --rm -v "$PWD:/project" -w /project \
+  espressif/idf@sha256:81893c71bb5e570088901f21def8684c25cd2a9020281bd01b843a7655edb18c \
+  idf.py -B "build_$kern_target" \
+    -D "SDKCONFIG=build_$kern_target/sdkconfig" \
+    -D "SDKCONFIG_DEFAULTS=$kern_defaults" build
+</code></pre>
+<p>Only after the build succeeds, record its image hash and check the lockfile. A successful lockfile check prints nothing; if it prints a diff or an error, stop before flashing.</p>
+<pre><code class="language-bash">sha256sum "build_$kern_target/kern.bin"
+git diff --exit-code -- dependencies.lock
+</code></pre>
+<p>Once the lockfile check passes, open the Kern source directory in Windows Explorer:</p>
+<pre><code class="language-bash">explorer.exe .
+</code></pre>
+<h2 id="flash-kern-from-windows">Flash Kern from Windows</h2>
+<p>Wait for a successful Kern build before proceeding. In <strong>normal PowerShell</strong>, make a Windows folder for its output files:</p>
+<pre><code class="language-powershell">$flashDir = Join-Path $env:USERPROFILE 'Documents\KernFlash'
+New-Item -ItemType Directory -Path $flashDir -Force | Out-Null
+explorer.exe $flashDir
+</code></pre>
+<p>The Ubuntu Explorer window shows Kern's source. Open <strong>build_<your kern_target=""></your></strong>
+(for example <strong>build_wave_7b</strong> or <strong>build_wave_43_v3</strong>). Copy these items into
+<strong>Documents/KernFlash</strong>, keeping the subfolders:</p>
+<ul>
+<li><code>flash_args</code></li>
+<li><code>bootloader</code> folder</li>
+<li><code>partition_table</code> folder</li>
+<li><code>ota_data_initial.bin</code></li>
+<li><code>kern.bin</code></li>
+</ul>
+<p>The generated <code>flash_args</code> supplies your board build's options and offsets.
+It refers to the subfolders above; keep their layout intact.</p>
+<p>Python was installed during preparation. Create an isolated flashing environment in the same <strong>PowerShell</strong> window:</p>
+<pre><code class="language-powershell">py -3.11 -m venv "$env:USERPROFILE\kern-flash-venv"
+$flashPython = "$env:USERPROFILE\kern-flash-venv\Scripts\python.exe"
+&amp; $flashPython -m pip install esptool==5.3.1
+&amp; $flashPython -m serial.tools.list_ports
+</code></pre>
+<p>Connect Kern using a USB data cable. Rerun the port-list command and identify the newly appearing COM port, also visible in <strong>Device Manager → Ports (COM &amp; LPT)</strong>. Replace <code>COM_REPLACE</code> below with that port, for example <code>COM3</code>. If no port appears, check the cable and USB port; use the board vendor's driver instructions if Windows requires a serial driver.</p>
+<pre><code class="language-powershell">$kernPort = 'COM_REPLACE'
+&amp; $flashPython -m esptool --chip esp32p4 --port $kernPort chip-id
+if ($LASTEXITCODE -ne 0) { throw 'Could not identify Kern; check port and USB connection' }
+</code></pre>
+<p>Confirm the chip-id output matches the <strong>v0.x/v1.x</strong> or <strong>v3.x</strong> revision
+selected for this build. Flashing replaces the installed firmware. Use the
+generated options/offsets from your own build, then flash in PowerShell:</p>
+<pre><code class="language-powershell">Set-Location -LiteralPath $flashDir
+$flashArgs = ((Get-Content -LiteralPath .\flash_args -Raw) -split '\s+') | Where-Object { $_ }
+&amp; $flashPython -m esptool --chip esp32p4 --port $kernPort write-flash @flashArgs
+if ($LASTEXITCODE -ne 0) { throw 'Kern flash failed' }
+Get-FileHash -Algorithm SHA256 kern.bin
+</code></pre>
+<p>Check that each write reports hash verification and Kern reaches Home after
+reset. If connection stalls, use the board's BOOT/reset procedure and repeat
+chip identification. Load your disposable seed, then use the orange <strong>i</strong> to
+confirm Testnet and anti-exfil on.</p>
+<h2 id="test-your-source-build">Test your source build</h2>
+<p>Record source commits, image hashes, board/chip revision, and operating system
+with your results. Your launch command selects a dedicated source-build profile;
+it is separate from the packaged kit's profile and retains its own sessions.</p>
+<p>Use <a href="offline-public-fixture-testing.html">offline signing tests</a> with the public
+fixtures in the tester kit, or <a href="end-to-end-testnet-testing.html">live Testnet4 signing</a>
+with your own disposable test seeds. Keep the source-built Sparrow launch
+command above instead of the kit's <strong>Start-Sparrow.cmd</strong>. The wallet/device
+steps are the same after launch; configure your own board's display and camera.
+Test successes, rejection, and recovery on your actual build. New hardware
+results do not inherit qualification from the downloadable firmware.</p></body></html>

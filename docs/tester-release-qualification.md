@@ -1,4 +1,4 @@
-# Tester release qualification
+# Historical package qualification record
 
 October 6 successor update: [current repaired Windows qualification](tester-release-status-2026-10-06.md) closes the M1 blocker for a132668f with either firmware set. The table below retains the October 4 original-package observations; it does not describe the repaired successor. [Frozen erratum](frozen-sparrow-erratum-2026-10-06.md) applies to original Sparrow.
 
@@ -8,7 +8,7 @@ These checks qualify exact downloaded packages, separately for the frozen and po
 
 Record the set, every package filename and SHA-256, manifest version, computer OS/version, SeedSigner model, Kern chip/revision, camera, QR density, and isolated profile path. Keep the original ZIPs unchanged. If a package changes, record the new hash and repeat affected tests.
 
-## Windows laptop checks
+## October 4 Windows checks (original application)
 
 October 4 V2.2 update: the operator reports completing the post-sync
 offline cycle using unchanged October 3 application/firmware ZIPs and verified
@@ -40,9 +40,8 @@ does not establish that Kern reached each named deeper validation check.
 The photo named Malicious nonce Protection documents ordinary-return rejection,
 not a physical malicious-nonce test.
 
-Use the [offline procedure](offline-public-fixture-testing.md) in order for
-the frozen run. Do not repeat completed post-sync checks merely to transcribe
-wording. New standalone result forms accept Pass/Fail/Blocked and optional
+This table is retained historical evidence, not a current testing checklist.
+Use the [current coverage record](tester-release-status-2026-10-06.md) for the repaired application. New standalone result forms accept Pass/Fail/Blocked and optional
 photo references. Post-sync publication remains blocked on multisig.
 
 ## Linux checks

@@ -1,0 +1,190 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Download and test anti-exfil signing</title><style>body{font:18px/1.6 system-ui,sans-serif;color:#182330;max-width:960px;margin:0 auto;padding:24px}
+h1{font-size:2rem;line-height:1.2}h2{margin-top:2.4rem;line-height:1.3}h3{margin-top:1.8rem}
+a{color:#0759a8}p,li{max-width:80ch}li{margin:.5rem 0}code{background:#eef2f6;padding:.1em .2em;overflow-wrap:anywhere}
+pre{background:#eef2f6;padding:18px;overflow:auto;font-size:.87rem;line-height:1.5}pre code{padding:0;overflow-wrap:normal}
+table{border-collapse:collapse;font-size:.95rem;margin:1rem 0;display:block;overflow:auto}td,th{border:1px solid #c5cfdb;padding:10px;text-align:left}
+th{background:#eef2f6}nav{padding:16px 22px;background:#f0f5fa;border-radius:8px}nav ul{columns:2;column-gap:24px}
+.notice{padding:10px 22px;background:#fff8df;border-left:5px solid #e0ad00;margin:22px 0}
+details{border:1px solid #c5cfdb;border-radius:8px;margin:18px 0;padding:12px 18px}summary{cursor:pointer;font-weight:700}
+details h2{margin-top:1.4rem}.review-note{font-size:.9rem;color:#42556b}@media(max-width:650px){nav ul{columns:1}body{padding:16px}}
+</style></head><body><h1 id="download-and-test-anti-exfil-signing">Download and test anti-exfil signing</h1>
+<section class="notice"><h2 id="read-this-before-running">Read this before running</h2>
+<p>Most of this project's new anti-exfil code and documentation were written
+with OpenAI GPT-5.6 and GPT-6.1 under my direction. I tested the workflows
+extensively on physical devices, but I cannot personally audit all of the
+source code or cryptography.</p>
+<p>Adversarial AI review of the work included V12, DeepSeek v4.1 Flash, GLM 5.3 (High and Flash Max), and Kimi K3 High. Those reviews and the device tests can miss subtle mistakes. <strong>They are not an independent human security audit.</strong> This disclosure describes our anti-exfil additions, not the authorship of the upstream projects.</p>
+<p>I am sharing this experimental work for testing and independent review. Use disposable test seeds and testnet coins. Successful device tests are not a guarantee of security.</p>
+<p>If you can review the code, challenge the assumptions and report what you find by <a href="https://github.com/FractalEncrypt/seedsigner-anti-exfil-review/issues">creating an issue in the repo</a>.</p>
+</section><hr/>
+<p>Try the extra QR exchange that protects ECDSA signing against malicious nonce
+choices. You can start with <strong>one SeedSigner or one Kern</strong>. After setup,
+choose live Testnet4 signing or prepared offline tests that need no coins.</p>
+<p>This guide covers the <strong>Windows x64 tester kit, 2026-10-09</strong>. It includes
+the rebuilt Sparrow, Java, both device images, Kern's flashing tool, and the test cases.
+No Git, Docker, WSL, Python, JDK installation, or BIOS changes are needed.
+macOS and Linux download packages are not available for this kit. Developers
+can use the separate Windows and Linux source-build guides.</p>
+<p>Use a device reserved for experimental testing. Public test seeds are known
+to everyone; keep your personal wallet seeds out of this test. The supplied
+transactions are fabricated for offline signing and cannot be broadcast.</p>
+<details><summary>Guide contents (jump to a section)</summary><nav aria-label="Guide contents"><ul><li><a href="#read-this-before-running">Read this before running</a></li><li><a href="#1-get-the-windows-tester-kit">1. Get the Windows tester kit</a></li><li><a href="#2-check-the-download-and-extract-it">2. Check the download and extract it</a></li><li><a href="#3-flash-seedsigner-skip-if-you-only-use-kern">3. Flash SeedSigner — skip if you only use Kern</a></li><li><a href="#4-flash-kern-skip-if-you-only-use-seedsigner">4. Flash Kern — skip if you only use SeedSigner</a></li><li><a href="#5-open-sparrow">5. Open Sparrow</a></li><li><a href="#6-choose-your-testing-path">6. Choose your testing path</a></li></ul></nav></details><h2 id="1-get-the-windows-tester-kit">1. Get the Windows tester kit</h2>
+<p>From the <a href="https://github.com/FractalEncrypt/seedsigner-anti-exfil-review/releases">project releases</a>,
+choose <strong>Airgap Anti-Exfil tester kit — Windows x64 — 2026-10-09</strong>. Download:</p>
+<ul>
+<li><strong>AexTest-20261009.zip</strong></li>
+<li><strong>AexTest-20261009.zip.sha256</strong></li>
+</ul>
+<p>The ZIP is the only package you need for this guide. The small <code>.sha256</code> file
+lets you check the download. Optional source and review archives are for
+people inspecting or rebuilding the software. GitHub's automatically added
+<strong>Source code</strong> downloads are not the tester kit.</p>
+<p>You will also need a computer camera and <strong>Windows 10 or 11, x64</strong>. For
+SeedSigner, use the supported <strong>Pi Zero revision 1.3</strong> with a test microSD card
+and a card reader. For Kern, have a USB <strong>data</strong> cable
+and the <strong>wave_7b ESP32-P4 revision v1.3</strong> board supported by this image.</p>
+<h2 id="2-check-the-download-and-extract-it">2. Check the download and extract it</h2>
+<p>Put the ZIP and its <code>.sha256</code> file in the same folder. Open that folder in
+File Explorer, click the address bar, type <strong>powershell</strong>, and press Enter.
+Run this check before opening any application in the kit:</p>
+<pre><code class="language-powershell">$package = 'AexTest-20261009.zip'
+$line = (Get-Content -LiteralPath ($package + '.sha256') -Raw).Trim()
+if ($line -notmatch '^([0-9a-f]{64})  (.+)$') { throw 'Invalid checksum file' }
+$expected = $Matches[1]
+if ($Matches[2] -ne $package) { throw 'Checksum names a different file' }
+$actual = (Get-FileHash -LiteralPath $package -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($actual -ne $expected) { throw 'Checksum mismatch. Stop and download again.' }
+Write-Host 'Checksum matched. You can extract the kit.'
+</code></pre>
+<p>The result must say <strong>Checksum matched</strong>. Then right-click the ZIP and choose
+<strong>Extract All</strong>. Open the <strong>AexTest</strong> folder inside the extracted folder. Everything is already arranged;
+there are no further ZIPs to unpack:</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>START-HERE.html</code></td>
+<td>Setup and a choice of testing guides, readable in a browser</td>
+</tr>
+<tr>
+<td><code>Start-Sparrow.cmd</code></td>
+<td>Launch the included test Sparrow</td>
+</tr>
+<tr>
+<td><code>SeedSigner</code></td>
+<td>Pi Zero microSD image</td>
+</tr>
+<tr>
+<td><code>Kern</code></td>
+<td>Firmware and Windows flashing tools</td>
+</tr>
+<tr>
+<td><code>Test-cases\Open-Test-Cases.html</code></td>
+<td>Public seed QRs and rejection test QRs</td>
+</tr>
+<tr>
+<td><code>FEEDBACK-OFFLINE.html</code> / <code>FEEDBACK-LIVE.html</code></td>
+<td>Saveable forms for each testing path</td>
+</tr>
+<tr>
+<td><code>FEEDBACK.html</code></td>
+<td>Full results form, including optional additional checks</td>
+</tr>
+<tr>
+<td><code>docs</code></td>
+<td>Offline/live guides and optional additional signing tests</td>
+</tr>
+</tbody>
+</table>
+<p>Keep the whole extracted folder together. A matching checksum detects an
+incomplete or altered download; it does not by itself authenticate the
+publisher. If you want to authenticate the release as well, use the optional
+check below before continuing to flashing or opening Sparrow.</p>
+<h2 id="3-flash-seedsigner-skip-if-you-only-use-kern">3. Flash SeedSigner — skip if you only use Kern</h2>
+<p>The image is for a <strong>Pi Zero</strong>. Flashing replaces everything on the selected
+card. Remove unrelated removable drives to make the test card easy to identify.</p>
+<p>If you already have balenaEtcher installed, open it now. Otherwise install
+<a href="https://etcher.balena.io/">balenaEtcher</a> before continuing.</p>
+<ol>
+<li>Disconnect SeedSigner's power cable. <strong>Remove its microSD card</strong> and put
+   the card in your computer's card reader.</li>
+<li>Open Etcher. Click <strong>Flash from file</strong> and choose the <code>.img</code> in the kit's
+   <strong>SeedSigner</strong> folder.</li>
+<li>Click <strong>Select target</strong>, select the test microSD card, then click <strong>Flash</strong>.</li>
+<li>Wait for flashing and validation to finish successfully. Safely eject the
+   card, remove it from the reader, and put it back in SeedSigner.</li>
+<li>Reconnect power. Confirm the menu opens and the buttons and camera work.</li>
+<li>Open <strong>Settings → Persistent Settings</strong> and enable persistent settings.</li>
+<li>Open <strong>Settings → Advanced</strong>. If you use a SeedSigner <strong>Plus</strong>, first open
+   <strong>Hardware → Display type</strong> and select <strong>st7789 320x240</strong>, then return to
+   <strong>Advanced</strong>.</li>
+<li>In <strong>Advanced → Bitcoin Network</strong>, select <strong>Testnet</strong>.</li>
+<li>In <strong>Advanced → Anti-exfil signing</strong>, select <strong>Required</strong>. Return to the
+   main menu. These settings are ready before you load a seed.</li>
+</ol>
+<p>If validation fails or SeedSigner does not boot, stop here and report that
+result. Otherwise continue below.</p>
+<h2 id="4-flash-kern-skip-if-you-only-use-seedsigner">4. Flash Kern — skip if you only use SeedSigner</h2>
+<p>This kit includes firmware for <strong>wave_7b, ESP32-P4 revision v1.3</strong>.
+Flashing replaces the installed firmware.</p>
+<ol>
+<li>Open the kit's <strong>Kern</strong> folder and double-click <strong>Check-Package.cmd</strong>.
+   All checks must pass.</li>
+<li>Connect Kern using a USB <strong>data</strong> cable. Open Windows <strong>Device Manager</strong>.
+   Under <strong>Ports (COM &amp; LPT)</strong>, find the entry that appears when Kern is
+   connected. Note its port, such as <strong>COM5</strong>.</li>
+<li>Double-click <strong>Flash-Kern.cmd</strong> and enter that COM port.</li>
+<li>The tool checks for <strong>ESP32-P4 revision v1.3</strong> automatically and stops
+   without writing if it cannot confirm that identity. When it asks
+   <strong>Type FLASH to write this firmware</strong>, type <strong>FLASH</strong> and press Enter.
+   Wait for the write and hash checks to finish.</li>
+<li>Start Kern and confirm its screen, touch controls, and camera work.</li>
+</ol>
+<p>If no port appears, try another data cable and USB port. If the port appears
+but identification fails, report the output before trying a different firmware.
+The supplied tool includes esptool; no Python installation is needed.</p>
+<h2 id="5-open-sparrow">5. Open Sparrow</h2>
+<p>The launcher automatically uses a separate test profile. Your regular Sparrow
+installation and wallets are not needed. This test profile remembers its own
+wallets and signing sessions between restarts; you do not need to choose or
+create a profile manually. The launcher is not Authenticode signed; a Windows
+reputation prompt is separate from the download checksum check.</p>
+<ol>
+<li>Double-click <strong>Start-Sparrow.cmd</strong> in the kit's top folder. Use this launcher
+   again whenever you restart. The file under <strong>Sparrow/Start-Native-Sparrow.cmd</strong>
+   is an internal helper used by this launcher; you do not need to open it.</li>
+<li>If the welcome dialog appears, close it with the <strong>X</strong> at its top-right.
+   On a first launch, Sparrow opens with no wallet loaded and the server
+   connection off.</li>
+<li>Confirm the top-right network label says <strong>Testnet4</strong>. Leave the server
+   connection off until you choose a testing path below.</li>
+</ol>
+<p><strong>If the camera will not open during a scan:</strong> check Windows <strong>Settings →
+Privacy → Camera</strong> and allow desktop apps to access the camera. A permission
+prompt is not necessarily shown when Sparrow first uses it.</p>
+<h2 id="6-choose-your-testing-path">6. Choose your testing path</h2>
+<p>Setup is complete. Choose one guide and follow it from start to finish:</p>
+<ul>
+<li><strong><a href="docs/end-to-end-testnet-testing.html">Live Testnet4 signing</a></strong> — create or load
+  your disposable test wallet, fund it with testnet coins, then sign and
+  broadcast a transaction. This is the familiar wallet-testing route, with
+  both singlesig and optional multisig steps.</li>
+<li><strong><a href="docs/offline-public-fixture-testing.html">Offline signing tests</a></strong> — use the
+  prepared public seeds, PSBTs, and HTML QR viewer. No coins or server
+  connection are needed. Start with singlesig, then optionally try multisig,
+  rejection cases, and recovery checks.</li>
+</ul>
+<p>Each guide contains its own wallet setup and signing steps; neither sends you back here mid-test. Open <strong><a href="FEEDBACK.html">FEEDBACK.html</a></strong>, record what you tried, and click <strong>Save feedback HTML</strong>. Reopen the downloaded HTML to keep editing. A photo or a sentence about where you got stuck is enough.</p>
+<p>For a focused report, use <a href="FEEDBACK-OFFLINE.html">offline feedback</a> or <a href="FEEDBACK-LIVE.html">live feedback</a>. Every result has a Steps link. Leave tests you did not try <strong>Not run</strong>.</p>
+<p>Source and build records are supplied separately for technical reviewers.
+<a href="docs/RELEASE-INFO.html">Release information</a> describes this package and its test coverage.</p>
+<p>This kit includes unmodified Microsoft runtime components under Microsoft’s terms; see <code>licenses/microsoft-runtime-2026/</code>. No Visual Studio installation is needed to run the kit.</p>
+<p>Microsoft components remain under their applicable terms, including the SDK terms delivered in <code>licenses/microsoft-runtime-2026/</code>; use of those components accepts the applicable Microsoft terms as stated there. Tor compiler-runtime notices and version caveats are in <code>licenses/tor-runtime/</code>. No first-launch dialog or IDE installation is added.</p>
+<p>Optional <a href="docs/DEVICE-TESTS.html">additional signing tests</a> cover policy enforcement,
+proof persistence, interrupted exchanges, stale replies, and device rejection cases.
+One successful singlesig run is enough for a useful tester report.</p></body></html>

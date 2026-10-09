@@ -1,0 +1,25 @@
+{
+  "tester": {
+    "filename": "AexTest-20261009.zip",
+    "bytes": 213261784,
+    "sha256": "85d74ac4ea746cb733f100903f7e3937cbb6667de2dd70e72870d8f30029a9eb"
+  },
+  "source_reviewer": {
+    "filename": "AexSource-20261009.zip",
+    "bytes": 2096570709,
+    "sha256": "acb4938fb3804ba3018274b9b89253728f31a0d9f14b489efd5152d2e8bafbf2"
+  },
+  "source": {
+    "sparrow_baseline_commit": "74e438d7c46dbfdb4796db04432fa66380c1ffb7",
+    "sparrow_tree": "2823ac1b19b8840c0905319b60197bbc5d8d70ec",
+    "sparrow_commit": "78ebc9a2aca4998267c0647944f49c51f265037f",
+    "sparrow_commit_state": "Committed source; exact tree verified",
+    "drongo": {
+      "commit": "1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36",
+      "tree": "a79a758edbedcbfda6fc884a06fc1ef55c13818c"
+    },
+    "lark_commit": "b15a676e592f82914c1bc662481ea8d8f0c90cd0",
+    "runtime_modules_sha256": "acd2f03aacd8f4ac393277b06ca9fc15820f46dd8060ee362024a9cf81a802eb"
+  },
+  "experimental_scope": "Windows x64; Pi Zero rev1.3 SeedSigner; wave_7b ESP32-P4 rev1.3 Kern; no human security audit or Jade/Mac qualification"
+}

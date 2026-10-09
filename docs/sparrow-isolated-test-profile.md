@@ -1,31 +1,26 @@
-# Isolated Sparrow application and profile
+# How the tester's Sparrow application stays separate
 
-For the current Windows tester application, verify and extract
-`sparrow-anti-exfil-post-sync-windows-x64.zip` completely. Close other experimental
-Sparrow instances, then double-click **Start-PostSync-Sparrow.cmd** at the top
-of the extracted folder. Keep that entire folder intact and use the same
-launcher on every restart. Its Java runtime is included.
+Double-click **Start-Sparrow.cmd** in the Windows tester kit. Java is included;
+there is no installation step. The launcher selects the dedicated test profile
+automatically and keeps its wallets/session history between restarts. It does
+not replace your regular Sparrow installation or register file associations.
 
-Choose **Later or Offline Mode** at onboarding. Confirm **Testnet4**, leave the
-server connection off for public fixtures, and grant Windows camera access if
-asked. The dedicated profile is `%LOCALAPPDATA%\AexTest\post-sync-p-a132668f`.
-Your test wallets and ceremony state persist there. Do not load production seeds
-or ordinary wallets, copy another profile/journal into it, or launch the internal
-`engine\Sparrow.exe` directly.
+At first launch, close the welcome dialog with its top-right **X**. Keep the
+server connection off for offline fixtures. [Download and test](download-and-test.md)
+covers setup, then links to complete offline and live Testnet4 testing guides.
 
-The launcher installs no file associations and replaces no official Sparrow.
-The package combines the exact tested repaired app and post-sync profile addon;
-[qualification](tester-release-status-2026-10-06.md) records their identities.
+## Technical details
 
-For deliberate frozen-device compatibility tests, use the repaired application's
-**Start-Anti-Exfil.exe** inside its application subfolder. Its distinct profile is
-`%LOCALAPPDATA%\AexTest\repair-p-a132668f`. Record the repaired application hash
-with the frozen firmware hashes. Preserve all existing journals.
+The top-level launcher delegates to the unchanged **Start-PostSync-Sparrow.cmd**
+inside the `Sparrow` folder. That launches the tested **Start-PostSync.exe**.
+The retained profile path is `%LOCALAPPDATA%\AexTest\post-sync-p-a132668f`.
+The historical name is retained to preserve existing journals. Use the kit's
+launcher on every restart; the internal `engine\Sparrow.exe` does not select
+this profile on its own.
 
-The original frozen Sparrow package uses a different profile but remains unfixed;
-see the [erratum](frozen-sparrow-erratum-2026-10-06.md). Repaired Linux binaries
-are not included in this Windows tester set. Use the [Linux source guide](build-from-source-linux.md)
-for development builds; their desktop/camera qualification remains pending.
-
-Follow [Download and test](download-and-test.md) for full setup, then the
-[offline procedure](offline-public-fixture-testing.md) in order.
+The application bytes are unchanged from the repaired, physically tested
+Windows package. See [identities and coverage](tester-release-status-2026-10-06.md).
+For historical frozen-firmware comparisons, the separate repaired
+**Start-Anti-Exfil.exe** profile is `%LOCALAPPDATA%\AexTest\repair-p-a132668f`;
+that research workflow is outside the novice kit procedure. Original frozen
+Sparrow retains its [known limitations](frozen-sparrow-erratum-2026-10-06.md).
