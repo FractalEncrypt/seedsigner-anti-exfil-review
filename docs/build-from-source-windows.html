@@ -367,7 +367,7 @@ docker info --format '{{.OSType}}'
 New-Item -ItemType Directory -Path $repos -Force | Out-Null
 Set-Location -LiteralPath $repos
 git clone https://github.com/FractalEncrypt/drongo.git drongo
-git clone --recurse-submodules https://github.com/FractalEncrypt/sparrow.git sparrow
+git clone https://github.com/FractalEncrypt/sparrow.git sparrow
 git -C drongo checkout --detach 1c88f61ef3ca4dac54c0ca44a06bdc0808e0ad36
 git -C drongo rev-parse HEAD
 git -C sparrow checkout --detach 78ebc9a2aca4998267c0647944f49c51f265037f
