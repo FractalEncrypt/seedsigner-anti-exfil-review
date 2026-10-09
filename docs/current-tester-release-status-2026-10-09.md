@@ -43,7 +43,7 @@ scope/pins remain unchanged and retain their Sparrow erratum.
 
 ## Final asset identities
 
-- **AexTest-20261009.zip** — 213261784 bytes; SHA-256 `85d74ac4ea746cb733f100903f7e3937cbb6667de2dd70e72870d8f30029a9eb`.
-- **AexSource-20261009.zip** — 2096570709 bytes; SHA-256 `acb4938fb3804ba3018274b9b89253728f31a0d9f14b489efd5152d2e8bafbf2`.
+- **AexTest-20261009.zip** — 213261939 bytes; SHA-256 `7269a31a4b5793bd2acec4529c96a61d60e357bfdc4614fa29af1c299a8c7516`.
+- **AexSource-20261009.zip** — 2096570727 bytes; SHA-256 `ca2b758c288af09bc3fbcef51d8ab8bd549e9687e54e520f0a548fdb0fba4b5e`.
 
 The machine-readable asset record is [current-tester-release-assets-2026-10-09.json](current-tester-release-assets-2026-10-09.json).

@@ -54,6 +54,8 @@ is not for a personal wallet.
 
 ## Signer order: A then B, or B then A
 
+If you already completed protected 2-of-2 A then B in the offline guide, record that same result in the combined A-then-B field; do not repeat it. The A-then-B reserve is only for a run you still need. B then A is a separate optional order check.
+
 After the [offline guide's two-device wallet setup](offline-public-fixture-testing.html#optional-2-of-2-multisig_2),
 keep the public A/B wallet on Testnet4, offline, with both keystores Required and
 device protection on. Load A on SeedSigner and B on Kern; have the descriptor

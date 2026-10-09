@@ -44,7 +44,7 @@ steps beside the controls. The maintainer tested the browser exchange in Brave
 and Firefox. If your browser blocks camera access for local files, try another
 desktop browser and report its name/version and the exact error.
 
-Run this demo last, after all signing, recovery and live tests. It deliberately replaces the public Seed A transaction session. Run this demo last, after all signing, recovery and live tests. It deliberately replaces the public Seed A transaction session. There is one attack mode. **A, A2 and A3** are distinct fabricated transactions
+Run this demo last, after all signing, recovery and live tests. It deliberately replaces the public Seed A transaction session. There is one attack mode. **A, A2 and A3** are distinct fabricated transactions
 for that same attack. Start with an unused transaction and use its matching PSBT
 in Sparrow. Each two-round QR exchange must end with Sparrow refusing the valid
 ordinary ECDSA signature as **SIGNATURE_INVALID: Anti-exfil signature verification
